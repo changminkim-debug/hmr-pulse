@@ -212,7 +212,7 @@ tbody tr:hover td{background:#edf1f8!important}
   </div>
 
   <div class="sb-bottom">
-    기준: 2026-06-17<br>갱신: 2026. 6. 18. 오전 3:39:08<br>C7 클릭 귀속 기준
+    기준: 2026-06-17<br>갱신: 2026. 6. 18. 오전 3:43:15<br>C7 클릭 귀속 기준
   </div>
 </div>
 
@@ -550,9 +550,9 @@ function renderAll() {
   const data = PERIODS[curPeriod];
   if (!data) return;
   renderKPI(data);
-  const ch = document.getElementById('chart-hint');
-  if (ch) ch.textContent = (curTeam || curPerson || curProduct)
-    ? '일별 비용 · ROAS — 추이는 전체 기간 기준 (팀/담당자/품목 필터 미반영)'
+  const chartHint = document.getElementById('chart-hint');
+  if (chartHint) chartHint.textContent = (curTeam || curPerson || curProduct)
+    ? '추이는 전체 기간 기준 (팀/담당자/품목 필터 미반영)'
     : '일별 비용(막대) · ROAS %(선)';
   renderChart(data);
   renderProduct(getFilteredByProduct(data));
@@ -560,10 +560,10 @@ function renderAll() {
   renderAd(data.byAd || []);
   renderPerson(getFilteredByPerson(data));
   // 개수 hint 업데이트
-  const ch = document.getElementById('camp-hint');
-  const ah = document.getElementById('ad-hint');
-  if (ch) { const n = (data.byCamp||[]).length; ch.textContent = n > 0 ? '총 ' + n + '개 · 비용순' : ''; }
-  if (ah) { const n = (data.byAd||[]).length; ah.textContent = n > 0 ? '총 ' + n + '개 · 비용순' + (curPeriod.startsWith('y') || curPeriod === 'all' ? ' (상위 500)' : '') : ''; }
+  const campHint = document.getElementById('camp-hint');
+  const adHint = document.getElementById('ad-hint');
+  if (campHint) { const n = (data.byCamp||[]).length; campHint.textContent = n > 0 ? '총 ' + n + '개 · 비용순' : ''; }
+  if (adHint) { const n = (data.byAd||[]).length; adHint.textContent = n > 0 ? '총 ' + n + '개 · 비용순' + (curPeriod.startsWith('y') || curPeriod === 'all' ? ' (상위 500)' : '') : ''; }
   syncStatusBar();
   applyRowFilters();
   reNumber();
