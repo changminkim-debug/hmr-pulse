@@ -212,7 +212,7 @@ tbody tr:hover td{background:#edf1f8!important}
   </div>
 
   <div class="sb-bottom">
-    기준: 2026-06-17<br>갱신: 2026. 6. 18. 오전 3:34:12<br>C7 클릭 귀속 기준
+    기준: 2026-06-17<br>갱신: 2026. 6. 18. 오전 3:39:08<br>C7 클릭 귀속 기준
   </div>
 </div>
 
@@ -250,7 +250,7 @@ tbody tr:hover td{background:#edf1f8!important}
 
     <!-- ② 추이 -->
     <div id="s-trend" class="panel" style="scroll-margin-top:80px">
-      <div class="sec-title">기간별 추이 <span class="hint">일별 비용(막대) · ROAS %(선)</span></div>
+      <div class="sec-title">기간별 추이 <span class="hint" id="chart-hint">일별 비용(막대) · ROAS %(선)</span></div>
       <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
     </div>
 
@@ -550,11 +550,15 @@ function renderAll() {
   const data = PERIODS[curPeriod];
   if (!data) return;
   renderKPI(data);
+  const ch = document.getElementById('chart-hint');
+  if (ch) ch.textContent = (curTeam || curPerson || curProduct)
+    ? '일별 비용 · ROAS — 추이는 전체 기간 기준 (팀/담당자/품목 필터 미반영)'
+    : '일별 비용(막대) · ROAS %(선)';
   renderChart(data);
-  renderProduct(data.byProduct || []);
+  renderProduct(getFilteredByProduct(data));
   renderCampaign(data.byCamp || []);
   renderAd(data.byAd || []);
-  renderPerson(data.byPerson || []);
+  renderPerson(getFilteredByPerson(data));
   // 개수 hint 업데이트
   const ch = document.getElementById('camp-hint');
   const ah = document.getElementById('ad-hint');
@@ -565,24 +569,67 @@ function renderAll() {
   reNumber();
 }
 
-// ── KPI Cards ─────────────────────────────────────────────
+// ── 필터 적용 집계 ────────────────────────────────────────
+function filteredAds(data) {
+  return (data.byAd || []).filter(a =>
+    (!curPerson  || a.person  === curPerson)  &&
+    (!curProduct || a.product === curProduct) &&
+    (!curTeam    || a.team    === curTeam)
+  );
+}
+
 function getFilteredKpi(data) {
-  if (!curPerson && !curProduct) return data.kpi;
-  // 단일 필터: byPerson / byProduct 사전계산값 사용
-  if (curPerson && !curProduct) {
+  // 필터 없음: 사전계산 KPI 그대로
+  if (!curPerson && !curProduct && !curTeam) return data.kpi;
+  // 팀 없이 단일 필터: 사전계산 byPerson / byProduct 사용 (더 정확)
+  if (curPerson && !curProduct && !curTeam) {
     const p = (data.byPerson || []).find(r => r.name === curPerson);
     if (p) return { spend: p.spend, purchases: p.purchases, val: p.val, roas: p.roas, clicks: 0 };
   }
-  if (curProduct && !curPerson) {
+  if (curProduct && !curPerson && !curTeam) {
     const p = (data.byProduct || []).find(r => r.name === curProduct);
     if (p) return { spend: p.spend, purchases: p.purchases, val: p.val, roas: p.roas, clicks: 0 };
   }
-  // 복합 필터: byAd에서 합산 (근사값)
-  const ads = (data.byAd || []).filter(a => (!curPerson || a.person === curPerson) && (!curProduct || a.product === curProduct));
+  // 팀 포함 또는 복합 필터: byAd에서 합산
+  const ads = filteredAds(data);
   const spend = ads.reduce((s, a) => s + a.spend, 0);
   const purchases = ads.reduce((s, a) => s + a.purchases, 0);
   const val = ads.reduce((s, a) => s + a.val, 0);
   return { spend, purchases, val, roas: spend > 0 ? val / spend * 100 : 0, clicks: 0 };
+}
+
+function getFilteredByProduct(data) {
+  // 팀/담당자 필터 없으면 사전계산값 그대로 (정확)
+  if (!curTeam && !curPerson) return data.byProduct || [];
+  const ads = filteredAds(data);
+  const totalSpend = ads.reduce((s, a) => s + a.spend, 0);
+  const map = {};
+  ads.forEach(a => {
+    const k = a.product || '미분류';
+    if (!map[k]) map[k] = { name: k, spend: 0, purchases: 0, val: 0 };
+    map[k].spend += a.spend; map[k].purchases += a.purchases; map[k].val += a.val;
+  });
+  return Object.values(map).map(p => ({
+    ...p, roas: p.spend > 0 ? p.val/p.spend*100 : 0,
+    share: totalSpend > 0 ? p.spend/totalSpend*100 : 0
+  })).sort((a, b) => b.spend - a.spend);
+}
+
+function getFilteredByPerson(data) {
+  // 팀/품목 필터 없으면 사전계산값 그대로 (정확)
+  if (!curTeam && !curProduct) return data.byPerson || [];
+  const ads = filteredAds(data);
+  const totalSpend = ads.reduce((s, a) => s + a.spend, 0);
+  const map = {};
+  ads.forEach(a => {
+    const k = a.person || '담당자 미확인';
+    if (!map[k]) map[k] = { name: k, team: a.team, spend: 0, purchases: 0, val: 0 };
+    map[k].spend += a.spend; map[k].purchases += a.purchases; map[k].val += a.val;
+  });
+  return Object.values(map).map(p => ({
+    ...p, roas: p.spend > 0 ? p.val/p.spend*100 : 0,
+    share: totalSpend > 0 ? p.spend/totalSpend*100 : 0
+  })).sort((a, b) => b.spend - a.spend);
 }
 
 function renderKPI(data) {
