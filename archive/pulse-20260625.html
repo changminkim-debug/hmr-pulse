@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>한끼통살 · 메타 펄스 · 00:00</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI','Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:#e8ebf0;color:#222836;font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}
+
+/* 헤더 */
+.hd{background:#fff;padding:15px 36px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #dce0ea;position:sticky;top:0;z-index:20;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.hd-left{display:flex;align-items:center;gap:14px}
+.hd-logo{font-size:13px;font-weight:700;color:#5a6a8a;padding:4px 11px;border-radius:4px;background:#eef0f6}
+.hd-title{font-size:20px;font-weight:700;color:#1a2030;letter-spacing:-.2px}
+.hd-sub{font-size:13px;color:#8c96ae;margin-top:2px}
+.hd-right{text-align:right}
+.hd-date{font-size:16px;font-weight:600;color:#3a4460}
+.hd-gen{font-size:13px;color:#b4bece;margin-top:2px}
+
+/* 필터바 */
+.fbar{background:#fff;padding:9px 36px;border-bottom:1px solid #dce0ea;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.fg{display:flex;align-items:center;gap:7px}
+.fl{font-size:13px;color:#8c96ae;font-weight:700;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap}
+.sel{padding:5px 11px;border:1px solid #dce0ea;border-radius:5px;font-size:14px;color:#2c3347;font-family:inherit;background:#fff;cursor:pointer}
+.sel:hover{border-color:#8c96ae}
+.warn-note{font-size:13px;color:#b4bece;margin-left:auto}
+
+/* 페이지 본문 */
+.page-body{padding:20px 32px;display:flex;flex-direction:column;gap:16px}
+
+/* KPI 카드 */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{background:#fff;border-radius:10px;padding:24px 26px;box-shadow:0 1px 3px rgba(0,0,0,.07),0 2px 8px rgba(0,0,0,.04);transition:box-shadow .15s,transform .15s}
+.card:hover{box-shadow:0 4px 14px rgba(0,0,0,.1);transform:translateY(-1px)}
+.cl{font-size:13px;color:#8c96ae;letter-spacing:.3px;margin-bottom:11px;text-transform:uppercase;font-weight:600}
+.cv{font-size:38px;font-weight:700;line-height:1.0;letter-spacing:-.6px;color:#1a2030}
+.cv-roas{font-size:38px;font-weight:700;line-height:1.0;letter-spacing:-.4px}
+.cs{font-size:13px;color:#b4bece;margin-top:8px}
+
+/* 섹션 패널 */
+.panel{background:#fff;border-radius:10px;padding:20px 22px;box-shadow:0 1px 3px rgba(0,0,0,.07),0 2px 8px rgba(0,0,0,.04)}
+.sec-title{font-size:16px;font-weight:700;color:#1a2030;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.hint{font-size:13px;color:#c0c6d4;font-weight:400;margin-left:4px}
+
+/* 테이블 */
+table{width:100%;border-collapse:collapse;background:#fff}
+thead tr{background:#f0f2f8}
+th{padding:11px 16px;color:#505870;font-size:14px;font-weight:700;text-align:right;white-space:nowrap;border-top:1px solid #dde0ea;border-bottom:2px solid #dde0ea}
+th.left{text-align:left;padding-left:16px;width:170px}
+th.th-cum{background:#e6e9f2;color:#3c4468;font-weight:700}
+td{padding:11px 16px;font-size:17px;text-align:right;border-bottom:1px solid #eceef5;white-space:nowrap;color:#2c3347}
+td.left{text-align:left;padding-left:16px;white-space:nowrap}
+td.name{font-weight:600;color:#1a2030}
+td.cum{background:#f6f7fb!important;font-weight:600}
+
+/* 행 줄무늬 */
+tbody tr:nth-child(even) td{background:#f8f9fd}
+tbody tr:nth-child(even) td.cum{background:#f0f2f8!important}
+tbody tr:hover td{background:#edf1f8!important}
+
+/* 현재 시간대 행 */
+tr.hour-row{cursor:pointer}
+tr.camp-row{cursor:pointer}
+tr.now-row td{font-weight:700;background:#eef2fc!important;border-top:1px solid #c6d0ee;border-bottom:1px solid #c6d0ee}
+tr.now-row td:first-child{border-left:3px solid #4466cc;padding-left:11px}
+tr.now-row td.cum{background:#e4eaf8!important}
+tr.now-row:hover td{background:#e6ecf8!important}
+
+/* 펼침 상세 행 */
+tr.detail-row td{background:#f2f4fa!important;cursor:default;padding:12px 10px}
+tr.detail-row:hover td{background:#f2f4fa!important}
+.detail-wrap{padding:4px 2px}
+.detail-wrap table{border:1px solid #dde0ea;border-radius:6px;overflow:hidden}
+.detail-wrap thead tr{background:#484e64}
+.detail-wrap th{font-size:14px;padding:10px 15px;border:none;color:rgba(255,255,255,.9);font-weight:600;background:transparent}
+.detail-wrap th.dh-now{background:#545e78}
+.detail-wrap th.dh-cum{background:#484e64}
+.detail-wrap td{font-size:15px;padding:9px 15px;background:#fff}
+.detail-wrap tbody tr:nth-child(even) td{background:#f8f9fc}
+.detail-title{font-size:12px;color:#3a4460;font-weight:700;margin-bottom:8px;padding-left:2px}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable:hover{background:#dde0ea;color:#2c3347}
+th.sort-active{color:#2c3347!important;background:#d8dcec!important}
+.sort-ic{font-size:10px;margin-left:3px;opacity:.4}
+th.sort-active .sort-ic{opacity:1;color:#4466cc}
+tr.grp-hour-row{cursor:pointer}
+tr.grp-hour-row:hover td{background:#e4eaf8!important}
+tr.grp-hour-row.row-bad td{background:rgba(192,48,48,.07)!important}
+tr.grp-hour-row.row-bad:hover td{background:rgba(192,48,48,.14)!important}
+tr.grp-hour-row.row-bad.now-grp td{background:rgba(192,48,48,.13)!important}
+tr.grp-detail-row td{background:#eceff8!important;padding:10px 6px!important}
+tr.grp-detail-row:hover td{background:#eceff8!important}
+
+/* ROAS — 250% 기준 초록/빨강 */
+.badge{font-size:17px;font-weight:700}
+.roas400{color:#146028}.roas300{color:#208040}.roas250{color:#349050}
+.roas200{color:#c03030}.roas150{color:#a02020}.roas100{color:#801818}.roas0{color:#601010}
+.cv-roas.roas400{color:#146028}.cv-roas.roas300{color:#208040}.cv-roas.roas250{color:#349050}
+.cv-roas.roas200{color:#c03030}.cv-roas.roas150{color:#a02020}.cv-roas.roas100{color:#801818}.cv-roas.roas0{color:#601010}
+
+/* 인사이트 패널 */
+.insight-wrap{border-left:4px solid #4466cc}
+.insight-empty{font-size:14px;color:#b4bece;padding:4px 0}
+.insight-summary{font-size:15px;color:#2c3347;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #eef0f6}
+.insight-item{font-size:14px;color:#2c3347;padding:8px 0;border-bottom:1px solid #f2f4f8;line-height:1.6}
+.insight-item:last-child{border-bottom:none}
+.ii-tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:3px;margin-right:8px;vertical-align:middle}
+.ii-tag.good{background:#ddf0e4;color:#146028}
+.ii-tag.bad{background:#fce8e8;color:#a02020}
+.ii-tag.alert{background:#fcd4d4;color:#801010;letter-spacing:.2px}
+.ii-tag.up{background:#dce8fc;color:#2a58b0}
+.ii-tag.down{background:#fce4e4;color:#a02020}
+.ii-list{display:inline-block;vertical-align:top;margin-top:2px}
+.ii-row{padding:3px 0;line-height:1.5}
+
+/* 기타 */
+.na{color:#c8cdd8;font-size:12px}
+.up{color:#2a6040;font-weight:600}
+.rd{display:inline-block;font-size:15px;font-weight:700;margin-left:4px;white-space:nowrap}
+.rd.up{color:#2a58b0}.rd.down{color:#a02828}.rd.flat{color:#b4bece;font-weight:600}
+.flat{color:#b8bece}
+.ft{text-align:center;padding:8px 32px 22px;font-size:11px;color:#c0c6d4}
+@media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="hd">
+  <div class="hd-left">
+    <div class="hd-logo">Egnis Ads</div>
+    <div>
+      <div class="hd-title">한끼통살 메타 실시간 펄스 · 지난 기록</div>
+      <div class="hd-sub">HMR 사업본부 · 2026-06-25 00:00 ~ 00:00</div>
+    </div>
+  </div>
+  <div class="hd-right">
+    <div class="hd-date">마감 <strong>00:00</strong></div>
+    <div class="hd-gen">갱신: 2026. 6. 25. 오전 12:01:13</div>
+  </div>
+</div>
+<div class="fbar">
+  <div class="fg"><span class="fl">품목</span>
+    <select class="sel" id="cat-sel"><option value="">전체</option></select>
+  </div>
+  <div class="fg"><span class="fl">기록</span><select class="sel" id="archive-sel" onchange="if(this.value)location.href=this.value"><option value="../pulse.html">오늘 (2026-06-25)</option><option value="pulse-20260624.html">2026-06-24</option><option value="pulse-20260623.html">2026-06-23</option><option value="pulse-20260622.html">2026-06-22</option><option value="pulse-20260621.html">2026-06-21</option><option value="pulse-20260620.html">2026-06-20</option><option value="pulse-20260619.html">2026-06-19</option><option value="pulse-20260618.html">2026-06-18</option><option value="pulse-20260617.html">2026-06-17</option></select></div>
+  <span class="warn-note">⚠ ROAS·전환은 클릭 후 1일 귀속 — 최근 시간대일수록 잠정치</span>
+</div>
+<div class="page-body">
+<div class="cards" id="kpi"></div>
+<div class="panel insight-wrap">
+  <div class="sec-title">
+    <span id="insight-title">인사이트</span>
+    <span class="hint">직전 완료 시간대 자동 분석 · 필터 반영</span>
+  </div>
+  <div id="insight-box"></div>
+</div>
+<div class="panel">
+  <div class="sec-title">시간대별 누적 페이스<span class="hint">행 클릭 → 10분 단위 상세</span></div>
+  <div style="overflow-x:auto">
+    <table><thead>
+      <tr>
+        <th class="left">시간대</th>
+        <th>시간 소진</th>
+        <th class="th-cum">누적 소진</th>
+        <th class="th-cum">누적 전환수</th>
+        <th class="th-cum">누적 전환값</th>
+        <th class="th-cum">ROAS</th>
+        <th>증감</th>
+      </tr>
+    </thead><tbody id="hour-tb"></tbody></table>
+  </div>
+</div>
+<div class="panel">
+  <div class="sec-title" id="camp-sec-title">품목별 누적 (00:00 ~ 00:00)<span class="hint" id="camp-hint">클릭 → 시간대별 추이</span></div>
+  <div style="overflow-x:auto">
+    <table>
+      <thead id="camp-thead"><tr>
+        <th class="left">품목</th>
+        <th>소진금액</th><th>전환수</th><th>전환값</th><th>ROAS</th>
+      </tr></thead>
+      <tbody id="camp-tb"></tbody>
+    </table>
+  </div>
+</div>
+</div>
+<div class="ft">한끼통살 HMR 사업본부 · data/pulse-20260625.csv</div>
+<script>
+var DAY = [];
+var HIST = [];
+var ADS = [];
+var NOW_HOUR = "00:00";
+var S = { cat: '' };
+var expandedHour = null;
+var expandedGroupKey = null;
+var expandedGroupHour = null;
+var campSortKey = 'spend';
+var campSortDir = 'desc';
+
+var PRODUCT_CODES = [
+  ["HTR","안심폭탄볶음밥"],["HEVENT","이벤트"],
+  ["HCPL","크리스피닭다리"],["HCPK","크리스피치킨"],["HCPT","크리스피안심"],["HCP","크리스피"],
+  ["HBPD","블랙페퍼닭가슴살"],["HKOG","칼집오븐구이"],["HKBB","김자반밥바"],
+  ["HMS","마녀스프"],["HSM","실온마녀스프"],
+  ["HSSD","슬림슬라이스"],["HSD","슬라이스닭가슴살"],
+  ["HDG","닭가슴살"],["HG","그릴드닭가슴살"],
+  ["HSL","닭다리살(순살)"],["HJB","주먹밥"]
+];
+
+function resolveProductFromNames(names) {
+  for (var ni = 0; ni < names.length; ni++) {
+    if (!names[ni]) continue;
+    var n = names[ni];
+    for (var i = 0; i < PRODUCT_CODES.length; i++) {
+      var re = new RegExp('(?:^|[^A-Z])' + PRODUCT_CODES[i][0] + '(?:[^A-Z]|$)');
+      if (re.test(n)) return PRODUCT_CODES[i][1];
+    }
+  }
+  return "미분류";
+}
+
+var CAMPAIGN_CATEGORY = {};
+(function buildCategoryMap() {
+  var campCat = {};
+  ADS.forEach(function(ad) {
+    var cat = resolveProductFromNames([ad.adName, ad.adsetName, ad.campaignName]);
+    if (!campCat[ad.campaignId]) campCat[ad.campaignId] = {};
+    campCat[ad.campaignId][cat] = (campCat[ad.campaignId][cat] || 0) + 1;
+  });
+  Object.keys(campCat).forEach(function(cid) {
+    var counts = campCat[cid];
+    var keys = Object.keys(counts).filter(function(k) { return k !== '미분류'; });
+    CAMPAIGN_CATEGORY[cid] = keys.length
+      ? keys.reduce(function(a, b) { return counts[a] >= counts[b] ? a : b; })
+      : '미분류';
+  });
+})();
+
+DAY.forEach(function(r) { r.category = CAMPAIGN_CATEGORY[r.campaignId] || '미분류'; });
+
+(function populateDropdown() {
+  var catEl = document.getElementById('cat-sel');
+  var present = {};
+  DAY.forEach(function(r) { present[r.category] = true; });
+  PRODUCT_CODES.forEach(function(c) {
+    if (!present[c[1]]) return;
+    var opt = document.createElement('option');
+    opt.value = c[1]; opt.textContent = c[1]; catEl.appendChild(opt);
+  });
+  if (present['미분류']) {
+    var unk = document.createElement('option'); unk.value = '미분류'; unk.textContent = '미분류'; catEl.appendChild(unk);
+  }
+})();
+
+function fmtWon(n) { return n > 0 ? Math.round(n).toLocaleString() + '원' : '-'; }
+function fmtNum(n) { return n > 0 ? Math.round(n).toLocaleString() : '-'; }
+function fmtRoas(n) { return n > 0 ? Math.round(n).toLocaleString() + '%' : '-'; }
+function roasClass(n) {
+  return n >= 400 ? 'roas400' : n >= 300 ? 'roas300' : n >= 250 ? 'roas250'
+       : n >= 200 ? 'roas200' : n >= 150 ? 'roas150' : n >= 100 ? 'roas100' : 'roas0';
+}
+
+function roasDeltaHTML(curr, prev) {
+  if (prev === null) return '';
+  var diff = Math.round(curr - prev);
+  if (diff === 0) return '<span class="rd flat">― 0%p</span>';
+  var cls = diff > 0 ? 'up' : 'down';
+  var arrow = diff > 0 ? '▲' : '▼';
+  return '<span class="rd ' + cls + '">' + arrow + ' ' + Math.abs(diff).toLocaleString() + '%p</span>';
+}
+
+function passFilter(campaignId) {
+  return !S.cat || (CAMPAIGN_CATEGORY[campaignId] || '미분류') === S.cat;
+}
+
+function filteredDay() {
+  return DAY.filter(function(r) { return passFilter(r.campaignId); });
+}
+
+function renderKpi(rows) {
+  var spend = 0, pur = 0, val = 0;
+  rows.forEach(function(r) { spend += r.spend; pur += r.purchases; val += r.purchaseValue; });
+  var roas = spend > 0 ? (val / spend) * 100 : 0;
+  var rc = roasClass(roas);
+  document.getElementById('kpi').innerHTML =
+    '<div class="card"><div class="cl">오늘 누적 소진금액</div><div class="cv">' + fmtWon(spend) + '</div><div class="cs">00:00 ~ ' + NOW_HOUR + '</div></div>' +
+    '<div class="card"><div class="cl">누적 전환수</div><div class="cv">' + fmtNum(pur) + '</div><div class="cs">클릭 후 1일 전환</div></div>' +
+    '<div class="card"><div class="cl">누적 전환값</div><div class="cv">' + fmtWon(val) + '</div><div class="cs">클릭 후 1일</div></div>' +
+    '<div class="card"><div class="cl">누적 ROAS</div><div class="cv-roas ' + rc + '">' + fmtRoas(roas) + '</div><div class="cs">목표 250% · 잠정치</div></div>';
+}
+
+function buildHourDetailHTML(hour) {
+  var polls = HIST.filter(function(r) { return r.hour === hour && passFilter(r.campaignId); });
+  var byPoll = {};
+  polls.forEach(function(r) {
+    if (!byPoll[r.pollTime]) byPoll[r.pollTime] = { spend: 0, purchases: 0, purchaseValue: 0 };
+    var p = byPoll[r.pollTime];
+    p.spend += r.spend; p.purchases += r.purchases; p.purchaseValue += r.purchaseValue;
+  });
+  var times = Object.keys(byPoll).sort();
+  if (!times.length) return '<div class="detail-wrap"><div class="detail-title">' + hour + ' — 10분 기록 없음</div></div>';
+
+  var prevSpend = 0, prevPur = 0, prevVal = 0, prevRoas = null;
+  var rows = times.map(function(t) {
+    var p = byPoll[t];
+    var dSpend = p.spend - prevSpend, dPur = p.purchases - prevPur, dVal = p.purchaseValue - prevVal;
+    prevSpend = p.spend; prevPur = p.purchases; prevVal = p.purchaseValue;
+    var roas = p.spend > 0 ? (p.purchaseValue / p.spend) * 100 : 0;
+    var rc = roasClass(roas);
+    var deltaHTML = roasDeltaHTML(roas, prevRoas);
+    prevRoas = roas;
+    var hhmm = t.slice(-8, -3);
+    var dSpendS = dSpend > 0 ? '<span class="up">+' + Math.round(dSpend).toLocaleString() + '원</span>' : '<span class="flat">-</span>';
+    var dPurS = dPur > 0 ? '<span class="up">+' + Math.round(dPur).toLocaleString() + '</span>' : '<span class="flat">-</span>';
+    var dValS = dVal > 0 ? '<span class="up">+' + Math.round(dVal).toLocaleString() + '원</span>' : '<span class="flat">-</span>';
+    return '<tr>' +
+      '<td class="left">' + hhmm + '</td>' +
+      '<td>' + dSpendS + '</td><td>' + dPurS + '</td><td>' + dValS + '</td>' +
+      '<td>' + fmtWon(p.spend) + '</td><td>' + fmtNum(p.purchases) + '</td><td>' + fmtWon(p.purchaseValue) + '</td>' +
+      '<td><span class="badge ' + rc + '">' + fmtRoas(roas) + '</span></td><td>' + deltaHTML + '</td>' +
+      '</tr>';
+  }).join('');
+
+  return '<div class="detail-wrap">' +
+    '<div class="detail-title">' + hour + ' 시간대 — 10분 단위 (' + times.length + '회)</div>' +
+    '<table><thead><tr>' +
+    '<th class="left">시각</th>' +
+    '<th class="dh-now">구간 소진</th><th class="dh-now">구간 전환수</th><th class="dh-now">구간 전환값</th>' +
+    '<th class="dh-cum">누적 소진</th><th class="dh-cum">누적 전환수</th><th class="dh-cum">누적 전환값</th>' +
+    '<th class="dh-cum">ROAS</th><th class="dh-cum">증감</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+}
+
+function renderInsights() {
+  var rows = filteredDay();
+  var hourSet = {};
+  rows.forEach(function(r) { hourSet[r.hour] = true; });
+  var allHours = Object.keys(hourSet).sort();
+  var nowIdx = allHours.indexOf(NOW_HOUR);
+
+  var titleEl = document.getElementById('insight-title');
+  var boxEl = document.getElementById('insight-box');
+  if (!titleEl || !boxEl) return;
+
+  if (nowIdx <= 0) {
+    titleEl.textContent = '인사이트';
+    boxEl.innerHTML = '<div class="insight-empty">아직 집계된 완료 시간대가 없습니다.</div>';
+    return;
+  }
+
+  var h1 = allHours[nowIdx - 1];
+  var h0 = nowIdx >= 2 ? allHours[nowIdx - 2] : null;
+  titleEl.textContent = h1 + ' 시간대 리뷰';
+
+  var bycamp = !!S.cat;
+
+  function aggByCat(hour) {
+    var m = {};
+    if (!hour) return m;
+    rows.filter(function(r) { return r.hour === hour; }).forEach(function(r) {
+      var key = bycamp ? (r.campaignName || r.campaignId) : r.category;
+      if (!m[key]) m[key] = { spend: 0, purchases: 0, purchaseValue: 0 };
+      m[key].spend += r.spend;
+      m[key].purchases += r.purchases;
+      m[key].purchaseValue += r.purchaseValue;
+    });
+    return m;
+  }
+
+  var c1 = aggByCat(h1), c0 = aggByCat(h0);
+
+  var totS1 = 0, totV1 = 0;
+  Object.values(c1).forEach(function(c) { totS1 += c.spend; totV1 += c.purchaseValue; });
+  var totR1 = totS1 > 0 ? (totV1 / totS1) * 100 : 0;
+
+  var totS0 = 0, totV0 = 0;
+  Object.values(c0).forEach(function(c) { totS0 += c.spend; totV0 += c.purchaseValue; });
+  var totR0 = totS0 > 0 ? (totV0 / totS0) * 100 : 0;
+
+  var items = Object.keys(c1)
+    .filter(function(k) { return c1[k].spend > 0; })
+    .map(function(cat) {
+      var a = c1[cat], b = c0[cat] || null;
+      var r1 = a.spend > 0 ? (a.purchaseValue / a.spend) * 100 : 0;
+      var r0 = b && b.spend > 0 ? (b.purchaseValue / b.spend) * 100 : null;
+      var delta = r0 !== null ? Math.round(r1 - r0) : null;
+      return { cat: cat, spend: a.spend, purchases: a.purchases, value: a.purchaseValue, roas: r1, roas0: r0, delta: delta };
+    })
+    .sort(function(a, b) { return b.spend - a.spend; });
+
+  var good  = items.filter(function(x) { return x.roas >= 250; });
+  var bad   = items.filter(function(x) { return x.roas > 0 && x.roas < 250; });
+  var zero  = items.filter(function(x) { return x.roas === 0; });
+
+  var withDelta = items.filter(function(x) { return x.delta !== null; })
+                       .sort(function(a, b) { return a.delta - b.delta; });
+  var bigDrop = withDelta.length && withDelta[0].delta < -30 ? withDelta[0] : null;
+  var bigRise = withDelta.length && withDelta[withDelta.length - 1].delta > 30 ? withDelta[withDelta.length - 1] : null;
+
+  var html = '';
+
+  // 전체 요약
+  var roasCls = totR1 >= 250 ? 'color:#146028' : 'color:#a02020';
+  var deltaStr = '';
+  if (totR0 > 0) {
+    var rd = Math.round(totR1 - totR0);
+    var rdC = rd >= 0 ? 'color:#146028' : 'color:#a02020';
+    deltaStr = ' <span style="' + rdC + ';font-weight:700">' + (rd >= 0 ? '▲' : '▼') + Math.abs(rd) + '%p</span>' +
+      '<span style="color:#b4bece;font-size:12px;margin-left:5px">vs ' + h0 + '</span>';
+  }
+  html += '<div class="insight-summary">' +
+    '소진 <strong>' + Math.round(totS1).toLocaleString() + '원</strong> &nbsp;·&nbsp; ' +
+    'ROAS <strong style="' + roasCls + '">' + Math.round(totR1).toLocaleString() + '%</strong>' + deltaStr +
+    '</div>';
+
+  function roaLine(x) {
+    var dStr = '';
+    if (x.delta !== null) {
+      var dc = x.delta >= 0 ? 'color:#146028' : 'color:#a02020';
+      dStr = ' <span style="' + dc + ';font-size:12px">(' + (x.delta >= 0 ? '▲' : '▼') + Math.abs(x.delta) + '%p)</span>';
+    }
+    return '<strong>' + x.cat + '</strong> ' + Math.round(x.roas).toLocaleString() + '%' + dStr;
+  }
+
+  function listItems(arr, tagHtml, lineFunc) {
+    if (!arr.length) return '';
+    return '<div class="insight-item">' + tagHtml +
+      '<div class="ii-list">' + arr.map(function(x) {
+        return '<div class="ii-row">' + lineFunc(x) + '</div>';
+      }).join('') + '</div></div>';
+  }
+
+  html += listItems(good, '<span class="ii-tag good">목표 달성</span>', roaLine);
+  html += listItems(bad, '<span class="ii-tag bad">목표 미달</span>', roaLine);
+  html += listItems(zero, '<span class="ii-tag alert">전환 없음</span>', function(x) {
+    return '<strong>' + x.cat + '</strong> <span style="color:#b4bece;font-size:13px">(' + Math.round(x.spend).toLocaleString() + '원 소진)</span>';
+  });
+  if (bigDrop) {
+    html += '<div class="insight-item"><span class="ii-tag down">급락</span>' +
+      '<strong>' + bigDrop.cat + '</strong> ' + Math.round(bigDrop.roas0) + '% → ' +
+      Math.round(bigDrop.roas) + '% <span style="color:#a02020">(▼' + Math.abs(bigDrop.delta) + '%p)</span></div>';
+  }
+  if (bigRise) {
+    html += '<div class="insight-item"><span class="ii-tag up">급등</span>' +
+      '<strong>' + bigRise.cat + '</strong> ' + Math.round(bigRise.roas0) + '% → ' +
+      Math.round(bigRise.roas) + '% <span style="color:#2a58b0">(▲' + bigRise.delta + '%p)</span></div>';
+  }
+  if (!items.length) {
+    html = '<div class="insight-empty">해당 시간대 데이터 없음</div>';
+  }
+
+  boxEl.innerHTML = html;
+}
+
+function renderHourTable(rows) {
+  var byHour = {};
+  rows.forEach(function(r) {
+    if (!byHour[r.hour]) byHour[r.hour] = { spend: 0, purchases: 0, purchaseValue: 0 };
+    var h = byHour[r.hour];
+    h.spend += r.spend; h.purchases += r.purchases; h.purchaseValue += r.purchaseValue;
+  });
+  var hours = Object.keys(byHour).sort();
+  var cumSpend = 0, cumPur = 0, cumVal = 0, prevRoas = null;
+  var html = hours.map(function(h) {
+    var d = byHour[h];
+    cumSpend += d.spend; cumPur += d.purchases; cumVal += d.purchaseValue;
+    var cumRoas = cumSpend > 0 ? (cumVal / cumSpend) * 100 : 0;
+    var rc = roasClass(cumRoas);
+    var deltaHTML = roasDeltaHTML(cumRoas, prevRoas);
+    prevRoas = cumRoas;
+    var isNow = h === NOW_HOUR;
+    var cls = 'hour-row' + (isNow ? ' now-row' : '');
+    var row = '<tr class="' + cls + '" data-hour="' + h + '">' +
+      '<td class="left">' + h + (isNow ? ' ◀ 현재' : '') + '</td>' +
+      '<td>' + fmtWon(d.spend) + '</td>' +
+      '<td class="cum">' + fmtWon(cumSpend) + '</td>' +
+      '<td class="cum">' + fmtNum(cumPur) + '</td>' +
+      '<td class="cum">' + fmtWon(cumVal) + '</td>' +
+      '<td class="cum"><span class="badge ' + rc + '">' + fmtRoas(cumRoas) + '</span></td>' +
+      '<td>' + deltaHTML + '</td>' +
+      '</tr>';
+    if (expandedHour === h) {
+      row += '<tr class="detail-row"><td colspan="7">' + buildHourDetailHTML(h) + '</td></tr>';
+    }
+    return row;
+  }).join('');
+  document.getElementById('hour-tb').innerHTML = html || '<tr><td class="left" colspan="7">데이터 없음</td></tr>';
+  document.querySelectorAll('#hour-tb tr.hour-row').forEach(function(tr) {
+    tr.addEventListener('click', function() {
+      var h = tr.dataset.hour;
+      expandedHour = expandedHour === h ? null : h;
+      render();
+    });
+  });
+}
+
+function buildGroupHourDetailHTML(hour, groupKey, isCategoryMode) {
+  var polls = HIST.filter(function(r) {
+    if (r.hour !== hour) return false;
+    return isCategoryMode
+      ? (CAMPAIGN_CATEGORY[r.campaignId] || '미분류') === groupKey
+      : r.campaignId === groupKey;
+  });
+  var byPoll = {};
+  polls.forEach(function(r) {
+    if (!byPoll[r.pollTime]) byPoll[r.pollTime] = { spend: 0, purchases: 0, purchaseValue: 0 };
+    var p = byPoll[r.pollTime];
+    p.spend += r.spend; p.purchases += r.purchases; p.purchaseValue += r.purchaseValue;
+  });
+  var times = Object.keys(byPoll).sort();
+  if (!times.length) return '<div style="padding:8px 12px;color:#8c96ae;font-size:13px">' + hour + ' — 10분 기록 없음</div>';
+
+  var prevSpend = 0, prevPur = 0, prevVal = 0, prevRoas = null;
+  var trs = times.map(function(t) {
+    var p = byPoll[t];
+    var dSpend = p.spend - prevSpend, dPur = p.purchases - prevPur, dVal = p.purchaseValue - prevVal;
+    prevSpend = p.spend; prevPur = p.purchases; prevVal = p.purchaseValue;
+    var roas = p.spend > 0 ? (p.purchaseValue / p.spend) * 100 : 0;
+    var rc = roasClass(roas);
+    var deltaHTML = roasDeltaHTML(roas, prevRoas);
+    prevRoas = roas;
+    var hhmm = t.slice(-8, -3);
+    var dSpendS = dSpend > 0 ? '<span class="up">+' + Math.round(dSpend).toLocaleString() + '원</span>' : '<span class="flat">-</span>';
+    var dPurS = dPur > 0 ? '<span class="up">+' + Math.round(dPur).toLocaleString() + '</span>' : '<span class="flat">-</span>';
+    var dValS = dVal > 0 ? '<span class="up">+' + Math.round(dVal).toLocaleString() + '원</span>' : '<span class="flat">-</span>';
+    return '<tr>' +
+      '<td class="left">' + hhmm + '</td>' +
+      '<td>' + dSpendS + '</td><td>' + dPurS + '</td><td>' + dValS + '</td>' +
+      '<td>' + fmtWon(p.spend) + '</td><td>' + fmtNum(p.purchases) + '</td><td>' + fmtWon(p.purchaseValue) + '</td>' +
+      '<td><span class="badge ' + rc + '">' + fmtRoas(roas) + '</span></td><td>' + deltaHTML + '</td>' +
+      '</tr>';
+  }).join('');
+
+  return '<div class="detail-wrap" style="margin-top:6px">' +
+    '<div class="detail-title">' + hour + ' 10분 단위 (' + times.length + '회)</div>' +
+    '<table><thead><tr>' +
+    '<th class="left">시각</th>' +
+    '<th class="dh-now">구간 소진</th><th class="dh-now">구간 전환수</th><th class="dh-now">구간 전환값</th>' +
+    '<th class="dh-cum">누적 소진</th><th class="dh-cum">누적 전환수</th><th class="dh-cum">누적 전환값</th>' +
+    '<th class="dh-cum">ROAS</th><th class="dh-cum">증감</th>' +
+    '</tr></thead><tbody>' + trs + '</tbody></table></div>';
+}
+
+function buildHourSeriesDetailHTML(label, rows, groupKey, isCategoryMode) {
+  var byHour = {};
+  rows.forEach(function(r) {
+    if (!byHour[r.hour]) byHour[r.hour] = { spend: 0, purchases: 0, purchaseValue: 0 };
+    var h = byHour[r.hour];
+    h.spend += r.spend; h.purchases += r.purchases; h.purchaseValue += r.purchaseValue;
+  });
+  var hours = Object.keys(byHour).sort();
+  if (!hours.length) return '<div class="detail-wrap"><div class="detail-title">' + label + ' — 데이터 없음</div></div>';
+
+  var cumSpend = 0, cumPur = 0, cumVal = 0, prevCumRoas = null;
+  var trs = hours.map(function(h) {
+    var d = byHour[h];
+    cumSpend += d.spend; cumPur += d.purchases; cumVal += d.purchaseValue;
+    var hourRoas = d.spend > 0 ? (d.purchaseValue / d.spend) * 100 : 0;
+    var cumRoas = cumSpend > 0 ? (cumVal / cumSpend) * 100 : 0;
+    var rc = roasClass(hourRoas), cumRc = roasClass(cumRoas);
+    var deltaHTML = roasDeltaHTML(cumRoas, prevCumRoas);
+    prevCumRoas = cumRoas;
+    var isNow = h === NOW_HOUR;
+    var badRow = d.spend > 0 && hourRoas < 250;
+    var rowCls = 'grp-hour-row' + (badRow ? ' row-bad' : '') + (isNow ? ' now-grp' : '');
+    var nowStyle = isNow && !badRow ? ' style="background:#eef2fc!important;font-weight:700"' : (isNow ? ' style="font-weight:700"' : '');
+    var row = '<tr class="' + rowCls + '" data-ghour="' + h + '"' + nowStyle + '>' +
+      '<td class="left">' + h + (isNow ? ' ◀ 현재' : '') + '</td>' +
+      '<td>' + fmtWon(d.spend) + '</td><td>' + fmtNum(d.purchases) + '</td><td>' + fmtWon(d.purchaseValue) + '</td>' +
+      '<td><span class="badge ' + rc + '">' + fmtRoas(hourRoas) + '</span></td>' +
+      '<td>' + fmtWon(cumSpend) + '</td><td>' + fmtNum(cumPur) + '</td><td>' + fmtWon(cumVal) + '</td>' +
+      '<td><span class="badge ' + cumRc + '">' + fmtRoas(cumRoas) + '</span></td>' +
+      '<td>' + deltaHTML + '</td>' +
+      '</tr>';
+    if (expandedGroupHour === h) {
+      row += '<tr class="grp-detail-row"><td colspan="10">' + buildGroupHourDetailHTML(h, groupKey, isCategoryMode) + '</td></tr>';
+    }
+    return row;
+  }).join('');
+
+  return '<div class="detail-wrap">' +
+    '<div class="detail-title">' + label + ' — 시간대별 추이 <span style="font-weight:400;color:#b4bece">(시간대 클릭 → 10분 상세)</span></div>' +
+    '<table><thead><tr>' +
+    '<th class="left">시간대</th>' +
+    '<th class="dh-now">소진</th><th class="dh-now">전환수</th><th class="dh-now">전환값</th><th class="dh-now">ROAS</th>' +
+    '<th class="dh-cum">누적 소진</th><th class="dh-cum">누적 전환수</th><th class="dh-cum">누적 전환값</th><th class="dh-cum">누적 ROAS</th><th class="dh-cum">증감</th>' +
+    '</tr></thead><tbody>' + trs + '</tbody></table></div>';
+}
+
+function renderCampaignTable(rows) {
+  var byCategoryMode = !S.cat;
+  document.getElementById('camp-hint').textContent = '클릭 → 시간대별 추이';
+
+  var groups = {};
+  rows.forEach(function(r) {
+    var key = byCategoryMode ? r.category : r.campaignId;
+    if (!groups[key]) groups[key] = { key: key, label: byCategoryMode ? r.category : r.campaignName, spend: 0, purchases: 0, purchaseValue: 0 };
+    var g = groups[key];
+    g.spend += r.spend; g.purchases += r.purchases; g.purchaseValue += r.purchaseValue;
+  });
+  var groupRows = Object.values(groups);
+  groupRows.forEach(function(r) { r.roas = r.spend > 0 ? (r.purchaseValue / r.spend) * 100 : 0; });
+  groupRows.sort(function(a, b) {
+    var av = a[campSortKey] || 0, bv = b[campSortKey] || 0;
+    return campSortDir === 'desc' ? bv - av : av - bv;
+  });
+
+  var SORT_COLS = [
+    { key: 'spend', label: '소진금액' },
+    { key: 'purchases', label: '전환수' },
+    { key: 'purchaseValue', label: '전환값' },
+    { key: 'roas', label: 'ROAS' }
+  ];
+  var thHTML = '<th class="left">' + (byCategoryMode ? '품목' : '캠페인') + '</th>' +
+    SORT_COLS.map(function(c) {
+      var isActive = campSortKey === c.key;
+      var icon = isActive ? (campSortDir === 'desc' ? '▼' : '▲') : '⇅';
+      var cls = 'sortable' + (isActive ? ' sort-active' : '');
+      return '<th class="' + cls + '" data-sort="' + c.key + '">' + c.label + '<span class="sort-ic">' + icon + '</span></th>';
+    }).join('');
+
+  var html = groupRows.map(function(r) {
+    var rc = roasClass(r.roas);
+    var row = '<tr class="camp-row" data-key="' + r.key + '">' +
+      '<td class="left name">' + r.label + '</td>' +
+      '<td>' + fmtWon(r.spend) + '</td>' +
+      '<td>' + fmtNum(r.purchases) + '</td>' +
+      '<td>' + fmtWon(r.purchaseValue) + '</td>' +
+      '<td><span class="badge ' + rc + '">' + fmtRoas(r.roas) + '</span></td>' +
+      '</tr>';
+    if (expandedGroupKey === r.key) {
+      var detailRows = byCategoryMode
+        ? DAY.filter(function(d) { return d.category === r.key; })
+        : DAY.filter(function(d) { return d.campaignId === r.key; });
+      row += '<tr class="detail-row"><td colspan="5">' + buildHourSeriesDetailHTML(r.label, detailRows, r.key, byCategoryMode) + '</td></tr>';
+    }
+    return row;
+  }).join('');
+  document.getElementById('camp-thead').innerHTML = '<tr>' + thHTML + '</tr>';
+  document.getElementById('camp-tb').innerHTML = html || '<tr><td class="left" colspan="5">데이터 없음</td></tr>';
+  document.querySelectorAll('#camp-thead th.sortable').forEach(function(th) {
+    th.addEventListener('click', function() {
+      var key = th.dataset.sort;
+      if (campSortKey === key) {
+        campSortDir = campSortDir === 'desc' ? 'asc' : 'desc';
+      } else {
+        campSortKey = key;
+        campSortDir = 'desc';
+      }
+      render();
+    });
+  });
+  document.querySelectorAll('#camp-tb tr.camp-row').forEach(function(tr) {
+    tr.addEventListener('click', function() {
+      var key = tr.dataset.key;
+      if (expandedGroupKey !== key) expandedGroupHour = null;
+      expandedGroupKey = expandedGroupKey === key ? null : key;
+      render();
+    });
+  });
+  document.querySelectorAll('#camp-tb tr.grp-hour-row').forEach(function(tr) {
+    tr.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var h = tr.dataset.ghour;
+      expandedGroupHour = expandedGroupHour === h ? null : h;
+      render();
+    });
+  });
+}
+
+function render() {
+  var rows = filteredDay();
+  renderKpi(rows);
+  renderInsights();
+  renderHourTable(rows);
+  renderCampaignTable(rows);
+}
+
+document.getElementById('cat-sel').addEventListener('change', function(e) {
+  S.cat = e.target.value; expandedGroupKey = null; render();
+});
+
+render();
+</script>
+</body>
+</html>
