@@ -57,8 +57,8 @@ thead th{padding:12px 15px;text-align:right;font-size:13px;font-weight:700;color
 thead th:first-child{text-align:left;position:sticky;left:0;z-index:2;background:#fafbfe}
 thead th.ga{background:#eef2ff;color:#4466cc}
 thead th.gb{background:#e8f5e9;color:#2e7d32}
-thead th.gc{background:#fff8e1;color:#f57f17}
-thead th.gd{background:#fce4ec;color:#c62828}
+thead th.gc{background:#c8d8ff;color:#2244bb}
+thead th.gd{background:#b8e0c4;color:#1b5e20}
 thead th.ge{background:#e8eaf6;color:#3949ab}
 tbody tr{border-bottom:1px solid #f0f3f9;transition:background .1s}
 tbody tr:hover td{background:#f5f7ff}
@@ -299,8 +299,8 @@ function rc(r){const c=r>=400?'rc-hi':r>=200?'rc-md':'rc-lo';return`<span class=
 function rcRatio(crev,mrev){
   if(!mrev)return'<span class="dash">—</span>';
   const r=crev/mrev*100;
-  const cls=r>=100?'rc-hi':r>=80?'rc-md':'rc-lo';
-  return`<span class="rc ${cls}">${r.toFixed(1)}%</span>`;
+  const col=r>=100?'#2e7d32':r>=80?'#e65100':'#c62828';
+  return`<strong style="color:${col}">${r.toFixed(1)}%</strong>`;
 }
 function parseCSV(t){
   return t.trim().split('\n').map(l=>{
