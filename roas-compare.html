@@ -382,7 +382,7 @@ function renderKPI(agg){
   const cRev=PAID_CH.reduce((s,k)=>s+agg[k].crev,0);
   const mR=roas(spd,mRev),cR=roas(spd,cRev);
   const revDiff=cRev-mRev;
-  const ratioVal=mRev>0?(cRev/mRev*100).toFixed(1)+'%':'—';
+  const ratioVal=mRev>0?Math.round(cRev/mRev*100)+'%':'—';
   document.getElementById('kpi-grid').innerHTML=`
     <div class="kpi-card hl"><div class="kpi-label">총 매체비용</div><div class="kpi-value">${fmtV(spd)}</div><div class="kpi-sub">VAT 제외</div></div>
     <div class="kpi-card"><div class="kpi-label">매체 보고 매출</div><div class="kpi-value">${fmtV(mRev)}</div><div class="kpi-sub">${rc(mR)} 매체 ROAS</div></div>
