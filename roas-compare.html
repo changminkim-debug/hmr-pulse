@@ -81,6 +81,7 @@ tbody tr.tr-organic td{color:#2e7d32}
 .ci{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
 .ci-naver{background:#03c75a}.ci-meta{background:#1877f2}.ci-google{background:#ea4335}
 .ci-payco{background:#ff5722}.ci-toss{background:#0064ff}.ci-aedi{background:#9c27b0}
+.ci-content{background:#607d8b}
 .expand-btn{background:none;border:none;cursor:pointer;color:#4466cc;font-size:11px;font-weight:700;padding:0 3px;font-family:inherit;vertical-align:middle}
 th.dv,td.dv{border-left:1px solid #e4e8f2}
 
@@ -320,7 +321,7 @@ async function loadMedia(){
   try{
     const [t1,t2]=await Promise.all([
       fetchGviz(['C','J','K','L','O','Q','T','V','Y','AA']),
-      fetchGviz(['C','AY','BA','BJ','BL','BX','BZ','CH','CI','CC','CE'])
+      fetchGviz(['C','AY','BA','BJ','BL','BX','BZ','CH','CI','CC','CE','CL'])
     ]);
     const r1=parseCSV(t1).slice(1),r2=parseCSV(t2).slice(1),m2={};
     r2.forEach(r=>{if(r[0])m2[r[0].trim()]=r;});
@@ -334,6 +335,7 @@ async function loadMedia(){
           meta:{spd:n(r[8]),rev:n(r[9])},
           google_sa:{spd:n(x[1]),rev:n(x[2])},google_da:{spd:n(x[3]),rev:n(x[4])},
           payco:{spd:n(x[5]),rev:n(x[6])},aedi:{spd:n(x[7]),rev:n(x[8])},toss:{spd:n(x[9]),rev:n(x[10])},
+          content_fee:{spd:n(x[11]),rev:0},
         },c24:C24[d]||{}};
     });
     setStatus('완료 · '+new Date().toLocaleTimeString('ko-KR'),'#4caf50',true);
@@ -348,10 +350,11 @@ function setStatus(m,c,ok){document.getElementById('stxt').textContent=m;const d
 // ═══ AGGREGATE ════════════════════════════════════════════════════
 function filteredDays(){return activeMonth==='all'?rawDays:rawDays.filter(d=>d.month===activeMonth);}
 function aggDays(days){
-  const res={};PAID_CH.forEach(k=>res[k]={spd:0,mrev:0,crev:0});res.organic={crev:0};
+  const res={};PAID_CH.forEach(k=>res[k]={spd:0,mrev:0,crev:0});res.organic={crev:0};res.content_fee={spd:0};
   days.forEach(d=>{
     PAID_CH.forEach(k=>{res[k].spd+=(d.media[k]||{spd:0}).spd;res[k].mrev+=(d.media[k]||{rev:0}).rev;res[k].crev+=(d.c24[k]||0);});
     res.organic.crev+=(d.c24.organic||0);
+    res.content_fee.spd+=(d.media.content_fee||{spd:0}).spd;
   });return res;
 }
 function chMetrics(day,ch){
@@ -374,7 +377,7 @@ function render(){
 
 // ── KPI ───────────────────────────────────────────────────────────
 function renderKPI(agg){
-  const spd=PAID_CH.reduce((s,k)=>s+agg[k].spd,0);
+  const spd=PAID_CH.reduce((s,k)=>s+agg[k].spd,0)+agg.content_fee.spd;
   const mRev=PAID_CH.reduce((s,k)=>s+agg[k].mrev,0);
   const cRev=PAID_CH.reduce((s,k)=>s+agg[k].crev,0);
   const mR=roas(spd,mRev),cR=roas(spd,cRev);
@@ -421,7 +424,16 @@ function renderMainTable(agg,days){
       });
     }
   });
-  const tS=PAID_CH.reduce((s,k)=>s+agg[k].spd,0),tM=PAID_CH.reduce((s,k)=>s+agg[k].mrev,0),tC=PAID_CH.reduce((s,k)=>s+agg[k].crev,0);
+  // 콘텐츠 비용 행 (에디ai 다음)
+  const cfSpd=agg.content_fee.spd;
+  rows+=`<tr class="parent-row">
+    <td><span class="ci ci-content"></span>콘텐츠 비용</td>
+    <td>${fmtV(cfSpd)}</td>
+    <td class="dv dash">—</td><td class="dash">—</td>
+    <td class="dv dash">—</td><td class="dash">—</td>
+    <td class="dv dash">—</td><td class="dash">—</td>
+  </tr>`;
+  const tS=PAID_CH.reduce((s,k)=>s+agg[k].spd,0)+cfSpd,tM=PAID_CH.reduce((s,k)=>s+agg[k].mrev,0),tC=PAID_CH.reduce((s,k)=>s+agg[k].crev,0);
   const tMR=roas(tS,tM),tCR=roas(tS,tC);
   rows+=`<tr class="tr-total"><td>합계</td><td>${fmtV(tS)}</td><td class="dv">${fmtV(tM)}</td><td>${rc(tMR)}</td><td class="dv">${fmtV(tC)}</td><td>${rc(tCR)}</td><td class="dv">${rcRatio(tC,tM)}</td><td class="${tC-tM>=0?'pos':'neg'}">${fmtDiff(tC-tM)}</td></tr>`;
   document.getElementById('main-table').innerHTML=`<table>
