@@ -94,8 +94,8 @@ th.dv,td.dv{border-left:1px solid #e4e8f2}
 .cmp-sep{width:1px;height:20px;background:#dde0ea}
 
 /* 비교 테이블 컬러 */
-td.ca{background:#f5f8ff}
-td.cb{background:#f3fdf5}
+td.ca{background:#fff}
+td.cb{background:#fff}
 td.ca-diff{background:#eef2ff}
 td.cb-diff{background:#e8f5e9}
 
@@ -558,7 +558,7 @@ function renderDailyTable(days){
     const isTop=top5.has(date);
     const badge=isTop?`<span class="top5-badge">TOP</span>`:'';
     rows+=`<tr class="${isTop?'top5-hi':''}">
-      <td>${badge}${date}</td><td>${fmtV(spd)}</td>
+      <td>${date}${badge}</td><td>${fmtV(spd)}</td>
       <td class="dv">${fmtV(mrev)}</td><td>${rc(mR)}</td>
       <td class="dv">${fmtV(crev)}</td><td>${rc(cR)}</td>
       <td class="dv ${rd>=0?'pos':'neg'}">${fmtRD(rd)}</td>
