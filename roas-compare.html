@@ -96,8 +96,8 @@ th.dv,td.dv{border-left:1px solid #e4e8f2}
 /* 비교 테이블 컬러 */
 td.ca{background:#fff}
 td.cb{background:#fff}
-td.ca-diff{background:#eef2ff}
-td.cb-diff{background:#e8f5e9}
+td.ca-diff{background:#f0f4ff}
+td.cb-diff{background:#f0faf1}
 
 /* 일별 채널 버튼 */
 .ch-filter{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}
@@ -244,7 +244,7 @@ tr.top5-hi td{background:#fff8e1!important}
         <button class="ch-btn aedi" data-ch="aedi"><span class="ci ci-aedi"></span>에디ai</button>
         <button class="ch-btn organic" data-ch="organic"><span class="ci ci-organic"></span>오가닉</button>
       </div>
-      <div class="top5-legend"><span class="top5-badge">TOP</span> ROAS 차이 절대값 상위 5일 강조</div>
+      <div class="top5-legend"><span class="top5-badge">TOP</span> 실매출 비중 하위 5일 강조</div>
       <div class="tbl-wrap" id="daily-table"></div>
     </div>
   </div>
@@ -295,6 +295,12 @@ function fmtDiff(v){
 }
 function fmtRD(v){return(v>=0?'+':'')+Math.round(v)+'%p';}
 function rc(r){const c=r>=400?'rc-hi':r>=200?'rc-md':'rc-lo';return`<span class="rc ${c}">${Math.round(r)}%</span>`;}
+function rcRatio(crev,mrev){
+  if(!mrev)return'<span class="dash">—</span>';
+  const r=crev/mrev*100;
+  const cls=r>=100?'rc-hi':r>=80?'rc-md':'rc-lo';
+  return`<span class="rc ${cls}">${r.toFixed(1)}%</span>`;
+}
 function parseCSV(t){
   return t.trim().split('\n').map(l=>{
     const cs=[];let c='',q=false;
@@ -372,14 +378,14 @@ function renderKPI(agg){
   const mRev=PAID_CH.reduce((s,k)=>s+agg[k].mrev,0);
   const cRev=PAID_CH.reduce((s,k)=>s+agg[k].crev,0);
   const mR=roas(spd,mRev),cR=roas(spd,cRev);
-  // 차이: Cafe24 − 매체
-  const roasDiff=cR-mR,revDiff=cRev-mRev;
+  const revDiff=cRev-mRev;
+  const ratioVal=mRev>0?(cRev/mRev*100).toFixed(1)+'%':'—';
   document.getElementById('kpi-grid').innerHTML=`
     <div class="kpi-card hl"><div class="kpi-label">총 매체비용</div><div class="kpi-value">${fmtV(spd)}</div><div class="kpi-sub">VAT 제외</div></div>
     <div class="kpi-card"><div class="kpi-label">매체 보고 매출</div><div class="kpi-value">${fmtV(mRev)}</div><div class="kpi-sub">${rc(mR)} 매체 ROAS</div></div>
     <div class="kpi-card"><div class="kpi-label">Cafe24 실매출</div><div class="kpi-value">${fmtV(cRev)}</div><div class="kpi-sub">${rc(cR)} Cafe24 ROAS</div></div>
-    <div class="kpi-card hl2"><div class="kpi-label">ROAS 차이</div><div class="kpi-value">${fmtRD(roasDiff)}</div><div class="kpi-sub">Cafe24 − 매체</div></div>
-    <div class="kpi-card hl2"><div class="kpi-label">매출 차이</div><div class="kpi-value">${fmtDiff(revDiff)}</div><div class="kpi-sub">Cafe24 − 매체</div></div>
+    <div class="kpi-card hl2"><div class="kpi-label">실매출 비중</div><div class="kpi-value">${ratioVal}</div><div class="kpi-sub">C24매출 ÷ 매체매출</div></div>
+    <div class="kpi-card hl2"><div class="kpi-label">매출액 차이</div><div class="kpi-value">${fmtDiff(revDiff)}</div><div class="kpi-sub">Cafe24 − 매체</div></div>
     <div class="kpi-card"><div class="kpi-label">오가닉 매출</div><div class="kpi-value">${fmtV(agg.organic.crev)}</div><div class="kpi-sub">채널없음 Cafe24</div></div>
   `;
 }
@@ -400,7 +406,7 @@ function renderMainTable(agg,days){
       <td>${fmtV(spd)}</td>
       <td class="dv">${fmtV(mrev)}</td><td>${rc(mR)}</td>
       <td class="dv">${fmtV(crev)}</td><td>${rc(cR)}</td>
-      <td class="dv ${cR-mR>=0?'pos':'neg'}">${fmtRD(cR-mR)}</td>
+      <td class="dv">${rcRatio(crev,mrev)}</td>
       <td class="${crev-mrev>=0?'pos':'neg'}">${fmtDiff(crev-mrev)}</td>
     </tr>`;
     if(isNaver){
@@ -417,7 +423,7 @@ function renderMainTable(agg,days){
   });
   const tS=PAID_CH.reduce((s,k)=>s+agg[k].spd,0),tM=PAID_CH.reduce((s,k)=>s+agg[k].mrev,0),tC=PAID_CH.reduce((s,k)=>s+agg[k].crev,0);
   const tMR=roas(tS,tM),tCR=roas(tS,tC);
-  rows+=`<tr class="tr-total"><td>합계</td><td>${fmtV(tS)}</td><td class="dv">${fmtV(tM)}</td><td>${rc(tMR)}</td><td class="dv">${fmtV(tC)}</td><td>${rc(tCR)}</td><td class="dv ${tCR-tMR>=0?'pos':'neg'}">${fmtRD(tCR-tMR)}</td><td class="${tC-tM>=0?'pos':'neg'}">${fmtDiff(tC-tM)}</td></tr>`;
+  rows+=`<tr class="tr-total"><td>합계</td><td>${fmtV(tS)}</td><td class="dv">${fmtV(tM)}</td><td>${rc(tMR)}</td><td class="dv">${fmtV(tC)}</td><td>${rc(tCR)}</td><td class="dv">${rcRatio(tC,tM)}</td><td class="${tC-tM>=0?'pos':'neg'}">${fmtDiff(tC-tM)}</td></tr>`;
   document.getElementById('main-table').innerHTML=`<table>
     <thead>
       <tr>
@@ -425,12 +431,12 @@ function renderMainTable(agg,days){
         <th rowspan="2">매체비용</th>
         <th colspan="2" class="ga dv">매체 보고</th>
         <th colspan="2" class="gb dv">Cafe24 실측</th>
-        <th colspan="2" class="gc dv">차이 (C24 − 매체)</th>
+        <th colspan="2" class="gc dv">비교</th>
       </tr>
       <tr>
         <th class="ga dv">매출</th><th class="ga">ROAS</th>
         <th class="gb dv">매출</th><th class="gb">ROAS</th>
-        <th class="gc dv">ROAS차이</th><th class="gc">매출차이</th>
+        <th class="gc dv">실매출비중</th><th class="gc">매출액차이</th>
       </tr>
     </thead>
     <tbody>${rows}</tbody>
@@ -467,18 +473,16 @@ function renderCompare(){
     totA.spd+=mA_.spd;totA.mrev+=mA_.mrev;totA.crev+=mA_.crev;
     totB.spd+=mB_.spd;totB.mrev+=mB_.mrev;totB.crev+=mB_.crev;
 
-    // A월 매체ROAS, C24ROAS, 차이
     const rMA=roas(mA_.spd,mA_.mrev),rCA=roas(mA_.spd,mA_.crev);
-    const diffA_rev=mA_.crev-mA_.mrev,diffA_roas=rCA-rMA;
-    // B월
+    const diffA_rev=mA_.crev-mA_.mrev;
     const rMB=roas(mB_.spd,mB_.mrev),rCB=roas(mB_.spd,mB_.crev);
-    const diffB_rev=mB_.crev-mB_.mrev,diffB_roas=rCB-rMB;
+    const diffB_rev=mB_.crev-mB_.mrev;
 
     const cA=dA
-      ?`<td class="ca">${fmtV(mA_.mrev)}</td><td class="ca">${rc(rMA)}</td><td class="ca">${fmtV(mA_.crev)}</td><td class="ca">${rc(rCA)}</td><td class="ca-diff dv ${diffA_rev>=0?'pos':'neg'}">${fmtDiff(diffA_rev)}</td><td class="ca-diff ${diffA_roas>=0?'pos':'neg'}">${fmtRD(diffA_roas)}</td>`
+      ?`<td class="ca">${fmtV(mA_.mrev)}</td><td class="ca">${rc(rMA)}</td><td class="ca">${fmtV(mA_.crev)}</td><td class="ca">${rc(rCA)}</td><td class="ca-diff dv ${diffA_rev>=0?'pos':'neg'}">${fmtDiff(diffA_rev)}</td><td class="ca-diff">${rcRatio(mA_.crev,mA_.mrev)}</td>`
       :`<td class="ca dash">—</td><td class="ca dash">—</td><td class="ca dash">—</td><td class="ca dash">—</td><td class="ca-diff dv dash">—</td><td class="ca-diff dash">—</td>`;
     const cB=dB
-      ?`<td class="cb dv">${fmtV(mB_.mrev)}</td><td class="cb">${rc(rMB)}</td><td class="cb">${fmtV(mB_.crev)}</td><td class="cb">${rc(rCB)}</td><td class="cb-diff dv ${diffB_rev>=0?'pos':'neg'}">${fmtDiff(diffB_rev)}</td><td class="cb-diff ${diffB_roas>=0?'pos':'neg'}">${fmtRD(diffB_roas)}</td>`
+      ?`<td class="cb dv">${fmtV(mB_.mrev)}</td><td class="cb">${rc(rMB)}</td><td class="cb">${fmtV(mB_.crev)}</td><td class="cb">${rc(rCB)}</td><td class="cb-diff dv ${diffB_rev>=0?'pos':'neg'}">${fmtDiff(diffB_rev)}</td><td class="cb-diff">${rcRatio(mB_.crev,mB_.mrev)}</td>`
       :`<td class="cb dv dash">—</td><td class="cb dash">—</td><td class="cb dash">—</td><td class="cb dash">—</td><td class="cb-diff dv dash">—</td><td class="cb-diff dash">—</td>`;
 
     rows+=`<tr><td>${dom}일</td>${cA}${cB}</tr>`;
@@ -487,20 +491,20 @@ function renderCompare(){
   // 합계행
   const rMA=roas(totA.spd,totA.mrev),rCA=roas(totA.spd,totA.crev);
   const rMB=roas(totB.spd,totB.mrev),rCB=roas(totB.spd,totB.crev);
-  const dAR=totA.crev-totA.mrev,dAROAS=rCA-rMA;
-  const dBR=totB.crev-totB.mrev,dBROAS=rCB-rMB;
+  const dAR=totA.crev-totA.mrev;
+  const dBR=totB.crev-totB.mrev;
   // 합계행 맨 위
   rows=`<tr class="tr-total">
     <td>합계</td>
     <td class="ca">${fmtV(totA.mrev)}</td><td class="ca">${rc(rMA)}</td><td class="ca">${fmtV(totA.crev)}</td><td class="ca">${rc(rCA)}</td>
-    <td class="ca-diff dv ${dAR>=0?'pos':'neg'}">${fmtDiff(dAR)}</td><td class="ca-diff ${dAROAS>=0?'pos':'neg'}">${fmtRD(dAROAS)}</td>
+    <td class="ca-diff dv ${dAR>=0?'pos':'neg'}">${fmtDiff(dAR)}</td><td class="ca-diff">${rcRatio(totA.crev,totA.mrev)}</td>
     <td class="cb dv">${fmtV(totB.mrev)}</td><td class="cb">${rc(rMB)}</td><td class="cb">${fmtV(totB.crev)}</td><td class="cb">${rc(rCB)}</td>
-    <td class="cb-diff dv ${dBR>=0?'pos':'neg'}">${fmtDiff(dBR)}</td><td class="cb-diff ${dBROAS>=0?'pos':'neg'}">${fmtRD(dBROAS)}</td>
+    <td class="cb-diff dv ${dBR>=0?'pos':'neg'}">${fmtDiff(dBR)}</td><td class="cb-diff">${rcRatio(totB.crev,totB.mrev)}</td>
   </tr>`+rows;
 
   const chLabel=ch==='all'?'전체':(CH_META[ch]?.label||ch);
   document.getElementById('compare-table').innerHTML=`
-    <div style="font-size:12px;color:#8a91a8;margin-bottom:10px">매체: <strong>${chLabel}</strong> &nbsp;|&nbsp; 차이 = Cafe24 − 매체</div>
+    <div style="font-size:12px;color:#8a91a8;margin-bottom:10px">매체: <strong>${chLabel}</strong> &nbsp;|&nbsp; 실매출비중 = C24매출 ÷ 매체매출 &nbsp;|&nbsp; 매출액차이 = C24 − 매체</div>
     <table>
       <thead>
         <tr>
@@ -512,9 +516,9 @@ function renderCompare(){
         </tr>
         <tr>
           <th class="ga dv">매체매출</th><th class="ga">매체ROAS</th><th class="ga">C24매출</th><th class="ga">C24ROAS</th>
-          <th class="gc dv">매출차이</th><th class="gc">ROAS차이</th>
+          <th class="gc dv">매출액차이</th><th class="gc">실매출비중</th>
           <th class="gb dv">매체매출</th><th class="gb">매체ROAS</th><th class="gb">C24매출</th><th class="gb">C24ROAS</th>
-          <th class="gd dv">매출차이</th><th class="gd">ROAS차이</th>
+          <th class="gd dv">매출액차이</th><th class="gd">실매출비중</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
@@ -540,28 +544,28 @@ function renderDailyTable(days){
     return;
   }
 
-  // 전체/매체별: TOP5 계산
+  // 전체/매체별: TOP5 (실매출 비중 낮은 순)
   const rowData=days.map(d=>{
     const{spd,mrev,crev}=chMetrics(d,ch);
     const mR=roas(spd,mrev),cR=roas(spd,crev);
-    return{date:d.date,spd,mrev,crev,mR,cR,rd:cR-mR};
+    return{date:d.date,spd,mrev,crev,mR,cR};
   });
   const top5=new Set(
-    [...rowData].filter(r=>r.spd>0)
-      .sort((a,b)=>Math.abs(b.rd)-Math.abs(a.rd))
+    [...rowData].filter(r=>r.spd>0&&r.mrev>0)
+      .sort((a,b)=>(a.crev/a.mrev)-(b.crev/b.mrev))
       .slice(0,5).map(r=>r.date)
   );
   document.querySelector('.top5-legend').style.display='';
 
   let rows='';
-  rowData.forEach(({date,spd,mrev,crev,mR,cR,rd})=>{
+  rowData.forEach(({date,spd,mrev,crev,mR,cR})=>{
     const isTop=top5.has(date);
     const badge=isTop?`<span class="top5-badge">TOP</span>`:'';
     rows+=`<tr class="${isTop?'top5-hi':''}">
       <td>${date}${badge}</td><td>${fmtV(spd)}</td>
       <td class="dv">${fmtV(mrev)}</td><td>${rc(mR)}</td>
       <td class="dv">${fmtV(crev)}</td><td>${rc(cR)}</td>
-      <td class="dv ${rd>=0?'pos':'neg'}">${fmtRD(rd)}</td>
+      <td class="dv">${rcRatio(crev,mrev)}</td>
       <td class="${crev-mrev>=0?'pos':'neg'}">${fmtDiff(crev-mrev)}</td>
     </tr>`;
   });
@@ -570,7 +574,7 @@ function renderDailyTable(days){
       <th style="text-align:left">날짜</th><th>매체비용</th>
       <th class="ga dv">매체매출</th><th class="ga">매체ROAS</th>
       <th class="gb dv">C24매출</th><th class="gb">C24ROAS</th>
-      <th class="gc dv">ROAS차이</th><th class="gc">매출차이</th>
+      <th class="gc dv">실매출비중</th><th class="gc">매출액차이</th>
     </tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
