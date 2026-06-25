@@ -682,5 +682,21 @@ document.getElementById('cat-sel').addEventListener('change', function(e) {
 
 render();
 </script>
+
+<script>
+(function(){
+  fetch('index.json')
+    .then(function(r){return r.ok?r.json():Promise.reject();})
+    .then(function(idx){
+      if(!idx||!Array.isArray(idx.dates))return;
+      var sel=document.getElementById('archive-sel');
+      if(!sel)return;
+      var cur='2026-06-18';
+      var opts='<option value="../pulse.html">오늘 ('+idx.today+')</option>';
+      idx.dates.forEach(function(x){if(x===cur||x===idx.today)return;opts+='<option value="pulse-'+x.replace(/-/g,'')+'.html">'+x+'</option>';});
+      sel.innerHTML=opts;
+    }).catch(function(){});
+})();
+</script>
 </body>
 </html>
