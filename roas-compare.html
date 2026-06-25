@@ -6,6 +6,15 @@
 <title>한끼통살 · 매체-Cafe24 ROAS 비교</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+#pw-overlay{position:fixed;inset:0;background:#1e2333;z-index:9999;display:flex;align-items:center;justify-content:center}
+.pw-box{background:#fff;border-radius:18px;padding:44px 48px;text-align:center;width:340px;box-shadow:0 8px 40px rgba(0,0,0,.3)}
+.pw-logo{font-size:20px;font-weight:800;color:#1e2333;margin-bottom:6px}
+.pw-sub{font-size:14px;color:#8a91a8;margin-bottom:28px}
+.pw-input{width:100%;padding:13px 16px;border:1.5px solid #d8dce8;border-radius:10px;font-size:16px;font-family:inherit;outline:none;text-align:center;letter-spacing:4px}
+.pw-input:focus{border-color:#4466cc}
+.pw-btn{margin-top:14px;width:100%;padding:13px;background:#4466cc;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+.pw-btn:hover{background:#3355bb}
+.pw-err{margin-top:10px;font-size:13px;color:#c62828;min-height:18px}
 body{font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:#f0f2f7;color:#1e2333;font-size:18px;line-height:1.65}
 .topbar{background:#1e2333;padding:0 32px;height:68px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:50}
 .topbar-logo{font-size:22px;font-weight:800;color:#fff}
@@ -136,6 +145,16 @@ tr.top5-hi td{background:#fff8e1!important}
 </style>
 </head>
 <body>
+
+<div id="pw-overlay">
+  <div class="pw-box">
+    <div class="pw-logo">한끼통살</div>
+    <div class="pw-sub">매체 · Cafe24 ROAS 비교 대시보드</div>
+    <input id="pw-input" class="pw-input" type="password" placeholder="비밀번호" autofocus>
+    <button class="pw-btn" onclick="checkPw()">확인</button>
+    <div class="pw-err" id="pw-err"></div>
+  </div>
+</div>
 
 <div class="topbar">
   <span class="topbar-logo">한끼통살</span>
@@ -655,6 +674,23 @@ document.querySelectorAll('#ch-filter .ch-btn').forEach(btn=>{
 document.querySelector('[data-m="all"]').classList.add('active');
 document.querySelector('[data-view="monthly"]').classList.add('active');
 loadMedia();
+</script>
+<script>
+(function(){
+  if(sessionStorage.getItem('hmr-auth')==='1')document.getElementById('pw-overlay').style.display='none';
+})();
+function checkPw(){
+  const v=document.getElementById('pw-input').value;
+  if(v==='hmr4321'){
+    sessionStorage.setItem('hmr-auth','1');
+    document.getElementById('pw-overlay').style.display='none';
+  }else{
+    document.getElementById('pw-err').textContent='비밀번호가 틀렸습니다.';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
+  }
+}
+document.getElementById('pw-input').addEventListener('keydown',e=>{if(e.key==='Enter')checkPw();});
 </script>
 </body>
 </html>
