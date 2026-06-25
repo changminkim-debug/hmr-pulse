@@ -698,5 +698,21 @@ render();
     }).catch(function(){});
 })();
 </script>
+
+<script>/* nav-v2 */
+(function(){
+  fetch('index.json')
+    .then(function(r){return r.ok?r.json():Promise.reject();})
+    .then(function(idx){
+      if(!idx||!Array.isArray(idx.dates))return;
+      var sel=document.getElementById('archive-sel');
+      if(!sel)return;
+      var cur='2026-06-24';
+      var opts='<option value="../pulse.html">오늘 ('+idx.today+')</option>';
+      idx.dates.forEach(function(x){if(x===idx.today)return;var s=(x===cur)?' selected':'';opts+='<option value="pulse-'+x.replace(/-/g,'')+'.html"'+s+'>'+x+'</option>';});
+      sel.innerHTML=opts;
+    }).catch(function(){});
+})();
+</script>
 </body>
 </html>
