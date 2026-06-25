@@ -6,46 +6,46 @@
 <title>한끼통살 · 매체-Cafe24 ROAS 비교</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:#f0f2f7;color:#1e2333;font-size:15px;line-height:1.6}
-.topbar{background:#1e2333;padding:0 28px;height:58px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:50}
-.topbar-logo{font-size:18px;font-weight:800;color:#fff}
-.topbar-sub{font-size:13px;color:rgba(255,255,255,.5)}
+body{font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:#f0f2f7;color:#1e2333;font-size:18px;line-height:1.65}
+.topbar{background:#1e2333;padding:0 32px;height:68px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:50}
+.topbar-logo{font-size:22px;font-weight:800;color:#fff}
+.topbar-sub{font-size:15px;color:rgba(255,255,255,.5)}
 .topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
 .status-dot{width:8px;height:8px;border-radius:50%;background:#ccc}
 .status-dot.ok{background:#4caf50;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .status-text{font-size:12px;color:rgba(255,255,255,.5)}
-.wrap{max-width:1560px;margin:0 auto;padding:22px 20px}
+.wrap{max-width:1700px;margin:0 auto;padding:26px 24px}
 
 /* Filter */
-.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
-.flabel{font-size:12px;font-weight:700;color:#8a91a8;letter-spacing:.5px;text-transform:uppercase}
-.fbtn{padding:7px 16px;border:1.5px solid #d8dce8;border-radius:18px;background:#fff;color:#4a5478;font-size:13px;cursor:pointer;transition:.12s;font-family:inherit;font-weight:500}
+.filter-bar{display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.flabel{font-size:14px;font-weight:700;color:#8a91a8;letter-spacing:.5px;text-transform:uppercase}
+.fbtn{padding:8px 18px;border:1.5px solid #d8dce8;border-radius:18px;background:#fff;color:#4a5478;font-size:14px;cursor:pointer;transition:.12s;font-family:inherit;font-weight:500}
 .fbtn:hover{border-color:#4466cc;color:#4466cc}
 .fbtn.active{background:#4466cc;border-color:#4466cc;color:#fff;font-weight:700}
 .fsep{width:1px;height:20px;background:#dde0ea;margin:0 4px}
-.data-badge{background:#e8f5e9;border:1px solid #4caf50;color:#2e7d32;font-size:12px;font-weight:700;padding:4px 12px;border-radius:12px;margin-left:auto}
+.data-badge{background:#e8f5e9;border:1px solid #4caf50;color:#2e7d32;font-size:14px;font-weight:700;padding:5px 14px;border-radius:12px;margin-left:auto}
 
 /* KPI */
-.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:20px}
+.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:22px}
 @media(max-width:1200px){.kpi-grid{grid-template-columns:repeat(3,1fr)}}
-.kpi-card{background:#fff;border-radius:12px;padding:20px 22px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.kpi-card{background:#fff;border-radius:14px;padding:24px 26px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
 .kpi-card.hl{background:#1e2333}
 .kpi-card.hl2{background:#4466cc}
-.kpi-label{font-size:11px;font-weight:700;color:#8a91a8;letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px}
+.kpi-label{font-size:13px;font-weight:700;color:#8a91a8;letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px}
 .kpi-card.hl .kpi-label,.kpi-card.hl2 .kpi-label{color:rgba(255,255,255,.6)}
-.kpi-value{font-size:22px;font-weight:800;color:#1e2333;letter-spacing:-.5px;line-height:1.2}
+.kpi-value{font-size:26px;font-weight:800;color:#1e2333;letter-spacing:-.5px;line-height:1.2}
 .kpi-card.hl .kpi-value,.kpi-card.hl2 .kpi-value{color:#fff}
-.kpi-sub{font-size:12px;color:#8a91a8;margin-top:5px}
+.kpi-sub{font-size:14px;color:#8a91a8;margin-top:6px}
 .kpi-card.hl .kpi-sub,.kpi-card.hl2 .kpi-sub{color:rgba(255,255,255,.5)}
 
 /* Section */
-.section{background:#fff;border-radius:12px;padding:22px;box-shadow:0 1px 4px rgba(0,0,0,.07);margin-bottom:18px}
-.sec-title{font-size:15px;font-weight:700;color:#1e2333;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.section{background:#fff;border-radius:14px;padding:26px;box-shadow:0 1px 4px rgba(0,0,0,.07);margin-bottom:20px}
+.sec-title{font-size:17px;font-weight:700;color:#1e2333;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .sec-title.mb{margin-bottom:16px}
-.sec-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:7px;background:#eef2ff;color:#4466cc}
-.sec-note{font-size:12px;color:#bbb;font-style:italic}
-.toggle-btn{margin-left:auto;padding:4px 12px;border:1.5px solid #d8dce8;border-radius:10px;background:#fff;color:#8a91a8;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap}
+.sec-badge{font-size:13px;font-weight:700;padding:4px 11px;border-radius:7px;background:#eef2ff;color:#4466cc}
+.sec-note{font-size:13px;color:#bbb;font-style:italic}
+.toggle-btn{margin-left:auto;padding:5px 14px;border:1.5px solid #d8dce8;border-radius:10px;background:#fff;color:#8a91a8;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap}
 .toggle-btn:hover{border-color:#4466cc;color:#4466cc}
 .sec-body{margin-top:16px}
 .sec-body.collapsed{display:none}
@@ -53,7 +53,7 @@ body{font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif
 /* Table */
 .tbl-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
-thead th{padding:10px 13px;text-align:right;font-size:11px;font-weight:700;color:#8a91a8;letter-spacing:.5px;text-transform:uppercase;border-bottom:2px solid #f0f2f7;white-space:nowrap;background:#fafbfe}
+thead th{padding:12px 15px;text-align:right;font-size:13px;font-weight:700;color:#8a91a8;letter-spacing:.5px;text-transform:uppercase;border-bottom:2px solid #f0f2f7;white-space:nowrap;background:#fafbfe}
 thead th:first-child{text-align:left;position:sticky;left:0;z-index:2;background:#fafbfe}
 thead th.ga{background:#eef2ff;color:#4466cc}
 thead th.gb{background:#e8f5e9;color:#2e7d32}
@@ -65,16 +65,16 @@ tbody tr:hover td{background:#f5f7ff}
 tbody tr.parent-row>td{background:#fff}
 tbody tr.sub-row{display:none}
 tbody tr.sub-row.open{display:table-row}
-tbody tr.sub-row td{color:#555;font-size:13px;background:#f8f9fe}
-tbody td{padding:11px 13px;text-align:right;white-space:nowrap;font-size:14px}
+tbody tr.sub-row td{color:#555;font-size:14px;background:#f8f9fe}
+tbody td{padding:13px 15px;text-align:right;white-space:nowrap;font-size:15px}
 tbody td:first-child{text-align:left;font-weight:600;position:sticky;left:0;z-index:1;background:inherit}
 tbody tr.sub-row td:first-child{font-weight:400;padding-left:28px;background:#f8f9fe}
-tbody tr.tr-total td{background:#f0f2f7!important;font-weight:700;font-size:14px;border-top:2.5px solid #4466cc}
+tbody tr.tr-total td{background:#f0f2f7!important;font-weight:700;font-size:15px;border-top:2.5px solid #4466cc}
 tbody tr.tr-organic td{color:#2e7d32}
 .dash{color:#ccc;font-size:12px}
 .pos{color:#2e7d32;font-weight:700}
 .neg{color:#c62828;font-weight:700}
-.rc{display:inline-block;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:700}
+.rc{display:inline-block;padding:3px 9px;border-radius:6px;font-size:13px;font-weight:700}
 .rc-hi{background:#e8f5e9;color:#2e7d32}
 .rc-md{background:#fff8e1;color:#f57f17}
 .rc-lo{background:#fce4ec;color:#c62828}
@@ -88,7 +88,7 @@ th.dv,td.dv{border-left:1px solid #e4e8f2}
 .cmp-ctrl{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px}
 .side-chip{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:7px;font-size:12px;font-weight:800;color:#fff}
 .side-chip.a{background:#4466cc}.side-chip.b{background:#2e7d32}
-.cmp-ctrl select{padding:6px 12px;border:1.5px solid #d8dce8;border-radius:10px;background:#fff;font-size:13px;font-family:inherit;color:#1e2333;cursor:pointer;outline:none}
+.cmp-ctrl select{padding:7px 14px;border:1.5px solid #d8dce8;border-radius:10px;background:#fff;font-size:14px;font-family:inherit;color:#1e2333;cursor:pointer;outline:none}
 .cmp-ctrl select:focus{border-color:#4466cc}
 .cmp-vs{font-size:13px;font-weight:700;color:#8a91a8}
 .cmp-sep{width:1px;height:20px;background:#dde0ea}
@@ -100,8 +100,8 @@ td.ca-diff{background:#eef2ff}
 td.cb-diff{background:#e8f5e9}
 
 /* 일별 채널 버튼 */
-.ch-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.ch-btn{padding:6px 14px;border:1.5px solid #d8dce8;border-radius:16px;background:#fff;color:#4a5478;font-size:13px;font-weight:500;cursor:pointer;transition:.12s;font-family:inherit;display:inline-flex;align-items:center;gap:5px}
+.ch-filter{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}
+.ch-btn{padding:7px 16px;border:1.5px solid #d8dce8;border-radius:16px;background:#fff;color:#4a5478;font-size:14px;font-weight:500;cursor:pointer;transition:.12s;font-family:inherit;display:inline-flex;align-items:center;gap:5px}
 .ch-btn:hover{border-color:#4466cc;color:#4466cc}
 .ch-btn.active.all{background:#4466cc;border-color:#4466cc;color:#fff;font-weight:700}
 .ch-btn.active.naver{color:#03c75a;border-color:#03c75a;background:#f0fdf6;font-weight:700}
@@ -115,6 +115,23 @@ td.cb-diff{background:#e8f5e9}
 .spin{width:20px;height:20px;border:2.5px solid #dde0ea;border-top-color:#4466cc;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 .err{background:#fce4ec;color:#c62828;padding:14px 18px;border-radius:10px;font-size:13px}
+
+/* 원 단위 */
+.won{font-size:11px;color:#aaa;font-weight:400;margin-left:1px}
+
+/* 월별 성과 비교 헤더 고정 */
+#compare-table{max-height:520px;overflow-y:auto;overflow-x:auto}
+#compare-table table thead{position:sticky;top:0;z-index:3}
+#compare-table table thead th{box-shadow:0 1px 0 #e4e8f2}
+
+/* 오가닉 채널 버튼 */
+.ci-organic{background:#2e7d32}
+.ch-btn.active.organic{color:#2e7d32;border-color:#2e7d32;background:#e8f5e9;font-weight:700}
+
+/* TOP5 ROAS 차이 강조 */
+tr.top5-hi td{background:#fff8e1!important}
+.top5-badge{background:#f57f17;color:#fff;font-size:10px;font-weight:800;padding:1px 5px;border-radius:4px;margin-right:4px;vertical-align:middle;letter-spacing:.3px}
+.top5-legend{font-size:12px;color:#aaa;margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -225,7 +242,9 @@ td.cb-diff{background:#e8f5e9}
         <button class="ch-btn payco" data-ch="payco"><span class="ci ci-payco"></span>페이코</button>
         <button class="ch-btn toss" data-ch="toss"><span class="ci ci-toss"></span>토스페이</button>
         <button class="ch-btn aedi" data-ch="aedi"><span class="ci ci-aedi"></span>에디ai</button>
+        <button class="ch-btn organic" data-ch="organic"><span class="ci ci-organic"></span>오가닉</button>
       </div>
+      <div class="top5-legend"><span class="top5-badge">TOP</span> ROAS 차이 절대값 상위 5일 강조</div>
       <div class="tbl-wrap" id="daily-table"></div>
     </div>
   </div>
@@ -266,13 +285,13 @@ function n(v){return parseFloat((v||'0').replace(/,/g,''))||0;}
 function roas(s,r){return s>0?(r/s*100):0;}
 function fmtV(v){
   const a=Math.abs(v);
-  if(a>=1e8)return(v<0?'-':'')+(a/1e8).toFixed(1)+'억';
-  return(v<0?'-':'')+Math.round(a/1e4).toLocaleString()+'만';
+  const s=a>=1e8?(v<0?'-':'')+(a/1e8).toFixed(1)+'억':(v<0?'-':'')+Math.round(a/1e4).toLocaleString()+'만';
+  return s+'<span class="won">원</span>';
 }
 function fmtDiff(v){
   const a=Math.abs(v);
   const s=a>=1e8?(a/1e8).toFixed(1)+'억':Math.round(a/1e4).toLocaleString()+'만';
-  return(v>=0?'+':'-')+s;
+  return(v>=0?'+':'-')+s+'<span class="won">원</span>';
 }
 function fmtRD(v){return(v>=0?'+':'')+Math.round(v)+'%p';}
 function rc(r){const c=r>=400?'rc-hi':r>=200?'rc-md':'rc-lo';return`<span class="rc ${c}">${Math.round(r)}%</span>`;}
@@ -344,7 +363,7 @@ function render(){
   document.getElementById('tbl-badge').textContent=activeMonth==='all'?'3~6월 합계':activeMonth;
   if(activeView==='daily'){document.getElementById('daily-section').style.display='';renderDailyTable(days);}
   else{document.getElementById('daily-section').style.display='none';}
-  renderOrganicTable(days,agg);
+  renderOrganicTable();
 }
 
 // ── KPI ───────────────────────────────────────────────────────────
@@ -470,13 +489,14 @@ function renderCompare(){
   const rMB=roas(totB.spd,totB.mrev),rCB=roas(totB.spd,totB.crev);
   const dAR=totA.crev-totA.mrev,dAROAS=rCA-rMA;
   const dBR=totB.crev-totB.mrev,dBROAS=rCB-rMB;
-  rows+=`<tr class="tr-total">
+  // 합계행 맨 위
+  rows=`<tr class="tr-total">
     <td>합계</td>
     <td class="ca">${fmtV(totA.mrev)}</td><td class="ca">${rc(rMA)}</td><td class="ca">${fmtV(totA.crev)}</td><td class="ca">${rc(rCA)}</td>
     <td class="ca-diff dv ${dAR>=0?'pos':'neg'}">${fmtDiff(dAR)}</td><td class="ca-diff ${dAROAS>=0?'pos':'neg'}">${fmtRD(dAROAS)}</td>
     <td class="cb dv">${fmtV(totB.mrev)}</td><td class="cb">${rc(rMB)}</td><td class="cb">${fmtV(totB.crev)}</td><td class="cb">${rc(rCB)}</td>
     <td class="cb-diff dv ${dBR>=0?'pos':'neg'}">${fmtDiff(dBR)}</td><td class="cb-diff ${dBROAS>=0?'pos':'neg'}">${fmtRD(dBROAS)}</td>
-  </tr>`;
+  </tr>`+rows;
 
   const chLabel=ch==='all'?'전체':(CH_META[ch]?.label||ch);
   document.getElementById('compare-table').innerHTML=`
@@ -504,16 +524,44 @@ function renderCompare(){
 // ── Daily Table ────────────────────────────────────────────────────
 function renderDailyTable(days){
   const ch=activeCh;
-  document.getElementById('daily-badge').textContent=ch==='all'?'전체 합계':(CH_META[ch]?.label||ch);
-  let rows='';
-  days.forEach(d=>{
+  document.getElementById('daily-badge').textContent=ch==='all'?'전체 합계':ch==='organic'?'오가닉':(CH_META[ch]?.label||ch);
+
+  // 오가닉 특별 처리
+  if(ch==='organic'){
+    let rows='';
+    days.forEach(d=>{rows+=`<tr><td>${d.date}</td><td>${fmtV(d.c24.organic||0)}</td></tr>`;});
+    const tot=days.reduce((s,d)=>s+(d.c24.organic||0),0);
+    rows+=`<tr class="tr-total"><td>합계 (${days.length}일)</td><td>${fmtV(tot)}</td></tr>`;
+    document.getElementById('daily-table').innerHTML=`<table>
+      <thead><tr><th style="text-align:left">날짜</th><th class="gb">오가닉 매출 (Cafe24)</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+    document.querySelector('.top5-legend').style.display='none';
+    return;
+  }
+
+  // 전체/매체별: TOP5 계산
+  const rowData=days.map(d=>{
     const{spd,mrev,crev}=chMetrics(d,ch);
     const mR=roas(spd,mrev),cR=roas(spd,crev);
-    rows+=`<tr>
-      <td>${d.date}</td><td>${fmtV(spd)}</td>
+    return{date:d.date,spd,mrev,crev,mR,cR,rd:cR-mR};
+  });
+  const top5=new Set(
+    [...rowData].filter(r=>r.spd>0)
+      .sort((a,b)=>Math.abs(b.rd)-Math.abs(a.rd))
+      .slice(0,5).map(r=>r.date)
+  );
+  document.querySelector('.top5-legend').style.display='';
+
+  let rows='';
+  rowData.forEach(({date,spd,mrev,crev,mR,cR,rd})=>{
+    const isTop=top5.has(date);
+    const badge=isTop?`<span class="top5-badge">TOP</span>`:'';
+    rows+=`<tr class="${isTop?'top5-hi':''}">
+      <td>${badge}${date}</td><td>${fmtV(spd)}</td>
       <td class="dv">${fmtV(mrev)}</td><td>${rc(mR)}</td>
       <td class="dv">${fmtV(crev)}</td><td>${rc(cR)}</td>
-      <td class="dv ${cR-mR>=0?'pos':'neg'}">${fmtRD(cR-mR)}</td>
+      <td class="dv ${rd>=0?'pos':'neg'}">${fmtRD(rd)}</td>
       <td class="${crev-mrev>=0?'pos':'neg'}">${fmtDiff(crev-mrev)}</td>
     </tr>`;
   });
@@ -529,14 +577,21 @@ function renderDailyTable(days){
 }
 
 // ── Organic ────────────────────────────────────────────────────────
-function renderOrganicTable(days,agg){
+// 항상 전체 기간 표시 (기간 필터 무관)
+function renderOrganicTable(){
   const byM={};
-  days.forEach(d=>{if(!byM[d.month])byM[d.month]={crev:0,cnt:0};byM[d.month].crev+=(d.c24.organic||0);byM[d.month].cnt++;});
+  rawDays.forEach(d=>{if(!byM[d.month])byM[d.month]={crev:0,cnt:0};byM[d.month].crev+=(d.c24.organic||0);byM[d.month].cnt++;});
+  const totalRev=rawDays.reduce((s,d)=>s+(d.c24.organic||0),0);
+  const totalCnt=rawDays.length;
   let rows='';
-  Object.keys(byM).sort().forEach(m=>{rows+=`<tr class="tr-organic"><td>${m}</td><td>${byM[m].cnt}일</td><td>${fmtV(byM[m].crev)}</td></tr>`;});
-  rows+=`<tr class="tr-total"><td>합계</td><td>—</td><td>${fmtV(agg.organic.crev)}</td></tr>`;
+  Object.keys(byM).sort().forEach(m=>{
+    const avg=byM[m].cnt>0?Math.round(byM[m].crev/byM[m].cnt):0;
+    rows+=`<tr class="tr-organic"><td>${m}</td><td>${byM[m].cnt}일</td><td>${fmtV(byM[m].crev)}</td><td>${fmtV(avg)}</td></tr>`;
+  });
+  const totalAvg=totalCnt>0?Math.round(totalRev/totalCnt):0;
+  rows+=`<tr class="tr-total"><td>합계</td><td>${totalCnt}일</td><td>${fmtV(totalRev)}</td><td>${fmtV(totalAvg)}</td></tr>`;
   document.getElementById('organic-table').innerHTML=`<table>
-    <thead><tr><th style="text-align:left">월</th><th>일수</th><th>오가닉 매출 (Cafe24)</th></tr></thead>
+    <thead><tr><th style="text-align:left">월</th><th>일수</th><th>오가닉 매출 (Cafe24)</th><th>일평균</th></tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
 }
