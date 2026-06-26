@@ -264,7 +264,7 @@ tr.top5-hi td{background:#fff8e1!important}
         <button class="ch-btn aedi" data-ch="aedi"><span class="ci ci-aedi"></span>에디ai</button>
         <button class="ch-btn organic" data-ch="organic"><span class="ci ci-organic"></span>오가닉</button>
       </div>
-      <div class="top5-legend"><span class="top5-badge">TOP</span> 실매출 비중 하위 5일 강조</div>
+      <div class="top5-legend"><span class="top5-badge">TOP</span> 실매출 갭 하위 5일 강조</div>
       <div class="tbl-wrap" id="daily-table"></div>
     </div>
   </div>
@@ -317,9 +317,9 @@ function fmtRD(v){return(v>=0?'+':'')+Math.round(v)+'%p';}
 function rc(r){const c=r>=400?'rc-hi':r>=200?'rc-md':'rc-lo';return`<span class="rc ${c}">${Math.round(r)}%</span>`;}
 function rcRatio(crev,mrev){
   if(!mrev)return'<span class="dash">—</span>';
-  const r=crev/mrev*100;
-  const col=r>=100?'#2e7d32':r>=80?'#e65100':'#c62828';
-  return`<strong style="color:${col}">${Math.round(r)}%</strong>`;
+  const gap=Math.round(crev/mrev*100-100);
+  const col=gap>=0?'#2e7d32':gap>=-20?'#e65100':'#c62828';
+  return`<strong style="color:${col}">${gap>=0?'+':''}${gap}%p</strong>`;
 }
 function parseCSV(t){
   return t.trim().split('\n').map(l=>{
@@ -401,12 +401,13 @@ function renderKPI(agg){
   const cRev=PAID_CH.reduce((s,k)=>s+agg[k].crev,0);
   const mR=roas(spd,mRev),cR=roas(spd,cRev);
   const revDiff=cRev-mRev;
-  const ratioVal=mRev>0?Math.round(cRev/mRev*100)+'%':'—';
+  const _gap=mRev>0?Math.round(cRev/mRev*100-100):null;
+  const ratioVal=_gap!==null?(_gap>=0?'+':'')+_gap+'%p':'—';
   document.getElementById('kpi-grid').innerHTML=`
     <div class="kpi-card hl"><div class="kpi-label">총 매체비용</div><div class="kpi-value">${fmtV(spd)}</div><div class="kpi-sub">VAT 제외</div></div>
     <div class="kpi-card"><div class="kpi-label">매체 보고 매출</div><div class="kpi-value">${fmtV(mRev)}</div><div class="kpi-sub">${rc(mR)} 매체 ROAS</div></div>
     <div class="kpi-card"><div class="kpi-label">Cafe24 실매출</div><div class="kpi-value">${fmtV(cRev)}</div><div class="kpi-sub">${rc(cR)} Cafe24 ROAS</div></div>
-    <div class="kpi-card hl2"><div class="kpi-label">실매출 비중</div><div class="kpi-value">${ratioVal}</div><div class="kpi-sub">C24매출 ÷ 매체매출</div></div>
+    <div class="kpi-card hl2"><div class="kpi-label">실매출 갭</div><div class="kpi-value">${ratioVal}</div><div class="kpi-sub">C24매출 ÷ 매체매출 − 100%</div></div>
     <div class="kpi-card hl2"><div class="kpi-label">매출액 차이</div><div class="kpi-value">${fmtDiff(revDiff)}</div><div class="kpi-sub">Cafe24 − 매체</div></div>
     <div class="kpi-card"><div class="kpi-label">오가닉 매출</div><div class="kpi-value">${fmtV(agg.organic.crev)}</div><div class="kpi-sub">채널없음 Cafe24</div></div>
   `;
@@ -467,7 +468,7 @@ function renderMainTable(agg,days){
       <tr>
         <th class="ga dv">매출</th><th class="ga">ROAS</th>
         <th class="gb dv">매출</th><th class="gb">ROAS</th>
-        <th class="gc dv">실매출비중</th><th class="gc">매출액차이</th>
+        <th class="gc dv">실매출갭</th><th class="gc">매출액차이</th>
       </tr>
     </thead>
     <tbody>${rows}</tbody>
@@ -535,7 +536,7 @@ function renderCompare(){
 
   const chLabel=ch==='all'?'전체':(CH_META[ch]?.label||ch);
   document.getElementById('compare-table').innerHTML=`
-    <div style="font-size:12px;color:#8a91a8;margin-bottom:10px">매체: <strong>${chLabel}</strong> &nbsp;|&nbsp; 실매출비중 = C24매출 ÷ 매체매출 &nbsp;|&nbsp; 매출액차이 = C24 − 매체</div>
+    <div style="font-size:12px;color:#8a91a8;margin-bottom:10px">매체: <strong>${chLabel}</strong> &nbsp;|&nbsp; 실매출갭 = C24매출÷매체매출−100% &nbsp;|&nbsp; 매출액차이 = C24 − 매체</div>
     <table>
       <thead>
         <tr>
@@ -547,9 +548,9 @@ function renderCompare(){
         </tr>
         <tr>
           <th class="ga dv">매체매출</th><th class="ga">매체ROAS</th><th class="ga">C24매출</th><th class="ga">C24ROAS</th>
-          <th class="gc dv">매출액차이</th><th class="gc">실매출비중</th>
+          <th class="gc dv">매출액차이</th><th class="gc">실매출갭</th>
           <th class="gb dv">매체매출</th><th class="gb">매체ROAS</th><th class="gb">C24매출</th><th class="gb">C24ROAS</th>
-          <th class="gd dv">매출액차이</th><th class="gd">실매출비중</th>
+          <th class="gd dv">매출액차이</th><th class="gd">실매출갭</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
@@ -605,7 +606,7 @@ function renderDailyTable(days){
       <th style="text-align:left">날짜</th><th>매체비용</th>
       <th class="ga dv">매체매출</th><th class="ga">매체ROAS</th>
       <th class="gb dv">C24매출</th><th class="gb">C24ROAS</th>
-      <th class="gc dv">실매출비중</th><th class="gc">매출액차이</th>
+      <th class="gc dv">실매출갭</th><th class="gc">매출액차이</th>
     </tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
