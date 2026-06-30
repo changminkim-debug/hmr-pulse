@@ -158,14 +158,19 @@ tr.top5-hi td{background:#fff8e1!important}
 .mm-tbl{width:100%;border-collapse:collapse;font-size:14px}
 .mm-tbl thead th{padding:8px 10px;text-align:right;font-size:11px;font-weight:700;color:#8a91a8;letter-spacing:.3px;border-bottom:2px solid #f0f2f7;background:#fafbfe;white-space:nowrap}
 .mm-tbl thead th:first-child{text-align:left;min-width:120px}
-.mm-tbl thead th.mmh-raw{background:#eef2ff;color:#4466cc}
-.mm-tbl thead th.mmh-real{background:#e8f5e9;color:#2e7d32}
+.mm-tbl thead th.mmh-raw{background:#eef2ff;color:#4466cc;border-left:2px solid #9baad8}
+.mm-tbl thead th.mmh-real{background:#e8f5e9;color:#2e7d32;border-left:2px solid #78c078}
 .mm-tbl thead th.mmh-real-roas{background:#c8e6c9;color:#1b5e20}
-.mm-tbl thead th.mmh-c24{background:#dce8ff;color:#2244bb}
+.mm-tbl thead th.mmh-c24{background:#dce8ff;color:#2244bb;border-left:2px solid #4466cc}
 .mm-tbl thead th.mmh-c24-roas{background:#c4d8ff;color:#1a2faa}
-.mm-tbl thead th.mmh-c24-real{background:#adc4ff;color:#1a2faa}
+.mm-tbl thead th.mmh-c24-real{background:#adc4ff;color:#1a2faa;border-left:1px solid #6688cc}
 .mm-tbl thead th.mmh-c24-real-roas{background:#94aeff;color:#1a2faa}
-.mm-tbl thead th.mmh-gap{background:#f0f0f0;color:#555}
+.mm-tbl thead th.mmh-gap{background:#f0f0f0;color:#555;border-left:1px solid #d8dce8;border-right:1px solid #d8dce8}
+.mm-tbl tbody td.mmh-raw{border-left:2px solid #9baad8}
+.mm-tbl tbody td.mmh-real{border-left:2px solid #78c078}
+.mm-tbl tbody td.mmh-c24{border-left:2px solid #4466cc}
+.mm-tbl tbody td.mmh-c24-real{border-left:1px solid #6688cc}
+.mm-tbl tbody td.mmh-gap{border-left:1px solid #d8dce8;border-right:1px solid #d8dce8}
 .mm-tbl tbody tr:not(.mm-total):not(.mm-perf-total):hover td{background:#f5f7ff}
 .mm-tbl tbody tr{border-bottom:1px solid #f0f3f9}
 .mm-tbl tbody td{padding:8px 10px;text-align:right;white-space:nowrap;font-size:13px}
@@ -804,16 +809,17 @@ document.querySelector('[data-view="monthly"]').classList.add('active');
 loadMedia();
 
 // ═══ 미디어믹스 계산기 ════════════════════════════════════════════
+const NAVER_GAP=0.80; // 4~6월 평균 (4월-18.5% / 5월-24.0% / 6월-17.3%)
 const CALC_CH=[
-  {key:'brand',    label:'브랜드검색', group:'naver', defRoas:7310, gap:0.82},
-  {key:'power',    label:'파워링크',   group:'naver', defRoas:688,  gap:0.82},
-  {key:'shop',     label:'쇼핑검색',   group:'naver', defRoas:602,  gap:0.82},
-  {key:'meta',     label:'메타',       group:'meta',  defRoas:233,  gap:0.74},
-  {key:'google_sa',label:'구글 SA',    group:'gsa',   defRoas:774,  gap:0.53},
-  {key:'google_da',label:'구글 DA',    group:'gda',   defRoas:258,  gap:0.79},
-  {key:'payco',    label:'페이코',     group:'payco', defRoas:396,  gap:0.33, cps:true},
-  {key:'toss',     label:'토스페이',   group:'toss',  defRoas:396,  gap:0.27, cps:true},
-  {key:'aedi',     label:'에디ai',     group:'aedi',  defRoas:396,  gap:1.10},
+  {key:'brand',    label:'브랜드검색', group:'naver', defRoas:7310, gap:NAVER_GAP},
+  {key:'power',    label:'파워링크',   group:'naver', defRoas:688,  gap:NAVER_GAP},
+  {key:'shop',     label:'쇼핑검색',   group:'naver', defRoas:602,  gap:NAVER_GAP},
+  {key:'meta',     label:'메타',       group:'meta',  defRoas:233,  gap:0.82}, // 4~6월 평균 -18%
+  {key:'google_sa',label:'구글 SA',    group:'gsa',   defRoas:774,  gap:0.62}, // 5~6월 평균 (4월 누락)
+  {key:'google_da',label:'구글 DA',    group:'gda',   defRoas:258,  gap:0.92}, // 6월 기준 -8%
+  {key:'payco',    label:'페이코',     group:'payco', defRoas:396,  gap:0.31, cps:true}, // 4~6월 평균 -69%
+  {key:'toss',     label:'토스페이',   group:'toss',  defRoas:396,  gap:0.28, cps:true}, // 4~6월 평균 -72%
+  {key:'aedi',     label:'에디ai',     group:'aedi',  defRoas:396,  gap:1.00}, // 4~6월 갭 없음 0%
 ];
 const MM_ORGANIC_RATIO=1.07; // 4~6월 오가닉/광고비 비율 (총오가닉30.94억/총광고비28.91억)
 let mmBuilt=false;
@@ -935,11 +941,12 @@ function buildMMTable(){
     if(ch.key==='shop'){
       html+=`<tr class="mm-naver-c24">
         <td style="padding-left:12px">└ 네이버 합계</td>
-        <td>—</td><td>—</td>
+        <td><span id="mm-naver-bgt">—</span></td>
+        <td><span id="mm-naver-rawroas">—</span></td>
         <td class="mmh-raw"><span id="mm-naver-raw">—</span></td>
         <td class="mmh-real"><span id="mm-naver-rel">—</span></td>
         <td class="mmh-real-roas"><span id="mm-naver-relr">—</span></td>
-        <td class="mmh-gap"><span style="font-weight:700;color:#c62828">-18%</span><br><small style="font-size:10px;color:#aaa">4~6월 평균</small></td>
+        <td class="mmh-gap"><span id="mm-naver-gap-lbl" style="font-weight:700;color:#c62828">—</span><br><small style="font-size:10px;color:#aaa">4~6월 평균</small></td>
         <td class="mmh-c24"><span class="mm-val-c24" id="mm-naver-c24">—</span></td>
         <td class="mmh-c24-roas"><span id="mm-naver-c24r">—</span></td>
         <td class="mmh-c24-real"><span id="mm-naver-c24rr">—</span></td>
@@ -1024,13 +1031,18 @@ function mmRecalc(){
     perfBgt+=bgt; perfRaw+=raw; perfReal+=real;
   });
   // 네이버 C24 합계
-  const naverC24=naverRaw*0.82;
+  const naverC24=naverRaw*NAVER_GAP;
   const naverC24r=naverBgt>0?naverC24/naverBgt*100:0;
   const naverC24real=naverC24*0.86;
   const naverC24realr=naverBgt>0?naverC24real/naverBgt*100:0;
+  const naverGapPct=Math.round(NAVER_GAP*100-100);
+  mmSi('mm-naver-bgt',mmFmtWon(naverBgt));
+  mmSi('mm-naver-rawroas',naverBgt>0?Math.round(naverRaw/naverBgt*100)+'%':'—');
   mmSi('mm-naver-raw',mmFmt(naverRaw));
   mmSi('mm-naver-rel',mmFmt(naverRaw*0.86));
   mmSi('mm-naver-relr',mmFmtR(naverBgt>0?naverRaw*0.86/naverBgt*100:0));
+  const naverGapEl=document.getElementById('mm-naver-gap-lbl');
+  if(naverGapEl){naverGapEl.textContent=(naverGapPct>=0?'+':'')+naverGapPct+'%';naverGapEl.style.color=naverGapPct>=0?'#2e7d32':'#c62828';}
   mmSi('mm-naver-c24',mmFmt(naverC24));
   mmSi('mm-naver-c24r',mmFmtR(naverC24r));
   mmSi('mm-naver-c24rr',mmFmt(naverC24real));
