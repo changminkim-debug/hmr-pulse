@@ -413,6 +413,7 @@ const NAVER_SUBS=[{key:'naver_brand',label:'브랜드검색'},{key:'naver_pl',la
 let rawDays=[],activeMonth='all',activeView='monthly',activeCh='all',naverExpanded=false,revMode='raw';
 function mRev(v,ch){
   if(ch==='aedi') return revMode==='actual'?v/0.9*0.86:v/0.9;
+  if(ch==='meta') return revMode==='actual'?v*0.86:v; // C1=RAW: 실매출=C1×0.86
   return revMode==='actual'?v:v/0.86;
 }
 function cRev(v,ch){return revMode==='actual'?v*0.86:v;}
