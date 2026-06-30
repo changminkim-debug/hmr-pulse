@@ -396,7 +396,10 @@ const CH_META={
 };
 const NAVER_SUBS=[{key:'naver_brand',label:'브랜드검색'},{key:'naver_pl',label:'파워링크'},{key:'naver_sh',label:'쇼핑검색'}];
 let rawDays=[],activeMonth='all',activeView='monthly',activeCh='all',naverExpanded=false,revMode='raw';
-function mRev(v,ch){return revMode==='actual'?v:v/(ch==='aedi'?0.9:0.86);}
+function mRev(v,ch){
+  if(ch==='aedi') return revMode==='actual'?v/0.9*0.86:v/0.9;
+  return revMode==='actual'?v:v/0.86;
+}
 function cRev(v,ch){return revMode==='actual'?v*0.86:v;}
 
 // ═══ HELPERS ══════════════════════════════════════════════════════
