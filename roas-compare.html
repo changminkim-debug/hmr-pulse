@@ -1123,12 +1123,12 @@ function mmRecalc(){
   mmSi('mm-perf-rawroas',mmFmtRPill(perfRawRoas));
   mmSi('mm-perf-raw',mmFmt(perfRaw));
   mmSi('mm-perf-real',mmFmt(perfReal));
-  mmSi('mm-perf-realr',mmFmtR(perfRealRoas));
+  mmSi('mm-perf-realr',mmFmtRPill(perfRealRoas));
   mmSi('mm-perf-gap',mmFmtGap(perfC24,perfRaw));
   mmSi('mm-perf-c24',mmFmt(perfC24));
-  mmSi('mm-perf-c24r',mmFmtR(perfC24r));
+  mmSi('mm-perf-c24r',mmFmtRPill(perfC24r));
   mmSi('mm-perf-c24rr',mmFmt(perfC24real));
-  mmSi('mm-perf-c24rrr',mmFmtR(perfC24realr));
+  mmSi('mm-perf-c24rrr',mmFmtRPill(perfC24realr));
   // 오가닉: 퍼포먼스 총 예산 × 4~6월 오가닉/광고비 비율
   const orgC24=perfBgt*MM_ORGANIC_RATIO;
   const orgC24real=orgC24*0.86;
@@ -1148,12 +1148,12 @@ function mmRecalc(){
   mmSi('mm-tot-rawroas',mmFmtRPill(totRawRoas));
   mmSi('mm-tot-raw',mmFmt(totRaw));
   mmSi('mm-tot-rel',mmFmt(totReal));
-  mmSi('mm-tot-relr',mmFmtR(totRealRoas));
+  mmSi('mm-tot-relr',mmFmtRPill(totRealRoas));
   mmSi('mm-tot-gap',mmFmtGap(totC24,totRaw));
   mmSi('mm-tot-c24',mmFmt(totC24));
-  mmSi('mm-tot-c24r',mmFmtR(totC24r));
+  mmSi('mm-tot-c24r',mmFmtRPill(totC24r));
   mmSi('mm-tot-c24rr',mmFmt(totC24real));
-  mmSi('mm-tot-c24rrr',mmFmtR(totC24realr));
+  mmSi('mm-tot-c24rrr',mmFmtRPill(totC24realr));
 }
 </script>
 <script>
