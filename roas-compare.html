@@ -905,8 +905,11 @@ function buildMMTable(){
     if(isNaver){
       c24Cols=`<td class="mmh-gap">—</td><td class="mmh-c24" colspan="4" style="color:#bbb;font-size:11px;text-align:center">네이버 통합↓</td>`;
     }else{
+      const gapPct=Math.round(ch.gap*100-100);
+      const gapColor=gapPct>=0?'#2e7d32':'#c62828';
+      const gapFixed=`<span style="font-weight:700;color:${gapColor}">${gapPct>=0?'+':''}${gapPct}%</span><br><small style="font-size:10px;color:#aaa">4~6월 평균</small>`;
       c24Cols=`
-        <td class="mmh-gap"><span id="mm-gap-${ch.key}">—</span></td>
+        <td class="mmh-gap">${gapFixed}</td>
         <td class="mmh-c24"><span class="mm-val-c24" id="mm-c24-${ch.key}">—</span>${cpsWarn}</td>
         <td class="mmh-c24-roas"><span class="mm-val-c24r" id="mm-c24r-${ch.key}">—</span></td>
         <td class="mmh-c24-real"><span class="mm-val-c24rr" id="mm-c24rr-${ch.key}">—</span></td>
@@ -923,10 +926,12 @@ function buildMMTable(){
     </tr>`;
     if(ch.key==='shop'){
       html+=`<tr class="mm-naver-c24">
-        <td style="padding-left:12px">└ 네이버 C24 합계</td>
+        <td style="padding-left:12px">└ 네이버 합계</td>
         <td>—</td><td>—</td>
-        <td class="mmh-raw">—</td><td class="mmh-real">—</td><td class="mmh-real-roas">—</td>
-        <td class="mmh-gap"><span id="mm-naver-gap">—</span></td>
+        <td class="mmh-raw"><span id="mm-naver-raw">—</span></td>
+        <td class="mmh-real"><span id="mm-naver-rel">—</span></td>
+        <td class="mmh-real-roas"><span id="mm-naver-relr">—</span></td>
+        <td class="mmh-gap"><span style="font-weight:700;color:#c62828">-18%</span><br><small style="font-size:10px;color:#aaa">4~6월 평균</small></td>
         <td class="mmh-c24"><span class="mm-val-c24" id="mm-naver-c24">—</span></td>
         <td class="mmh-c24-roas"><span id="mm-naver-c24r">—</span></td>
         <td class="mmh-c24-real"><span id="mm-naver-c24rr">—</span></td>
@@ -1002,7 +1007,6 @@ function mmRecalc(){
       const c24r=bgt>0?c24/bgt*100:0;
       const c24Real=c24*0.86;
       const c24RealRoas=bgt>0?c24Real/bgt*100:0;
-      mmSi(`mm-gap-${ch.key}`,mmFmtGap(c24,raw));
       mmSi(`mm-c24-${ch.key}`,mmFmt(c24));
       mmSi(`mm-c24r-${ch.key}`,mmFmtR(c24r));
       mmSi(`mm-c24rr-${ch.key}`,mmFmt(c24Real));
@@ -1016,7 +1020,9 @@ function mmRecalc(){
   const naverC24r=naverBgt>0?naverC24/naverBgt*100:0;
   const naverC24real=naverC24*0.86;
   const naverC24realr=naverBgt>0?naverC24real/naverBgt*100:0;
-  mmSi('mm-naver-gap',mmFmtGap(naverC24,naverRaw));
+  mmSi('mm-naver-raw',mmFmt(naverRaw));
+  mmSi('mm-naver-rel',mmFmt(naverRaw*0.86));
+  mmSi('mm-naver-relr',mmFmtR(naverBgt>0?naverRaw*0.86/naverBgt*100:0));
   mmSi('mm-naver-c24',mmFmt(naverC24));
   mmSi('mm-naver-c24r',mmFmtR(naverC24r));
   mmSi('mm-naver-c24rr',mmFmt(naverC24real));
