@@ -1,0 +1,31 @@
+name: Update Dashboard Daily
+
+on:
+  schedule:
+    - cron: '0 23 * * *'  # 23:00 UTC = 08:00 KST
+  workflow_dispatch:       # 수동 실행 버튼
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Update dashboard
+        env:
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          META_AD_ACCOUNT_IDS: ${{ secrets.META_AD_ACCOUNT_IDS }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_PAGES_REPO: changminkim-debug/hmr-pulse
+          CI_MODE: 'true'
+        run: node scripts/dashboard.js
