@@ -478,13 +478,30 @@ async function fetchMetaC1Rev(){
   });
   return map;
 }
+
+// 스프레드시트 공구제외 오가닉 매출 (gid=897405789, B열=날짜, D열=매출)
+async function fetchOrganicSheet(){
+  const GID_ORG='897405789';
+  const tq='SELECT B, D LIMIT 700 OFFSET 24';
+  const url=;
+  const r=await fetch(url);if(!r.ok)throw new Error('오가닉시트 HTTP '+r.status);
+  const rows=parseCSV(await r.text()).slice(1);
+  const map={};
+  rows.forEach(row=>{
+    if(!row[0]||!row[1])return;
+    const d=row[0].trim();
+    if(d>=START&&d<=END)map[d]=n(row[1]);
+  });
+  return map;
+}
 async function loadMedia(){
   setStatus('매체 데이터 로딩중...','#ccc',false);
   try{
-    const [t1,t2,metaC1]=await Promise.all([
+    const [t1,t2,metaC1,organicMap]=await Promise.all([
       fetchGviz(['C','J','K','L','O','Q','T','V','Y','AA']),
       fetchGviz(['C','AY','BA','BJ','BL','BX','BZ','CH','CI','CC','CE','CL']),
       fetchMetaC1Rev(),
+      fetchOrganicSheet(),
     ]);
     const r1=parseCSV(t1).slice(1),r2=parseCSV(t2).slice(1),m2={},m1={};
     r2.forEach(r=>{if(r[0])m2[r[0].trim()]=r;});
@@ -502,7 +519,7 @@ async function loadMedia(){
           google_sa:{spd:n(x[1]),rev:n(x[2])},google_da:{spd:n(x[3]),rev:n(x[4])},
           payco:{spd:n(x[5]),rev:n(x[6])},aedi:{spd:n(x[7]),rev:n(x[8])},toss:{spd:n(x[9]),rev:n(x[10])},
           content_fee:{spd:n(x[11]),rev:0},
-        },c24:C24[d]||{}};
+        },c24:{...C24[d]||{},organic:organicMap[d]||0}};
     });
     setStatus('완료 · '+new Date().toLocaleTimeString('ko-KR'),'#4caf50',true);
     render();
@@ -560,7 +577,7 @@ function renderKPI(agg){
     <div class="kpi-card"><div class="kpi-label">Cafe24 매출</div><div class="kpi-value">${fmtV(cRev)}</div><div class="kpi-sub">${rc(cR)} C24 ROAS · ${revMode==='actual'?'RAW×0.86':'원본값'}</div></div>
     <div class="kpi-card hl2"><div class="kpi-label">실매출 갭</div><div class="kpi-value">${ratioVal}</div><div class="kpi-sub">C24매출 ÷ 매체매출 − 100%</div></div>
     <div class="kpi-card hl2"><div class="kpi-label">매출액 차이</div><div class="kpi-value">${fmtDiff(revDiff)}</div><div class="kpi-sub">Cafe24 − 매체</div></div>
-    <div class="kpi-card"><div class="kpi-label">오가닉 매출</div><div class="kpi-value">${fmtV(agg.organic.crev)}</div><div class="kpi-sub">채널없음 Cafe24</div></div>
+    <div class="kpi-card"><div class="kpi-label">오가닉 매출</div><div class="kpi-value">${fmtV(agg.organic.crev)}</div><div class="kpi-sub">공구제외 (스프레드시트)</div></div>
   `;
 }
 
