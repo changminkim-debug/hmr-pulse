@@ -159,17 +159,14 @@ tr.top5-hi td{background:#fff8e1!important}
 .mm-tbl thead th{padding:9px 11px;text-align:right;font-size:11px;font-weight:700;color:#8a91a8;letter-spacing:.3px;background:#f7f8fc;white-space:nowrap;border-bottom:1px solid #eaecf3}
 .mm-tbl thead th:first-child{text-align:left;min-width:120px}
 .mm-tbl thead th.mmh-raw{background:#eef2ff;color:#4a6bd8}
-.mm-tbl thead th.mmh-real{background:#e6f4ee;color:#2a7a50}
-.mm-tbl thead th.mmh-real-roas{background:#d4ecdf;color:#1e6040}
-.mm-tbl thead th.mmh-c24{background:#e2ecff;color:#2040b8}
-.mm-tbl thead th.mmh-c24-roas{background:#cfdeff;color:#1a32a8}
-.mm-tbl thead th.mmh-c24-real{background:#bdd0ff;color:#1a32a8}
-.mm-tbl thead th.mmh-c24-real-roas{background:#abc0ff;color:#1a32a8}
+.mm-tbl thead th.mmh-real,.mm-tbl thead th.mmh-real-roas{background:#ddf0e6;color:#1a7040}
+.mm-tbl thead th.mmh-c24,.mm-tbl thead th.mmh-c24-roas{background:#dce8ff;color:#2040b8}
+.mm-tbl thead th.mmh-c24-real,.mm-tbl thead th.mmh-c24-real-roas{background:#b8ccff;color:#1428a0}
 .mm-tbl thead th.mmh-gap{background:#f2f3f7;color:#666}
 .mm-tbl tbody td.mmh-raw{background:#fafbff}
-.mm-tbl tbody td.mmh-real{background:#f8fcf9}
-.mm-tbl tbody td.mmh-c24{background:#f4f7ff}
-.mm-tbl tbody td.mmh-c24-real{background:#f0f4ff}
+.mm-tbl tbody td.mmh-real,.mm-tbl tbody td.mmh-real-roas{background:#f4fbf7}
+.mm-tbl tbody td.mmh-c24,.mm-tbl tbody td.mmh-c24-roas{background:#f4f7ff}
+.mm-tbl tbody td.mmh-c24-real,.mm-tbl tbody td.mmh-c24-real-roas{background:#edf2ff}
 .mm-tbl tbody td.mmh-gap{background:#f9f9fb}
 .mm-tbl tbody tr:not(.mm-total):not(.mm-perf-total):hover td{background:#eef1ff!important;transition:background .1s}
 .mm-tbl tbody tr{border-bottom:1px solid #eef0f6}
@@ -1010,7 +1007,7 @@ function buildMMTable(){
   // 퍼포먼스 TOTAL
   html+=`<tr class="mm-perf-total">
     <td>퍼포먼스 TOTAL</td>
-    <td id="mm-perf-bgt">—</td><td>—</td>
+    <td id="mm-perf-bgt">—</td><td id="mm-perf-rawroas">—</td>
     <td id="mm-perf-raw">—</td>
     <td id="mm-perf-real">—</td>
     <td id="mm-perf-realr">—</td>
@@ -1036,7 +1033,7 @@ function buildMMTable(){
   // 전체 TOTAL
   html+=`<tr class="mm-total">
     <td>전체 TOTAL</td>
-    <td id="mm-tot-bgt">—</td><td>—</td>
+    <td id="mm-tot-bgt">—</td><td id="mm-tot-rawroas">—</td>
     <td id="mm-tot-raw">—</td>
     <td id="mm-tot-rel">—</td>
     <td id="mm-tot-relr">—</td>
@@ -1103,7 +1100,9 @@ function mmRecalc(){
   const perfC24r=perfBgt>0?perfC24/perfBgt*100:0;
   const perfC24real=perfC24*0.86;
   const perfC24realr=perfBgt>0?perfC24real/perfBgt*100:0;
+  const perfRawRoas=perfBgt>0?perfRaw/perfBgt*100:0;
   mmSi('mm-perf-bgt',mmFmtWon(perfBgt));
+  mmSi('mm-perf-rawroas',mmFmtRPill(perfRawRoas));
   mmSi('mm-perf-raw',mmFmt(perfRaw));
   mmSi('mm-perf-real',mmFmt(perfReal));
   mmSi('mm-perf-realr',mmFmtR(perfRealRoas));
@@ -1126,7 +1125,9 @@ function mmRecalc(){
   const totC24r=totBgt>0?totC24/totBgt*100:0;
   const totC24real=totC24*0.86;
   const totC24realr=totBgt>0?totC24real/totBgt*100:0;
+  const totRawRoas=totBgt>0?totRaw/totBgt*100:0;
   mmSi('mm-tot-bgt',mmFmtWon(totBgt));
+  mmSi('mm-tot-rawroas',mmFmtRPill(totRawRoas));
   mmSi('mm-tot-raw',mmFmt(totRaw));
   mmSi('mm-tot-rel',mmFmt(totReal));
   mmSi('mm-tot-relr',mmFmtR(totRealRoas));
