@@ -165,6 +165,7 @@ tr.top5-hi td{background:#fff8e1!important}
 .mm-tbl thead th.mmh-c24-roas{background:#c4d8ff;color:#1a2faa}
 .mm-tbl thead th.mmh-c24-real{background:#adc4ff;color:#1a2faa}
 .mm-tbl thead th.mmh-c24-real-roas{background:#94aeff;color:#1a2faa}
+.mm-tbl thead th.mmh-gap{background:#f0f0f0;color:#555}
 .mm-tbl tbody tr:not(.mm-total):not(.mm-perf-total):hover td{background:#f5f7ff}
 .mm-tbl tbody tr{border-bottom:1px solid #f0f3f9}
 .mm-tbl tbody td{padding:8px 10px;text-align:right;white-space:nowrap;font-size:13px}
@@ -192,6 +193,10 @@ input.mm-org-days:focus{border-color:#4466cc}
 .mm-val-c24rrr{color:#1a2faa;font-weight:600}
 .topbar-mm-btn{padding:7px 15px;background:#4466cc;border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
 .topbar-mm-btn:hover{background:#3355bb}
+.mm-save-btn{padding:5px 13px;background:#3a8a3a;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.mm-save-btn:hover{background:#2e7d2e}
+.mm-load-btn{padding:5px 13px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#fff;font-size:13px;cursor:pointer;font-family:inherit}
+.mm-load-btn:hover{background:rgba(255,255,255,.25)}
 /* Rev Mode Toggle */
 .rev-mode-wrap{display:inline-flex;align-items:center;gap:5px;margin-left:6px}
 .rev-btn{padding:4px 12px;border:1.5px solid #d8dce8;border-radius:8px;background:#fff;color:#8a91a8;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:.12s}
@@ -217,6 +222,8 @@ input.mm-org-days:focus{border-color:#4466cc}
     <div class="mm-modal-hd">
       <span class="mm-modal-title">미디어믹스 계산기</span>
       <span class="mm-modal-badge">7월 시뮬레이션</span>
+      <button class="mm-save-btn" onclick="mmSave()" title="입력값 저장 (브라우저 로컬)">💾 저장</button>
+      <button class="mm-load-btn" onclick="mmLoad()" title="저장된 값 불러오기">불러오기</button>
       <button class="mm-modal-close" onclick="closeMMCalc()">✕</button>
     </div>
     <div class="mm-modal-body">
@@ -230,6 +237,7 @@ input.mm-org-days:focus{border-color:#4466cc}
               <th rowspan="2">RAW ROAS</th>
               <th class="mmh-raw" rowspan="2">매체 RAW<br>매출</th>
               <th class="mmh-real" colspan="2">매체 실매출</th>
+              <th class="mmh-gap" rowspan="2">매출 갭</th>
               <th class="mmh-c24" colspan="4">C24 기준</th>
             </tr>
             <tr>
@@ -818,6 +826,38 @@ function closeMMCalc(){
   document.removeEventListener('keydown',mmEsc);
 }
 function mmEsc(e){if(e.key==='Escape')closeMMCalc();}
+function mmSave(){
+  const data={};
+  CALC_CH.forEach(ch=>{
+    const b=document.getElementById(`mm-b-${ch.key}`);
+    const r=document.getElementById(`mm-r-${ch.key}`);
+    if(b)data[`b_${ch.key}`]=b.value;
+    if(r)data[`r_${ch.key}`]=r.value;
+  });
+  const bc=document.getElementById('mm-b-content');
+  if(bc)data['b_content']=bc.value;
+  const od=document.getElementById('mm-org-days');
+  if(od)data['org_days']=od.value;
+  localStorage.setItem('mm-calc-save',JSON.stringify(data));
+  const btn=document.querySelector('.mm-save-btn');
+  if(btn){const t=btn.textContent;btn.textContent='✅ 저장됨';setTimeout(()=>btn.textContent=t,1500);}
+}
+function mmLoad(){
+  const raw=localStorage.getItem('mm-calc-save');
+  if(!raw){alert('저장된 값이 없습니다.');return;}
+  const data=JSON.parse(raw);
+  CALC_CH.forEach(ch=>{
+    const b=document.getElementById(`mm-b-${ch.key}`);
+    const r=document.getElementById(`mm-r-${ch.key}`);
+    if(b&&data[`b_${ch.key}`]!==undefined)b.value=data[`b_${ch.key}`];
+    if(r&&data[`r_${ch.key}`]!==undefined)r.value=data[`r_${ch.key}`];
+  });
+  const bc=document.getElementById('mm-b-content');
+  if(bc&&data['b_content']!==undefined)bc.value=data['b_content'];
+  const od=document.getElementById('mm-org-days');
+  if(od&&data['org_days']!==undefined)od.value=data['org_days'];
+  mmRecalc();
+}
 
 function mmFmt(v){
   if(!v||v===0)return'<span class="dash">—</span>';
@@ -836,6 +876,16 @@ function mmFmtR(v){
   return Math.round(v)+'%';
 }
 function mmSi(id,html){const el=document.getElementById(id);if(el)el.innerHTML=html;}
+function mmFmtGap(c24,raw){
+  if(!raw&&!c24)return'<span class="dash">—</span>';
+  const diff=c24-raw;
+  const pct=raw>0?Math.round(c24/raw*100-100):null;
+  const color=diff>=0?'#2e7d32':'#c62828';
+  const sign=diff>=0?'+':'';
+  const pctStr=pct!==null?`<span style="font-weight:700;color:${color}">${pct>=0?'+':''}${pct}%</span><br>`:'';
+  const diffStr=`<small style="font-size:11px;color:#888">${sign}${mmFmtWon(Math.abs(diff))}</small>`;
+  return pctStr+diffStr;
+}
 function mmBgtFmt(el){
   const num=parseInt(el.value.replace(/[^0-9]/g,''))||0;
   const pos=el.selectionStart-(el.value.length);
@@ -853,9 +903,10 @@ function buildMMTable(){
     const cpsWarn=ch.cps?`<span class="mm-cps-warn" title="CPS 채널 — C24 포착 낮음">⚠</span>`:'';
     let c24Cols;
     if(isNaver){
-      c24Cols=`<td class="mmh-c24" colspan="4" style="color:#bbb;font-size:11px;text-align:center">네이버 통합↓</td>`;
+      c24Cols=`<td class="mmh-gap">—</td><td class="mmh-c24" colspan="4" style="color:#bbb;font-size:11px;text-align:center">네이버 통합↓</td>`;
     }else{
       c24Cols=`
+        <td class="mmh-gap"><span id="mm-gap-${ch.key}">—</span></td>
         <td class="mmh-c24"><span class="mm-val-c24" id="mm-c24-${ch.key}">—</span>${cpsWarn}</td>
         <td class="mmh-c24-roas"><span class="mm-val-c24r" id="mm-c24r-${ch.key}">—</span></td>
         <td class="mmh-c24-real"><span class="mm-val-c24rr" id="mm-c24rr-${ch.key}">—</span></td>
@@ -875,6 +926,7 @@ function buildMMTable(){
         <td style="padding-left:12px">└ 네이버 C24 합계</td>
         <td>—</td><td>—</td>
         <td class="mmh-raw">—</td><td class="mmh-real">—</td><td class="mmh-real-roas">—</td>
+        <td class="mmh-gap"><span id="mm-naver-gap">—</span></td>
         <td class="mmh-c24"><span class="mm-val-c24" id="mm-naver-c24">—</span></td>
         <td class="mmh-c24-roas"><span id="mm-naver-c24r">—</span></td>
         <td class="mmh-c24-real"><span id="mm-naver-c24rr">—</span></td>
@@ -888,6 +940,7 @@ function buildMMTable(){
     <td><input class="mm-bgt" id="mm-b-content" type="text" inputmode="numeric" placeholder="0" oninput="mmBgtFmt(this)"></td>
     <td>—</td>
     <td class="mmh-raw">—</td><td class="mmh-real">—</td><td class="mmh-real-roas">—</td>
+    <td class="mmh-gap">—</td>
     <td class="mmh-c24">—</td><td class="mmh-c24-roas">—</td><td class="mmh-c24-real">—</td><td class="mmh-c24-real-roas">—</td>
   </tr>`;
   // 퍼포먼스 TOTAL
@@ -897,6 +950,7 @@ function buildMMTable(){
     <td id="mm-perf-raw">—</td>
     <td id="mm-perf-real">—</td>
     <td id="mm-perf-realr">—</td>
+    <td id="mm-perf-gap">—</td>
     <td id="mm-perf-c24">—</td>
     <td id="mm-perf-c24r">—</td>
     <td id="mm-perf-c24rr">—</td>
@@ -907,6 +961,7 @@ function buildMMTable(){
     <td>오가닉 예측 (<input class="mm-org-days" id="mm-org-days" type="number" min="1" max="31" value="31" oninput="mmRecalc()">일)</td>
     <td>—</td><td>—</td>
     <td class="mmh-raw">—</td><td class="mmh-real">—</td><td class="mmh-real-roas">—</td>
+    <td class="mmh-gap">—</td>
     <td class="mmh-c24"><span id="mm-org-c24">—</span></td>
     <td class="mmh-c24-roas">—</td>
     <td class="mmh-c24-real"><span id="mm-org-c24rr">—</span></td>
@@ -919,6 +974,7 @@ function buildMMTable(){
     <td id="mm-tot-raw">—</td>
     <td id="mm-tot-rel">—</td>
     <td id="mm-tot-relr">—</td>
+    <td id="mm-tot-gap">—</td>
     <td id="mm-tot-c24">—</td>
     <td id="mm-tot-c24r">—</td>
     <td id="mm-tot-c24rr">—</td>
@@ -946,6 +1002,7 @@ function mmRecalc(){
       const c24r=bgt>0?c24/bgt*100:0;
       const c24Real=c24*0.86;
       const c24RealRoas=bgt>0?c24Real/bgt*100:0;
+      mmSi(`mm-gap-${ch.key}`,mmFmtGap(c24,raw));
       mmSi(`mm-c24-${ch.key}`,mmFmt(c24));
       mmSi(`mm-c24r-${ch.key}`,mmFmtR(c24r));
       mmSi(`mm-c24rr-${ch.key}`,mmFmt(c24Real));
@@ -959,6 +1016,7 @@ function mmRecalc(){
   const naverC24r=naverBgt>0?naverC24/naverBgt*100:0;
   const naverC24real=naverC24*0.86;
   const naverC24realr=naverBgt>0?naverC24real/naverBgt*100:0;
+  mmSi('mm-naver-gap',mmFmtGap(naverC24,naverRaw));
   mmSi('mm-naver-c24',mmFmt(naverC24));
   mmSi('mm-naver-c24r',mmFmtR(naverC24r));
   mmSi('mm-naver-c24rr',mmFmt(naverC24real));
@@ -976,6 +1034,7 @@ function mmRecalc(){
   mmSi('mm-perf-raw',mmFmt(perfRaw));
   mmSi('mm-perf-real',mmFmt(perfReal));
   mmSi('mm-perf-realr',mmFmtR(perfRealRoas));
+  mmSi('mm-perf-gap',mmFmtGap(perfC24,perfRaw));
   mmSi('mm-perf-c24',mmFmt(perfC24));
   mmSi('mm-perf-c24r',mmFmtR(perfC24r));
   mmSi('mm-perf-c24rr',mmFmt(perfC24real));
@@ -999,6 +1058,7 @@ function mmRecalc(){
   mmSi('mm-tot-raw',mmFmt(totRaw));
   mmSi('mm-tot-rel',mmFmt(totReal));
   mmSi('mm-tot-relr',mmFmtR(totRealRoas));
+  mmSi('mm-tot-gap',mmFmtGap(totC24,totRaw));
   mmSi('mm-tot-c24',mmFmt(totC24));
   mmSi('mm-tot-c24r',mmFmtR(totC24r));
   mmSi('mm-tot-c24rr',mmFmt(totC24real));
