@@ -452,12 +452,29 @@ async function fetchGviz(cols){
   const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}&tq=${encodeURIComponent(tq)}`;
   const r=await fetch(url);if(!r.ok)throw new Error('HTTP '+r.status);return r.text();
 }
+// 02.메타 시트에서 일자(E)별 C1 전환값(U) 합산 로드
+async function fetchMetaC1Rev(){
+  const tq=`SELECT E, SUM(U) WHERE E >= date '${START}' AND E <= date '${END}' GROUP BY E ORDER BY E`;
+  const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=02.%EB%A9%94%ED%83%80&tq=${encodeURIComponent(tq)}`;
+  const r=await fetch(url);if(!r.ok)throw new Error('메타C1 HTTP '+r.status);
+  const rows=parseCSV(await r.text()).slice(1);
+  const map={};
+  rows.forEach(row=>{
+    if(!row[0])return;
+    // "2026-4-1" → "2026-04-01" 정규화
+    const p=row[0].split('-');
+    const d=p[0]+'-'+p[1].padStart(2,'0')+'-'+p[2].padStart(2,'0');
+    map[d]=n(row[1]);
+  });
+  return map;
+}
 async function loadMedia(){
   setStatus('매체 데이터 로딩중...','#ccc',false);
   try{
-    const [t1,t2]=await Promise.all([
+    const [t1,t2,metaC1]=await Promise.all([
       fetchGviz(['C','J','K','L','O','Q','T','V','Y','AA']),
-      fetchGviz(['C','AY','BA','BJ','BL','BX','BZ','CH','CI','CC','CE','CL'])
+      fetchGviz(['C','AY','BA','BJ','BL','BX','BZ','CH','CI','CC','CE','CL']),
+      fetchMetaC1Rev(),
     ]);
     const r1=parseCSV(t1).slice(1),r2=parseCSV(t2).slice(1),m2={},m1={};
     r2.forEach(r=>{if(r[0])m2[r[0].trim()]=r;});
@@ -471,7 +488,7 @@ async function loadMedia(){
         media:{
           naver:{spd:bs+pl+sh,rev:n(r[3])+n(r[5])+n(r[7])},
           naver_brand:{spd:bs,rev:n(r[3])},naver_pl:{spd:pl,rev:n(r[5])},naver_sh:{spd:sh,rev:n(r[7])},
-          meta:{spd:n(r[8]),rev:n(r[9])},
+          meta:{spd:n(r[8]),rev:metaC1[d]||0}, // C1 전환값 기준 (02.메타 시트 U열)
           google_sa:{spd:n(x[1]),rev:n(x[2])},google_da:{spd:n(x[3]),rev:n(x[4])},
           payco:{spd:n(x[5]),rev:n(x[6])},aedi:{spd:n(x[7]),rev:n(x[8])},toss:{spd:n(x[9]),rev:n(x[10])},
           content_fee:{spd:n(x[11]),rev:0},
@@ -814,7 +831,7 @@ const CALC_CH=[
   {key:'brand',    label:'브랜드검색', group:'naver', defRoas:7310, gap:NAVER_GAP},
   {key:'power',    label:'파워링크',   group:'naver', defRoas:688,  gap:NAVER_GAP},
   {key:'shop',     label:'쇼핑검색',   group:'naver', defRoas:602,  gap:NAVER_GAP},
-  {key:'meta',     label:'메타',       group:'meta',  defRoas:233,  gap:0.82}, // 4~6월 평균 -18%
+  {key:'meta',     label:'메타',       group:'meta',  defRoas:233,  gap:0.80}, // C1 기준 4~6월 평균 -20%
   {key:'google_sa',label:'구글 SA',    group:'gsa',   defRoas:774,  gap:0.62}, // 5~6월 평균 (4월 누락)
   {key:'google_da',label:'구글 DA',    group:'gda',   defRoas:258,  gap:0.92}, // 6월 기준 -8%
   {key:'payco',    label:'페이코',     group:'payco', defRoas:396,  gap:0.31, cps:true}, // 4~6월 평균 -69%
