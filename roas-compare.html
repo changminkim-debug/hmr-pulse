@@ -826,17 +826,17 @@ document.querySelector('[data-view="monthly"]').classList.add('active');
 loadMedia();
 
 // ═══ 미디어믹스 계산기 ════════════════════════════════════════════
-const NAVER_GAP=0.80; // 4~6월 평균 (4월-18.5% / 5월-24.0% / 6월-17.3%)
+const NAVER_GAP=0.69; // 4~6월 평균 (4월-30% / 5월-35% / 6월-29%) — 대시보드 동일 기준
 const CALC_CH=[
   {key:'brand',    label:'브랜드검색', group:'naver', defRoas:7310, gap:NAVER_GAP},
   {key:'power',    label:'파워링크',   group:'naver', defRoas:688,  gap:NAVER_GAP},
   {key:'shop',     label:'쇼핑검색',   group:'naver', defRoas:602,  gap:NAVER_GAP},
-  {key:'meta',     label:'메타',       group:'meta',  defRoas:233,  gap:0.80}, // C1 기준 4~6월 평균 -20%
-  {key:'google_sa',label:'구글 SA',    group:'gsa',   defRoas:774,  gap:0.62}, // 5~6월 평균 (4월 누락)
-  {key:'google_da',label:'구글 DA',    group:'gda',   defRoas:258,  gap:0.92}, // 6월 기준 -8%
-  {key:'payco',    label:'페이코',     group:'payco', defRoas:396,  gap:0.31, cps:true}, // 4~6월 평균 -69%
-  {key:'toss',     label:'토스페이',   group:'toss',  defRoas:396,  gap:0.28, cps:true}, // 4~6월 평균 -72%
-  {key:'aedi',     label:'에디ai',     group:'aedi',  defRoas:396,  gap:1.00}, // 4~6월 갭 없음 0%
+  {key:'meta',     label:'메타',       group:'meta',  defRoas:233,  gap:0.80}, // C1 RAW 기준 4~6월 평균 -20%
+  {key:'google_sa',label:'구글 SA',    group:'gsa',   defRoas:774,  gap:0.53}, // 5~6월 평균 (4월 누락)
+  {key:'google_da',label:'구글 DA',    group:'gda',   defRoas:258,  gap:0.79}, // 6월 기준 -21%
+  {key:'payco',    label:'페이코',     group:'payco', defRoas:396,  gap:0.27, cps:true}, // 4~6월 평균 -73%
+  {key:'toss',     label:'토스페이',   group:'toss',  defRoas:396,  gap:0.24, cps:true}, // 4~6월 평균 -76%
+  {key:'aedi',     label:'에디ai',     group:'aedi',  defRoas:396,  gap:1.00}, // 4~6월 0%
 ];
 const MM_ORGANIC_RATIO=1.07; // 4~6월 오가닉/광고비 비율 (총오가닉30.94억/총광고비28.91억)
 let mmBuilt=false;
