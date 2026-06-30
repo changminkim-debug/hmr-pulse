@@ -396,7 +396,7 @@ const CH_META={
 };
 const NAVER_SUBS=[{key:'naver_brand',label:'브랜드검색'},{key:'naver_pl',label:'파워링크'},{key:'naver_sh',label:'쇼핑검색'}];
 let rawDays=[],activeMonth='all',activeView='monthly',activeCh='all',naverExpanded=false,revMode='raw';
-function mRev(v){return revMode==='actual'?v:v/0.86;}
+function mRev(v,ch){return revMode==='actual'?v:v/(ch==='aedi'?0.9:0.86);}
 function cRev(v){return revMode==='actual'?v*0.86:v;}
 
 // ═══ HELPERS ══════════════════════════════════════════════════════
@@ -473,15 +473,15 @@ function filteredDays(){return activeMonth==='all'?rawDays:rawDays.filter(d=>d.m
 function aggDays(days){
   const res={};PAID_CH.forEach(k=>res[k]={spd:0,mrev:0,crev:0});res.organic={crev:0};res.content_fee={spd:0};
   days.forEach(d=>{
-    PAID_CH.forEach(k=>{res[k].spd+=(d.media[k]||{spd:0}).spd;res[k].mrev+=mRev((d.media[k]||{rev:0}).rev);res[k].crev+=cRev(d.c24[k]||0);});
+    PAID_CH.forEach(k=>{res[k].spd+=(d.media[k]||{spd:0}).spd;res[k].mrev+=mRev((d.media[k]||{rev:0}).rev,k);res[k].crev+=cRev(d.c24[k]||0);});
     res.organic.crev+=cRev(d.c24.organic||0);
     res.content_fee.spd+=(d.media.content_fee||{spd:0}).spd;
   });return res;
 }
 function chMetrics(day,ch){
   if(!day)return{spd:0,mrev:0,crev:0};
-  if(ch==='all')return{spd:PAID_CH.reduce((s,k)=>s+(day.media[k]||{spd:0}).spd,0),mrev:mRev(PAID_CH.reduce((s,k)=>s+(day.media[k]||{rev:0}).rev,0)),crev:cRev(PAID_CH.reduce((s,k)=>s+(day.c24[k]||0),0))};
-  return{spd:(day.media[ch]||{spd:0}).spd,mrev:mRev((day.media[ch]||{rev:0}).rev),crev:cRev(day.c24[ch]||0)};
+  if(ch==='all')return{spd:PAID_CH.reduce((s,k)=>s+(day.media[k]||{spd:0}).spd,0),mrev:PAID_CH.reduce((s,k)=>s+mRev((day.media[k]||{rev:0}).rev,k),0),crev:cRev(PAID_CH.reduce((s,k)=>s+(day.c24[k]||0),0))};
+  return{spd:(day.media[ch]||{spd:0}).spd,mrev:mRev((day.media[ch]||{rev:0}).rev,ch),crev:cRev(day.c24[ch]||0)};
 }
 
 // ═══ RENDER ═══════════════════════════════════════════════════════
@@ -518,7 +518,7 @@ function renderKPI(agg){
 // ── Main Table ─────────────────────────────────────────────────────
 function renderMainTable(agg,days){
   const subAgg={};
-  NAVER_SUBS.forEach(({key})=>{subAgg[key]={spd:0,mrev:0};days.forEach(d=>{subAgg[key].spd+=(d.media[key]||{spd:0}).spd;subAgg[key].mrev+=mRev((d.media[key]||{rev:0}).rev);});});
+  NAVER_SUBS.forEach(({key})=>{subAgg[key]={spd:0,mrev:0};days.forEach(d=>{subAgg[key].spd+=(d.media[key]||{spd:0}).spd;subAgg[key].mrev+=mRev((d.media[key]||{rev:0}).rev,key);});});
   let rows='';
   PAID_CH.forEach(k=>{
     const{spd,mrev,crev}=agg[k],m=CH_META[k];
