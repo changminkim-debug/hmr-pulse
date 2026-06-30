@@ -279,6 +279,7 @@ input.mm-org-days:focus{border-color:#4466cc}
   <div class="filter-bar">
     <span class="flabel">기간</span>
     <button class="fbtn" data-m="all">전체 (3~6월)</button>
+    <button class="fbtn" data-m="q2">4~6월</button>
     <button class="fbtn" data-m="2026-03">3월</button>
     <button class="fbtn" data-m="2026-04">4월</button>
     <button class="fbtn" data-m="2026-05">5월</button>
@@ -505,7 +506,11 @@ async function loadMedia(){
 function setStatus(m,c,ok){document.getElementById('stxt').textContent=m;const d=document.getElementById('sdot');d.style.background=c;d.className='status-dot'+(ok?' ok':'');}
 
 // ═══ AGGREGATE ════════════════════════════════════════════════════
-function filteredDays(){return activeMonth==='all'?rawDays:rawDays.filter(d=>d.month===activeMonth);}
+function filteredDays(){
+  if(activeMonth==='all') return rawDays;
+  if(activeMonth==='q2') return rawDays.filter(d=>d.month>='2026-04');
+  return rawDays.filter(d=>d.month===activeMonth);
+}
 function aggDays(days){
   const res={};PAID_CH.forEach(k=>res[k]={spd:0,mrev:0,crev:0});res.organic={crev:0};res.content_fee={spd:0};
   days.forEach(d=>{
@@ -526,7 +531,7 @@ function render(){
   renderKPI(agg);
   renderMainTable(agg,days);
   renderCompare();
-  document.getElementById('tbl-badge').textContent=activeMonth==='all'?'3~6월 합계':activeMonth;
+  document.getElementById('tbl-badge').textContent=activeMonth==='all'?'3~6월 합계':activeMonth==='q2'?'4~6월 합계':activeMonth;
   if(activeView==='daily'){document.getElementById('daily-section').style.display='';renderDailyTable(days);}
   else{document.getElementById('daily-section').style.display='none';}
   renderOrganicTable();
