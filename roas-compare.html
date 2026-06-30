@@ -397,7 +397,7 @@ const CH_META={
 const NAVER_SUBS=[{key:'naver_brand',label:'브랜드검색'},{key:'naver_pl',label:'파워링크'},{key:'naver_sh',label:'쇼핑검색'}];
 let rawDays=[],activeMonth='all',activeView='monthly',activeCh='all',naverExpanded=false,revMode='raw';
 function mRev(v,ch){return revMode==='actual'?v:v/(ch==='aedi'?0.9:0.86);}
-function cRev(v){return revMode==='actual'?v*0.86:v;}
+function cRev(v,ch){return revMode==='actual'?v*(ch==='aedi'?0.9:0.86):v;}
 
 // ═══ HELPERS ══════════════════════════════════════════════════════
 function n(v){return parseFloat((v||'0').replace(/,/g,''))||0;}
@@ -473,15 +473,15 @@ function filteredDays(){return activeMonth==='all'?rawDays:rawDays.filter(d=>d.m
 function aggDays(days){
   const res={};PAID_CH.forEach(k=>res[k]={spd:0,mrev:0,crev:0});res.organic={crev:0};res.content_fee={spd:0};
   days.forEach(d=>{
-    PAID_CH.forEach(k=>{res[k].spd+=(d.media[k]||{spd:0}).spd;res[k].mrev+=mRev((d.media[k]||{rev:0}).rev,k);res[k].crev+=cRev(d.c24[k]||0);});
-    res.organic.crev+=cRev(d.c24.organic||0);
+    PAID_CH.forEach(k=>{res[k].spd+=(d.media[k]||{spd:0}).spd;res[k].mrev+=mRev((d.media[k]||{rev:0}).rev,k);res[k].crev+=cRev(d.c24[k]||0,k);});
+    res.organic.crev+=cRev(d.c24.organic||0,'organic');
     res.content_fee.spd+=(d.media.content_fee||{spd:0}).spd;
   });return res;
 }
 function chMetrics(day,ch){
   if(!day)return{spd:0,mrev:0,crev:0};
-  if(ch==='all')return{spd:PAID_CH.reduce((s,k)=>s+(day.media[k]||{spd:0}).spd,0),mrev:PAID_CH.reduce((s,k)=>s+mRev((day.media[k]||{rev:0}).rev,k),0),crev:cRev(PAID_CH.reduce((s,k)=>s+(day.c24[k]||0),0))};
-  return{spd:(day.media[ch]||{spd:0}).spd,mrev:mRev((day.media[ch]||{rev:0}).rev,ch),crev:cRev(day.c24[ch]||0)};
+  if(ch==='all')return{spd:PAID_CH.reduce((s,k)=>s+(day.media[k]||{spd:0}).spd,0),mrev:PAID_CH.reduce((s,k)=>s+mRev((day.media[k]||{rev:0}).rev,k),0),crev:PAID_CH.reduce((s,k)=>s+cRev(day.c24[k]||0,k),0)};
+  return{spd:(day.media[ch]||{spd:0}).spd,mrev:mRev((day.media[ch]||{rev:0}).rev,ch),crev:cRev(day.c24[ch]||0,ch)};
 }
 
 // ═══ RENDER ═══════════════════════════════════════════════════════
@@ -667,8 +667,8 @@ function renderDailyTable(days){
   // 오가닉 특별 처리
   if(ch==='organic'){
     let rows='';
-    days.forEach(d=>{rows+=`<tr><td>${d.date}</td><td>${fmtV(cRev(d.c24.organic||0))}</td></tr>`;});
-    const tot=days.reduce((s,d)=>s+cRev(d.c24.organic||0),0);
+    days.forEach(d=>{rows+=`<tr><td>${d.date}</td><td>${fmtV(cRev(d.c24.organic||0,'organic'))}</td></tr>`;});
+    const tot=days.reduce((s,d)=>s+cRev(d.c24.organic||0,'organic'),0);
     rows+=`<tr class="tr-total"><td>합계 (${days.length}일)</td><td>${fmtV(tot)}</td></tr>`;
     document.getElementById('daily-table').innerHTML=`<table>
       <thead><tr><th style="text-align:left">날짜</th><th class="gb">오가닉 매출 (Cafe24)</th></tr></thead>
@@ -718,8 +718,8 @@ function renderDailyTable(days){
 // 항상 전체 기간 표시 (기간 필터 무관)
 function renderOrganicTable(){
   const byM={};
-  rawDays.forEach(d=>{if(!byM[d.month])byM[d.month]={crev:0,cnt:0};byM[d.month].crev+=cRev(d.c24.organic||0);byM[d.month].cnt++;});
-  const totalRev=rawDays.reduce((s,d)=>s+cRev(d.c24.organic||0),0);
+  rawDays.forEach(d=>{if(!byM[d.month])byM[d.month]={crev:0,cnt:0};byM[d.month].crev+=cRev(d.c24.organic||0,'organic');byM[d.month].cnt++;});
+  const totalRev=rawDays.reduce((s,d)=>s+cRev(d.c24.organic||0,'organic'),0);
   const totalCnt=rawDays.length;
   let rows='';
   Object.keys(byM).sort().forEach(m=>{
