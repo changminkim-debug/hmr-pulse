@@ -203,6 +203,9 @@ input.mm-org-days:focus{border-color:#4466cc}
 .topbar-mm-btn:hover{background:#3355bb}
 .mm-save-btn{padding:5px 13px;background:#3a8a3a;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
 .mm-save-btn:hover{background:#2e7d2e}
+.mm-dl-btn{padding:5px 13px;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.mm-dl-btn.csv{background:#1565c0}.mm-dl-btn.csv:hover{background:#0d47a1}
+.mm-dl-btn.xlsx{background:#1b5e20}.mm-dl-btn.xlsx:hover{background:#145a18}
 .mm-saved-label{font-size:13px;color:#a8e6a8;font-weight:700;padding:0 4px}
 .mm-edit-btn{padding:5px 13px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#fff;font-size:13px;cursor:pointer;font-family:inherit}
 .mm-edit-btn:hover{background:rgba(255,255,255,.25)}
@@ -212,6 +215,7 @@ input.mm-org-days:focus{border-color:#4466cc}
 .rev-btn:hover{border-color:#4466cc;color:#4466cc}
 .rev-btn.active{background:#4466cc;border-color:#4466cc;color:#fff}
 </style>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -231,7 +235,7 @@ input.mm-org-days:focus{border-color:#4466cc}
     <div class="mm-modal-hd">
       <span class="mm-modal-title">미디어믹스 계산기</span>
       <span class="mm-modal-badge">7월 시뮬레이션</span>
-      <button class="mm-save-btn" id="mm-btn-save" onclick="mmSave()">💾 저장</button>
+      <button class="mm-dl-btn csv" onclick="mmDownloadCSV()">CSV ↓</button><button class="mm-dl-btn xlsx" onclick="mmDownloadXLSX()">엑셀 ↓</button><button class="mm-save-btn" id="mm-btn-save" onclick="mmSave()">💾 저장</button>
       <span class="mm-saved-label" id="mm-saved-label" style="display:none">✅ 저장됨</span>
       <button class="mm-edit-btn" id="mm-btn-edit" onclick="mmEdit()" style="display:none">✏️ 수정</button>
       <button class="mm-modal-close" onclick="closeMMCalc()">✕</button>
@@ -872,6 +876,68 @@ function closeMMCalc(){
   document.removeEventListener('keydown',mmEsc);
 }
 function mmEsc(e){if(e.key==='Escape')closeMMCalc();}
+
+function mmGetTableData(){
+  const rows=[];
+  rows.push(['채널','예산(원)','RAW ROAS(%)','매체RAW매출','매체실매출','실매출ROAS(%)','매출갭(%)','C24매출','C24ROAS(%)','C24실매출','C24실매출ROAS(%)','비고']);
+  let perfBgt=0,perfRaw=0,perfReal=0,perfC24=0,naverRaw=0,naverBgt=0,naverReal=0;
+  CALC_CH.forEach(ch=>{
+    const bgt=parseInt((document.getElementById('mm-b-'+ch.key)?.value||'').replace(/,/g,''))||0;
+    const r=parseFloat(document.getElementById('mm-r-'+ch.key)?.value)||ch.defRoas;
+    const raw=bgt*r/100;
+    const real=raw*0.86;
+    const realRoas=bgt>0?Math.round(real/bgt*100):0;
+    const note=document.getElementById('mm-note-'+ch.key)?.value||'';
+    const isNaver=ch.group==='naver';
+    if(isNaver){
+      naverRaw+=raw;naverBgt+=bgt;naverReal+=real;
+      rows.push([ch.label,bgt,Math.round(r),Math.round(raw),Math.round(real),realRoas,'','','','','',note]);
+    }else{
+      const gapPct=Math.round(ch.gap*100-100);
+      const c24=raw*ch.gap,c24r=bgt>0?Math.round(c24/bgt*100):0,c24Real=c24*0.86,c24RealRoas=bgt>0?Math.round(c24Real/bgt*100):0;
+      rows.push([ch.label,bgt,Math.round(r),Math.round(raw),Math.round(real),realRoas,gapPct,Math.round(c24),c24r,Math.round(c24Real),c24RealRoas,note]);
+      perfC24+=c24;
+    }
+    perfBgt+=bgt;perfRaw+=raw;perfReal+=real;
+  });
+  // 네이버 합계
+  const nC24=naverRaw*NAVER_GAP,nGapPct=Math.round(NAVER_GAP*100-100),nC24r=naverBgt>0?Math.round(nC24/naverBgt*100):0,nC24real=nC24*0.86,nC24realr=naverBgt>0?Math.round(nC24real/naverBgt*100):0;
+  rows.push(['└ 네이버 합계',naverBgt,naverBgt>0?Math.round(naverRaw/naverBgt*100):'',Math.round(naverRaw),Math.round(naverReal),naverBgt>0?Math.round(naverReal/naverBgt*100):'',nGapPct,Math.round(nC24),nC24r,Math.round(nC24real),nC24realr,'']);
+  perfC24+=nC24;
+  // 콘텐츠 비용
+  const cfBgt=parseInt((document.getElementById('mm-b-content')?.value||'').replace(/,/g,''))||0;
+  rows.push(['콘텐츠 비용',cfBgt,'','','','','','','','','',document.getElementById('mm-note-content')?.value||'']);
+  perfBgt+=cfBgt;
+  // 퍼포먼스 TOTAL
+  const pRealRoas=perfBgt>0?Math.round(perfReal/perfBgt*100):0,pC24r=perfBgt>0?Math.round(perfC24/perfBgt*100):0,pC24real=perfC24*0.86,pC24realr=perfBgt>0?Math.round(pC24real/perfBgt*100):0;
+  rows.push(['퍼포먼스 TOTAL',perfBgt,'',Math.round(perfRaw),Math.round(perfReal),pRealRoas,'',Math.round(perfC24),pC24r,Math.round(pC24real),pC24realr,'']);
+  // 오가닉 예측
+  const orgC24=perfBgt*MM_ORGANIC_RATIO,orgC24real=orgC24*0.86;
+  rows.push(['오가닉 예측 (광고비×107%)','','','','','','',Math.round(orgC24),'',Math.round(orgC24real),'','']);
+  // 전체 TOTAL
+  const totC24=perfC24+orgC24,totC24r=perfBgt>0?Math.round(totC24/perfBgt*100):0,totC24real=totC24*0.86,totC24realr=perfBgt>0?Math.round(totC24real/perfBgt*100):0;
+  rows.push(['전체 TOTAL',perfBgt,'',Math.round(perfRaw),Math.round(perfReal),'','',Math.round(totC24),totC24r,Math.round(totC24real),totC24realr,'']);
+  return rows;
+}
+function mmDownloadCSV(){
+  const rows=mmGetTableData();
+  const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(',')).join('
+');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download='미디어믹스_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();URL.revokeObjectURL(a.href);
+}
+function mmDownloadXLSX(){
+  const rows=mmGetTableData();
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  // 숫자 열 너비 자동 조정
+  ws['!cols']=[{wch:14},{wch:14},{wch:12},{wch:14},{wch:14},{wch:12},{wch:10},{wch:14},{wch:12},{wch:14},{wch:14},{wch:20}];
+  // 헤더 행 스타일 (SheetJS CE에서는 제한적)
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,'미디어믹스',ws);
+  XLSX.writeFile(wb,'미디어믹스_'+new Date().toISOString().slice(0,10)+'.xlsx');
+}
 function mmSave(){
   const data={};
   CALC_CH.forEach(ch=>{
