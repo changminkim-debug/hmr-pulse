@@ -836,6 +836,13 @@ function mmFmtR(v){
   return Math.round(v)+'%';
 }
 function mmSi(id,html){const el=document.getElementById(id);if(el)el.innerHTML=html;}
+function mmBgtFmt(el){
+  const num=parseInt(el.value.replace(/[^0-9]/g,''))||0;
+  const pos=el.selectionStart-(el.value.length);
+  el.value=num?num.toLocaleString():'';
+  try{el.setSelectionRange(el.value.length+pos,el.value.length+pos);}catch(e){}
+  mmRecalc();
+}
 
 function buildMMTable(){
   let html='';
@@ -856,7 +863,7 @@ function buildMMTable(){
     }
     html+=`<tr${rowCls}>
       <td${lpad}>${ch.label}</td>
-      <td><input class="mm-bgt" id="mm-b-${ch.key}" type="number" min="0" step="10000" placeholder="0" oninput="mmRecalc()"></td>
+      <td><input class="mm-bgt" id="mm-b-${ch.key}" type="text" inputmode="numeric" placeholder="0" oninput="mmBgtFmt(this)"></td>
       <td><input class="mm-roas" id="mm-r-${ch.key}" type="number" min="1" step="1" value="${ch.defRoas}" oninput="mmRecalc()"></td>
       <td class="mmh-raw"><span class="mm-val-raw" id="mm-raw-${ch.key}">—</span></td>
       <td class="mmh-real"><span class="mm-val-real" id="mm-rel-${ch.key}">—</span></td>
@@ -878,7 +885,7 @@ function buildMMTable(){
   // 콘텐츠 비용 (예산만)
   html+=`<tr class="mm-content-fee">
     <td>콘텐츠 비용</td>
-    <td><input class="mm-bgt" id="mm-b-content" type="number" min="0" step="10000" placeholder="0" oninput="mmRecalc()"></td>
+    <td><input class="mm-bgt" id="mm-b-content" type="text" inputmode="numeric" placeholder="0" oninput="mmBgtFmt(this)"></td>
     <td>—</td>
     <td class="mmh-raw">—</td><td class="mmh-real">—</td><td class="mmh-real-roas">—</td>
     <td class="mmh-c24">—</td><td class="mmh-c24-roas">—</td><td class="mmh-c24-real">—</td><td class="mmh-c24-real-roas">—</td>
@@ -924,7 +931,7 @@ function buildMMTable(){
 function mmRecalc(){
   let perfBgt=0,perfRaw=0,perfReal=0,perfC24=0,naverRaw=0,naverBgt=0;
   CALC_CH.forEach(ch=>{
-    const bgt=parseInt(document.getElementById(`mm-b-${ch.key}`)?.value)||0;
+    const bgt=parseInt((document.getElementById(`mm-b-${ch.key}`)?.value||'').replace(/,/g,''))||0;
     const r=parseFloat(document.getElementById(`mm-r-${ch.key}`)?.value)||ch.defRoas;
     const raw=bgt*r/100;
     const real=raw*0.86;
@@ -958,7 +965,7 @@ function mmRecalc(){
   mmSi('mm-naver-c24rrr',mmFmtR(naverC24realr));
   perfC24+=naverC24;
   // 콘텐츠 비용 예산
-  const cfBgt=parseInt(document.getElementById('mm-b-content')?.value)||0;
+  const cfBgt=parseInt((document.getElementById('mm-b-content')?.value||'').replace(/,/g,''))||0;
   perfBgt+=cfBgt;
   // 퍼포먼스 TOTAL
   const perfRealRoas=perfBgt>0?perfReal/perfBgt*100:0;
