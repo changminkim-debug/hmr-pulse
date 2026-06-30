@@ -146,7 +146,7 @@ tr.top5-hi td{background:#fff8e1!important}
 /* 미디어믹스 계산기 모달 */
 .mm-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:8000;display:none;align-items:center;justify-content:center;padding:20px}
 .mm-modal-overlay.open{display:flex}
-.mm-modal{background:#fff;border-radius:18px;width:100%;max-width:1200px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.mm-modal{background:#fff;border-radius:18px;width:100%;max-width:1480px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.4)}
 .mm-modal-hd{background:#1e2333;border-radius:18px 18px 0 0;padding:22px 28px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
 .mm-modal-title{font-size:18px;font-weight:800;color:#fff}
 .mm-modal-badge{font-size:12px;font-weight:700;padding:4px 11px;border-radius:7px;background:#4466cc;color:#fff}
@@ -156,43 +156,40 @@ tr.top5-hi td{background:#fff8e1!important}
 .mm-roas-note{font-size:12px;color:#5a6380;margin-bottom:16px;padding:10px 14px;background:#f0f2ff;border-radius:8px;border-left:3px solid #4466cc}
 .mm-tbl-wrap{overflow-x:auto;margin-bottom:20px}
 .mm-tbl{width:100%;border-collapse:collapse;font-size:14px}
-.mm-tbl thead th{padding:10px 12px;text-align:right;font-size:12px;font-weight:700;color:#8a91a8;letter-spacing:.4px;border-bottom:2px solid #f0f2f7;background:#fafbfe;white-space:nowrap}
-.mm-tbl thead th:first-child{text-align:left;min-width:130px}
+.mm-tbl thead th{padding:8px 10px;text-align:right;font-size:11px;font-weight:700;color:#8a91a8;letter-spacing:.3px;border-bottom:2px solid #f0f2f7;background:#fafbfe;white-space:nowrap}
+.mm-tbl thead th:first-child{text-align:left;min-width:120px}
 .mm-tbl thead th.mmh-raw{background:#eef2ff;color:#4466cc}
 .mm-tbl thead th.mmh-real{background:#e8f5e9;color:#2e7d32}
-.mm-tbl thead th.mmh-c24{background:#c8d8ff;color:#2244bb}
-.mm-tbl tbody tr:not(.mm-total):hover td{background:#f5f7ff}
+.mm-tbl thead th.mmh-real-roas{background:#c8e6c9;color:#1b5e20}
+.mm-tbl thead th.mmh-c24{background:#dce8ff;color:#2244bb}
+.mm-tbl thead th.mmh-c24-roas{background:#c4d8ff;color:#1a2faa}
+.mm-tbl thead th.mmh-c24-real{background:#adc4ff;color:#1a2faa}
+.mm-tbl thead th.mmh-c24-real-roas{background:#94aeff;color:#1a2faa}
+.mm-tbl tbody tr:not(.mm-total):not(.mm-perf-total):hover td{background:#f5f7ff}
 .mm-tbl tbody tr{border-bottom:1px solid #f0f3f9}
-.mm-tbl tbody td{padding:9px 12px;text-align:right;white-space:nowrap}
+.mm-tbl tbody td{padding:8px 10px;text-align:right;white-space:nowrap;font-size:13px}
 .mm-tbl tbody td:first-child{text-align:left;font-weight:600}
 .mm-tbl tr.mm-naver td{background:#fafbfe}
 .mm-tbl tr.mm-naver td:first-child{padding-left:24px;font-weight:400;color:#444}
 .mm-tbl tr.mm-naver-c24 td{background:#e8f0fe;color:#2244bb;font-weight:700}
-.mm-tbl tr.mm-organic td{color:#2e7d32}
+.mm-tbl tr.mm-content-fee td{background:#fff8e1;color:#5a4000}
+.mm-tbl tr.mm-organic td{color:#2e7d32;background:#f1f8f1}
+.mm-tbl tr.mm-perf-total td{background:#2c3555!important;color:#fff!important;font-weight:700;border-top:2px solid #667acc}
 .mm-tbl tr.mm-total td{background:#1e2333!important;color:#fff!important;font-weight:700;border-top:2px solid #4466cc}
-input.mm-bgt{width:75px;padding:5px 7px;border:1.5px solid #d8dce8;border-radius:7px;font-size:13px;text-align:right;font-family:inherit;outline:none}
+input.mm-bgt{width:110px;padding:5px 7px;border:1.5px solid #d8dce8;border-radius:7px;font-size:12px;text-align:right;font-family:inherit;outline:none}
 input.mm-bgt:focus{border-color:#4466cc}
-input.mm-roas{width:65px;padding:5px 7px;border:1.5px solid #d8dce8;border-radius:7px;font-size:13px;text-align:right;font-family:inherit;outline:none}
+input.mm-roas{width:60px;padding:5px 7px;border:1.5px solid #d8dce8;border-radius:7px;font-size:12px;text-align:right;font-family:inherit;outline:none}
 input.mm-roas:focus{border-color:#4466cc}
-input.mm-org-days{width:48px;padding:3px 5px;border:1.5px solid #d8dce8;border-radius:6px;font-size:13px;text-align:center;font-family:inherit;outline:none}
+input.mm-org-days{width:44px;padding:3px 5px;border:1.5px solid #d8dce8;border-radius:6px;font-size:12px;text-align:center;font-family:inherit;outline:none}
 input.mm-org-days:focus{border-color:#4466cc}
 .mm-cps-warn{font-size:11px;color:#e65100;cursor:help;margin-left:3px}
 .mm-val-raw{color:#3355cc;font-weight:600}
 .mm-val-real{color:#2e7d32;font-weight:600}
+.mm-val-realr{color:#1b5e20;font-weight:600}
 .mm-val-c24{color:#2244bb;font-weight:600}
-.mm-others-sec{margin-top:8px}
-.mm-others-lbl{font-size:12px;font-weight:700;color:#8a91a8;letter-spacing:.5px;margin-bottom:8px}
-.mm-oth-tbl{width:100%;border-collapse:collapse}
-.mm-oth-tbl tr{border-bottom:1px solid #f0f3f9}
-.mm-oth-tbl td{padding:6px 8px}
-input.mm-other-lbl{width:130px;padding:4px 8px;border:1.5px solid #d8dce8;border-radius:6px;font-size:13px;font-family:inherit;outline:none}
-input.mm-other-lbl:focus{border-color:#4466cc}
-input.mm-other-amt{width:75px;padding:4px 7px;border:1.5px solid #d8dce8;border-radius:6px;font-size:13px;text-align:right;font-family:inherit;outline:none}
-input.mm-other-amt:focus{border-color:#4466cc}
-.mm-add-row-btn{margin-top:8px;padding:6px 15px;border:1.5px dashed #d8dce8;border-radius:8px;background:#fff;color:#8a91a8;font-size:13px;cursor:pointer;font-family:inherit}
-.mm-add-row-btn:hover{border-color:#4466cc;color:#4466cc}
-.mm-del-row-btn{background:none;border:none;color:#ccc;cursor:pointer;font-size:14px;padding:2px 6px;font-family:inherit}
-.mm-del-row-btn:hover{color:#c62828}
+.mm-val-c24r{color:#1a2faa;font-weight:600}
+.mm-val-c24rr{color:#1a2faa;font-weight:600}
+.mm-val-c24rrr{color:#1a2faa;font-weight:600}
 .topbar-mm-btn{padding:7px 15px;background:#4466cc;border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
 .topbar-mm-btn:hover{background:#3355bb}
 /* Rev Mode Toggle */
@@ -223,26 +220,29 @@ input.mm-other-amt:focus{border-color:#4466cc}
       <button class="mm-modal-close" onclick="closeMMCalc()">✕</button>
     </div>
     <div class="mm-modal-body">
-      <div class="mm-roas-note">ROAS 기본값은 6월 실적 기준입니다. 예산 단위는 억원(億)입니다. 오가닉은 4~6월 일평균 기준 예측값입니다.</div>
+      <div class="mm-roas-note">RAW ROAS 기본값은 6월 실적 기준 · 예산은 원(₩) 단위 입력 · C24 갭비율은 4~6월 평균 기준 · 오가닉은 4~6월 일평균 예측값</div>
       <div class="mm-tbl-wrap">
         <table class="mm-tbl">
           <thead>
             <tr>
-              <th>채널</th>
-              <th>예산(억)</th>
-              <th>ROAS(%)</th>
-              <th class="mmh-raw">매체 RAW</th>
-              <th class="mmh-real">실매출 ×0.86</th>
-              <th class="mmh-c24">C24 기준</th>
+              <th rowspan="2" style="text-align:left;vertical-align:bottom">채널</th>
+              <th rowspan="2">예산(원)</th>
+              <th rowspan="2">RAW ROAS</th>
+              <th class="mmh-raw" rowspan="2">매체 RAW<br>매출</th>
+              <th class="mmh-real" colspan="2">매체 실매출</th>
+              <th class="mmh-c24" colspan="4">C24 기준</th>
+            </tr>
+            <tr>
+              <th class="mmh-real">매출</th>
+              <th class="mmh-real-roas">ROAS</th>
+              <th class="mmh-c24">C24 매출</th>
+              <th class="mmh-c24-roas">C24 ROAS</th>
+              <th class="mmh-c24-real">C24 실매출</th>
+              <th class="mmh-c24-real-roas">C24 실매출<br>ROAS</th>
             </tr>
           </thead>
           <tbody id="mm-tbody"></tbody>
         </table>
-      </div>
-      <div class="mm-others-sec">
-        <div class="mm-others-lbl">기타 비용 (예산 합계에만 반영)</div>
-        <table class="mm-oth-tbl" id="mm-oth-tbl"></table>
-        <button class="mm-add-row-btn" onclick="addMMOtherRow()">+ 행 추가</button>
       </div>
     </div>
   </div>
@@ -800,13 +800,12 @@ const CALC_CH=[
   {key:'shop',     label:'쇼핑검색',   group:'naver', defRoas:602,  gap:0.82},
   {key:'meta',     label:'메타',       group:'meta',  defRoas:233,  gap:0.74},
   {key:'google_sa',label:'구글 SA',    group:'gsa',   defRoas:774,  gap:0.71},
-  {key:'aedi',     label:'에디ai',     group:'aedi',  defRoas:396,  gap:1.10},
-  {key:'toss',     label:'토스',       group:'toss',  defRoas:396,  gap:0.27, cps:true},
-  {key:'payco',    label:'페이코',     group:'payco', defRoas:396,  gap:0.33, cps:true},
   {key:'google_da',label:'구글 DA',    group:'gda',   defRoas:258,  gap:0.70},
+  {key:'payco',    label:'페이코',     group:'payco', defRoas:396,  gap:0.33, cps:true},
+  {key:'toss',     label:'토스페이',   group:'toss',  defRoas:396,  gap:0.27, cps:true},
+  {key:'aedi',     label:'에디ai',     group:'aedi',  defRoas:396,  gap:1.10},
 ];
-const MM_ORGANIC_DAY=(8.57/30+13.04/31+9.65/30)/3; // 억/일 (4~6월 평균)
-let mmOtherRows=[];
+const MM_ORGANIC_DAY=(8.57e8/30+13.04e8/31+9.65e8/30)/3; // 원/일 (4~6월 평균)
 let mmBuilt=false;
 
 function openMMCalc(){
@@ -821,9 +820,22 @@ function closeMMCalc(){
 function mmEsc(e){if(e.key==='Escape')closeMMCalc();}
 
 function mmFmt(v){
-  if(v===0)return'<span class="dash">—</span>';
-  return v.toFixed(2)+'억';
+  if(!v||v===0)return'<span class="dash">—</span>';
+  if(v>=1e8)return(v/1e8).toFixed(2)+'억';
+  if(v>=1e4)return Math.round(v/1e4)+'만';
+  return Math.round(v).toLocaleString()+'원';
 }
+function mmFmtWon(v){
+  if(!v||v===0)return'—';
+  if(v>=1e8)return(v/1e8).toFixed(2)+'억';
+  if(v>=1e4)return Math.round(v/1e4)+'만';
+  return Math.round(v).toLocaleString()+'원';
+}
+function mmFmtR(v){
+  if(!v||v===0)return'<span class="dash">—</span>';
+  return Math.round(v)+'%';
+}
+function mmSi(id,html){const el=document.getElementById(id);if(el)el.innerHTML=html;}
 
 function buildMMTable(){
   let html='';
@@ -831,111 +843,159 @@ function buildMMTable(){
     const isNaver=ch.group==='naver';
     const rowCls=isNaver?' class="mm-naver"':'';
     const lpad=isNaver?' style="padding-left:24px;font-weight:400"':'';
-    let c24cell;
+    const cpsWarn=ch.cps?`<span class="mm-cps-warn" title="CPS 채널 — C24 포착 낮음">⚠</span>`:'';
+    let c24Cols;
     if(isNaver){
-      c24cell=`<span style="color:#bbb;font-size:11px">네이버 통합↓</span>`;
+      c24Cols=`<td class="mmh-c24" colspan="4" style="color:#bbb;font-size:11px;text-align:center">네이버 통합↓</td>`;
     }else{
-      const cps=ch.cps?`<span class="mm-cps-warn" title="CPS 채널 - C24 포착 낮음 (유실 인지)">⚠️</span>`:'';
-      c24cell=`<span class="mm-val-c24" id="mm-c24-${ch.key}">${mmFmt(0)}</span>${cps}`;
+      c24Cols=`
+        <td class="mmh-c24"><span class="mm-val-c24" id="mm-c24-${ch.key}">—</span>${cpsWarn}</td>
+        <td class="mmh-c24-roas"><span class="mm-val-c24r" id="mm-c24r-${ch.key}">—</span></td>
+        <td class="mmh-c24-real"><span class="mm-val-c24rr" id="mm-c24rr-${ch.key}">—</span></td>
+        <td class="mmh-c24-real-roas"><span class="mm-val-c24rrr" id="mm-c24rrr-${ch.key}">—</span></td>`;
     }
-    html+=`<tr${rowCls}><td${lpad}>${ch.label}</td>
-      <td><input class="mm-bgt" id="mm-b-${ch.key}" type="number" min="0" step="0.1" placeholder="0" oninput="mmRecalc()"></td>
+    html+=`<tr${rowCls}>
+      <td${lpad}>${ch.label}</td>
+      <td><input class="mm-bgt" id="mm-b-${ch.key}" type="number" min="0" step="10000" placeholder="0" oninput="mmRecalc()"></td>
       <td><input class="mm-roas" id="mm-r-${ch.key}" type="number" min="1" step="1" value="${ch.defRoas}" oninput="mmRecalc()"></td>
-      <td class="mmh-raw"><span class="mm-val-raw" id="mm-raw-${ch.key}">${mmFmt(0)}</span></td>
-      <td class="mmh-real"><span class="mm-val-real" id="mm-rel-${ch.key}">${mmFmt(0)}</span></td>
-      <td class="mmh-c24">${c24cell}</td></tr>`;
+      <td class="mmh-raw"><span class="mm-val-raw" id="mm-raw-${ch.key}">—</span></td>
+      <td class="mmh-real"><span class="mm-val-real" id="mm-rel-${ch.key}">—</span></td>
+      <td class="mmh-real-roas"><span class="mm-val-realr" id="mm-relr-${ch.key}">—</span></td>
+      ${c24Cols}
+    </tr>`;
     if(ch.key==='shop'){
-      html+=`<tr class="mm-naver-c24"><td style="padding-left:12px">└ 네이버 C24 합계</td>
-        <td>—</td><td>—</td><td class="mmh-raw">—</td><td class="mmh-real">—</td>
-        <td class="mmh-c24"><span class="mm-val-c24" id="mm-naver-c24">${mmFmt(0)}</span></td></tr>`;
+      html+=`<tr class="mm-naver-c24">
+        <td style="padding-left:12px">└ 네이버 C24 합계</td>
+        <td>—</td><td>—</td>
+        <td class="mmh-raw">—</td><td class="mmh-real">—</td><td class="mmh-real-roas">—</td>
+        <td class="mmh-c24"><span class="mm-val-c24" id="mm-naver-c24">—</span></td>
+        <td class="mmh-c24-roas"><span id="mm-naver-c24r">—</span></td>
+        <td class="mmh-c24-real"><span id="mm-naver-c24rr">—</span></td>
+        <td class="mmh-c24-real-roas"><span id="mm-naver-c24rrr">—</span></td>
+      </tr>`;
     }
   });
-  html+=`<tr class="mm-organic"><td>오가닉 예측 (<input class="mm-org-days" id="mm-org-days" type="number" min="1" max="31" value="31" oninput="mmRecalc()">일)</td>
-    <td>—</td><td>—</td><td class="mmh-raw">—</td><td class="mmh-real">—</td>
-    <td class="mmh-c24"><span class="mm-val-c24" id="mm-org-c24">${mmFmt(0)}</span></td></tr>`;
-  html+=`<tr class="mm-total"><td>TOTAL <small style="font-size:11px;font-weight:400;color:rgba(255,255,255,.5)">(기타비용 포함)</small></td>
-    <td id="mm-tot-bgt">0.00억</td><td>—</td>
-    <td id="mm-tot-raw">${mmFmt(0)}</td>
-    <td id="mm-tot-rel">${mmFmt(0)}</td>
-    <td id="mm-tot-c24">${mmFmt(0)}</td></tr>`;
+  // 콘텐츠 비용 (예산만)
+  html+=`<tr class="mm-content-fee">
+    <td>콘텐츠 비용</td>
+    <td><input class="mm-bgt" id="mm-b-content" type="number" min="0" step="10000" placeholder="0" oninput="mmRecalc()"></td>
+    <td>—</td>
+    <td class="mmh-raw">—</td><td class="mmh-real">—</td><td class="mmh-real-roas">—</td>
+    <td class="mmh-c24">—</td><td class="mmh-c24-roas">—</td><td class="mmh-c24-real">—</td><td class="mmh-c24-real-roas">—</td>
+  </tr>`;
+  // 퍼포먼스 TOTAL
+  html+=`<tr class="mm-perf-total">
+    <td>퍼포먼스 TOTAL</td>
+    <td id="mm-perf-bgt">—</td><td>—</td>
+    <td id="mm-perf-raw">—</td>
+    <td id="mm-perf-real">—</td>
+    <td id="mm-perf-realr">—</td>
+    <td id="mm-perf-c24">—</td>
+    <td id="mm-perf-c24r">—</td>
+    <td id="mm-perf-c24rr">—</td>
+    <td id="mm-perf-c24rrr">—</td>
+  </tr>`;
+  // 오가닉 예측
+  html+=`<tr class="mm-organic">
+    <td>오가닉 예측 (<input class="mm-org-days" id="mm-org-days" type="number" min="1" max="31" value="31" oninput="mmRecalc()">일)</td>
+    <td>—</td><td>—</td>
+    <td class="mmh-raw">—</td><td class="mmh-real">—</td><td class="mmh-real-roas">—</td>
+    <td class="mmh-c24"><span id="mm-org-c24">—</span></td>
+    <td class="mmh-c24-roas">—</td>
+    <td class="mmh-c24-real"><span id="mm-org-c24rr">—</span></td>
+    <td class="mmh-c24-real-roas">—</td>
+  </tr>`;
+  // 전체 TOTAL
+  html+=`<tr class="mm-total">
+    <td>전체 TOTAL</td>
+    <td id="mm-tot-bgt">—</td><td>—</td>
+    <td id="mm-tot-raw">—</td>
+    <td id="mm-tot-rel">—</td>
+    <td id="mm-tot-relr">—</td>
+    <td id="mm-tot-c24">—</td>
+    <td id="mm-tot-c24r">—</td>
+    <td id="mm-tot-c24rr">—</td>
+    <td id="mm-tot-c24rrr">—</td>
+  </tr>`;
   document.getElementById('mm-tbody').innerHTML=html;
   mmRecalc();
 }
 
 function mmRecalc(){
-  let totBgt=0,totRaw=0,totRel=0,totC24=0,naverRaw=0;
+  let perfBgt=0,perfRaw=0,perfReal=0,perfC24=0,naverRaw=0,naverBgt=0;
   CALC_CH.forEach(ch=>{
-    const bgt=parseFloat(document.getElementById(`mm-b-${ch.key}`)?.value)||0;
+    const bgt=parseInt(document.getElementById(`mm-b-${ch.key}`)?.value)||0;
     const r=parseFloat(document.getElementById(`mm-r-${ch.key}`)?.value)||ch.defRoas;
-    const raw=bgt*r/100, rel=raw*0.86;
-    const rawEl=document.getElementById(`mm-raw-${ch.key}`);
-    const relEl=document.getElementById(`mm-rel-${ch.key}`);
-    if(rawEl)rawEl.innerHTML=mmFmt(raw);
-    if(relEl)relEl.innerHTML=mmFmt(rel);
-    if(ch.group==='naver'){naverRaw+=raw;}
-    else{
+    const raw=bgt*r/100;
+    const real=raw*0.86;
+    const realRoas=bgt>0?real/bgt*100:0;
+    mmSi(`mm-raw-${ch.key}`,mmFmt(raw));
+    mmSi(`mm-rel-${ch.key}`,mmFmt(real));
+    mmSi(`mm-relr-${ch.key}`,mmFmtR(realRoas));
+    if(ch.group==='naver'){
+      naverRaw+=raw; naverBgt+=bgt;
+    }else{
       const c24=raw*ch.gap;
-      const el=document.getElementById(`mm-c24-${ch.key}`);
-      if(el)el.innerHTML=mmFmt(c24);
-      totC24+=c24;
+      const c24r=bgt>0?c24/bgt*100:0;
+      const c24Real=c24*0.86;
+      const c24RealRoas=bgt>0?c24Real/bgt*100:0;
+      mmSi(`mm-c24-${ch.key}`,mmFmt(c24));
+      mmSi(`mm-c24r-${ch.key}`,mmFmtR(c24r));
+      mmSi(`mm-c24rr-${ch.key}`,mmFmt(c24Real));
+      mmSi(`mm-c24rrr-${ch.key}`,mmFmtR(c24RealRoas));
+      perfC24+=c24;
     }
-    totBgt+=bgt; totRaw+=raw; totRel+=rel;
+    perfBgt+=bgt; perfRaw+=raw; perfReal+=real;
   });
+  // 네이버 C24 합계
   const naverC24=naverRaw*0.82;
-  const nc24el=document.getElementById('mm-naver-c24');
-  if(nc24el)nc24el.innerHTML=mmFmt(naverC24);
-  totC24+=naverC24;
-
+  const naverC24r=naverBgt>0?naverC24/naverBgt*100:0;
+  const naverC24real=naverC24*0.86;
+  const naverC24realr=naverBgt>0?naverC24real/naverBgt*100:0;
+  mmSi('mm-naver-c24',mmFmt(naverC24));
+  mmSi('mm-naver-c24r',mmFmtR(naverC24r));
+  mmSi('mm-naver-c24rr',mmFmt(naverC24real));
+  mmSi('mm-naver-c24rrr',mmFmtR(naverC24realr));
+  perfC24+=naverC24;
+  // 콘텐츠 비용 예산
+  const cfBgt=parseInt(document.getElementById('mm-b-content')?.value)||0;
+  perfBgt+=cfBgt;
+  // 퍼포먼스 TOTAL
+  const perfRealRoas=perfBgt>0?perfReal/perfBgt*100:0;
+  const perfC24r=perfBgt>0?perfC24/perfBgt*100:0;
+  const perfC24real=perfC24*0.86;
+  const perfC24realr=perfBgt>0?perfC24real/perfBgt*100:0;
+  mmSi('mm-perf-bgt',mmFmtWon(perfBgt));
+  mmSi('mm-perf-raw',mmFmt(perfRaw));
+  mmSi('mm-perf-real',mmFmt(perfReal));
+  mmSi('mm-perf-realr',mmFmtR(perfRealRoas));
+  mmSi('mm-perf-c24',mmFmt(perfC24));
+  mmSi('mm-perf-c24r',mmFmtR(perfC24r));
+  mmSi('mm-perf-c24rr',mmFmt(perfC24real));
+  mmSi('mm-perf-c24rrr',mmFmtR(perfC24realr));
+  // 오가닉
   const days=parseInt(document.getElementById('mm-org-days')?.value)||31;
   const orgC24=MM_ORGANIC_DAY*days;
-  const ocel=document.getElementById('mm-org-c24');
-  if(ocel)ocel.innerHTML=mmFmt(orgC24);
-  totC24+=orgC24;
-
-  let otherBgt=0;
-  mmOtherRows.forEach((_,i)=>{
-    otherBgt+=parseFloat(document.getElementById(`mm-oth-${i}`)?.value)||0;
-  });
-  totBgt+=otherBgt;
-
-  const rRaw=totBgt>0?Math.round(totRaw/totBgt*100):0;
-  const rRel=totBgt>0?Math.round(totRel/totBgt*100):0;
-  const rC24=totBgt>0?Math.round(totC24/totBgt*100):0;
-  const sml=(t)=>`<br><small style="font-size:11px;color:rgba(255,255,255,.5)">ROAS ${t}%</small>`;
-  const b=document.getElementById('mm-tot-bgt');if(b)b.textContent=totBgt.toFixed(2)+'억';
-  const tr=document.getElementById('mm-tot-raw');if(tr)tr.innerHTML=mmFmt(totRaw)+sml(rRaw);
-  const trel=document.getElementById('mm-tot-rel');if(trel)trel.innerHTML=mmFmt(totRel)+sml(rRel);
-  const tc24=document.getElementById('mm-tot-c24');if(tc24)tc24.innerHTML=mmFmt(totC24)+sml(rC24);
-}
-
-function saveMMOtherVals(){
-  mmOtherRows.forEach((row,i)=>{
-    const a=document.getElementById(`mm-oth-${i}`);
-    const l=document.getElementById(`mm-othl-${i}`);
-    if(a)row.amt=parseFloat(a.value)||0;
-    if(l)row.lbl=l.value||'';
-  });
-}
-function addMMOtherRow(){
-  saveMMOtherVals();
-  mmOtherRows.push({lbl:'',amt:0});
-  renderMMOtherRows();
-}
-function delMMOtherRow(i){
-  saveMMOtherVals();
-  mmOtherRows.splice(i,1);
-  renderMMOtherRows();
-  mmRecalc();
-}
-function renderMMOtherRows(){
-  const tbl=document.getElementById('mm-oth-tbl');
-  if(!tbl)return;
-  if(!mmOtherRows.length){tbl.innerHTML='';return;}
-  tbl.innerHTML=mmOtherRows.map((row,i)=>`<tr>
-    <td><input class="mm-other-lbl" id="mm-othl-${i}" type="text" placeholder="항목명" value="${row.lbl||''}"></td>
-    <td style="text-align:right"><input class="mm-other-amt" id="mm-oth-${i}" type="number" min="0" step="0.1" placeholder="0" value="${row.amt||''}" oninput="mmRecalc()"> 억</td>
-    <td><button class="mm-del-row-btn" onclick="delMMOtherRow(${i})">✕</button></td>
-  </tr>`).join('');
+  const orgC24real=orgC24*0.86;
+  mmSi('mm-org-c24',mmFmt(orgC24));
+  mmSi('mm-org-c24rr',mmFmt(orgC24real));
+  // 전체 TOTAL
+  const totBgt=perfBgt;
+  const totRaw=perfRaw;
+  const totReal=perfReal;
+  const totC24=perfC24+orgC24;
+  const totRealRoas=totBgt>0?totReal/totBgt*100:0;
+  const totC24r=totBgt>0?totC24/totBgt*100:0;
+  const totC24real=totC24*0.86;
+  const totC24realr=totBgt>0?totC24real/totBgt*100:0;
+  mmSi('mm-tot-bgt',mmFmtWon(totBgt));
+  mmSi('mm-tot-raw',mmFmt(totRaw));
+  mmSi('mm-tot-rel',mmFmt(totReal));
+  mmSi('mm-tot-relr',mmFmtR(totRealRoas));
+  mmSi('mm-tot-c24',mmFmt(totC24));
+  mmSi('mm-tot-c24r',mmFmtR(totC24r));
+  mmSi('mm-tot-c24rr',mmFmt(totC24real));
+  mmSi('mm-tot-c24rrr',mmFmtR(totC24realr));
 }
 </script>
 <script>
