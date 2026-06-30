@@ -195,8 +195,9 @@ input.mm-org-days:focus{border-color:#4466cc}
 .topbar-mm-btn:hover{background:#3355bb}
 .mm-save-btn{padding:5px 13px;background:#3a8a3a;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
 .mm-save-btn:hover{background:#2e7d2e}
-.mm-load-btn{padding:5px 13px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#fff;font-size:13px;cursor:pointer;font-family:inherit}
-.mm-load-btn:hover{background:rgba(255,255,255,.25)}
+.mm-saved-label{font-size:13px;color:#a8e6a8;font-weight:700;padding:0 4px}
+.mm-edit-btn{padding:5px 13px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#fff;font-size:13px;cursor:pointer;font-family:inherit}
+.mm-edit-btn:hover{background:rgba(255,255,255,.25)}
 /* Rev Mode Toggle */
 .rev-mode-wrap{display:inline-flex;align-items:center;gap:5px;margin-left:6px}
 .rev-btn{padding:4px 12px;border:1.5px solid #d8dce8;border-radius:8px;background:#fff;color:#8a91a8;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:.12s}
@@ -222,8 +223,9 @@ input.mm-org-days:focus{border-color:#4466cc}
     <div class="mm-modal-hd">
       <span class="mm-modal-title">미디어믹스 계산기</span>
       <span class="mm-modal-badge">7월 시뮬레이션</span>
-      <button class="mm-save-btn" onclick="mmSave()" title="입력값 저장 (브라우저 로컬)">💾 저장</button>
-      <button class="mm-load-btn" onclick="mmLoad()" title="저장된 값 불러오기">불러오기</button>
+      <button class="mm-save-btn" id="mm-btn-save" onclick="mmSave()">💾 저장</button>
+      <span class="mm-saved-label" id="mm-saved-label" style="display:none">✅ 저장됨</span>
+      <button class="mm-edit-btn" id="mm-btn-edit" onclick="mmEdit()" style="display:none">✏️ 수정</button>
       <button class="mm-modal-close" onclick="closeMMCalc()">✕</button>
     </div>
     <div class="mm-modal-body">
@@ -807,8 +809,8 @@ const CALC_CH=[
   {key:'power',    label:'파워링크',   group:'naver', defRoas:688,  gap:0.82},
   {key:'shop',     label:'쇼핑검색',   group:'naver', defRoas:602,  gap:0.82},
   {key:'meta',     label:'메타',       group:'meta',  defRoas:233,  gap:0.74},
-  {key:'google_sa',label:'구글 SA',    group:'gsa',   defRoas:774,  gap:0.71},
-  {key:'google_da',label:'구글 DA',    group:'gda',   defRoas:258,  gap:0.70},
+  {key:'google_sa',label:'구글 SA',    group:'gsa',   defRoas:774,  gap:0.53},
+  {key:'google_da',label:'구글 DA',    group:'gda',   defRoas:258,  gap:0.79},
   {key:'payco',    label:'페이코',     group:'payco', defRoas:396,  gap:0.33, cps:true},
   {key:'toss',     label:'토스페이',   group:'toss',  defRoas:396,  gap:0.27, cps:true},
   {key:'aedi',     label:'에디ai',     group:'aedi',  defRoas:396,  gap:1.10},
@@ -819,8 +821,19 @@ let mmBuilt=false;
 function openMMCalc(){
   document.getElementById('mm-overlay').classList.add('open');
   if(!mmBuilt){buildMMTable();mmBuilt=true;}
+  const saved=localStorage.getItem('mm-calc-save');
+  if(saved){mmLoad();mmSetSavedState(true);}
   document.addEventListener('keydown',mmEsc);
 }
+function mmSetSavedState(isSaved){
+  const s=document.getElementById('mm-btn-save');
+  const l=document.getElementById('mm-saved-label');
+  const e=document.getElementById('mm-btn-edit');
+  if(s)s.style.display=isSaved?'none':'';
+  if(l)l.style.display=isSaved?'':'none';
+  if(e)e.style.display=isSaved?'':'none';
+}
+function mmEdit(){mmSetSavedState(false);}
 function closeMMCalc(){
   document.getElementById('mm-overlay').classList.remove('open');
   document.removeEventListener('keydown',mmEsc);
@@ -839,8 +852,7 @@ function mmSave(){
   const od=document.getElementById('mm-org-days');
   if(od)data['org_days']=od.value;
   localStorage.setItem('mm-calc-save',JSON.stringify(data));
-  const btn=document.querySelector('.mm-save-btn');
-  if(btn){const t=btn.textContent;btn.textContent='✅ 저장됨';setTimeout(()=>btn.textContent=t,1500);}
+  mmSetSavedState(true);
 }
 function mmLoad(){
   const raw=localStorage.getItem('mm-calc-save');
