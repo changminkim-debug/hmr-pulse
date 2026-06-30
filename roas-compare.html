@@ -472,6 +472,21 @@ async function fetchMetaC1Rev(){
   return map;
 }
 
+async function fetchOrganicSheet(){
+  const GID_ORG='897405789';
+  const tq='SELECT B, D LIMIT 700 OFFSET 24';
+  const url='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:csv&gid='+GID_ORG+'&tq='+encodeURIComponent(tq);
+  const r=await fetch(url);
+  if(!r.ok)throw new Error('오가닉시트 HTTP '+r.status);
+  const rows=parseCSV(await r.text()).slice(1);
+  const map={};
+  rows.forEach(row=>{
+    if(!row[0]||!row[1])return;
+    const d=row[0].trim();
+    if(d>=START&&d<=END)map[d]=n(row[1]);
+  });
+  return map;
+}
 async function loadMedia(){
   setStatus('매체 데이터 로딩중...','#ccc',false);
   try{
@@ -480,6 +495,8 @@ async function loadMedia(){
       fetchGviz(['C','AY','BA','BJ','BL','BX','BZ','CH','CI','CC','CE','CL']),
       fetchMetaC1Rev(),
     ]);
+    let organicMap={};
+    try{organicMap=await fetchOrganicSheet();}catch(e){console.warn('오가닉 시트 로드 실패, C24 fallback:',e.message);}
     const r1=parseCSV(t1).slice(1),r2=parseCSV(t2).slice(1),m2={},m1={};
     r2.forEach(r=>{if(r[0])m2[r[0].trim()]=r;});
     r1.forEach(r=>{if(r[0])m1[r[0].trim()]=r;});
@@ -488,6 +505,7 @@ async function loadMedia(){
     rawDays=allDates.filter(d=>d>=START&&d<=END).map(d=>{
       const r=m1[d]||[],x=m2[d]||[];
       const bs=n(r[1])+n(r[2]),pl=n(r[4]),sh=n(r[6]);
+      const c24base=C24[d]||{};
       return{date:d,month:d.slice(0,7),
         media:{
           naver:{spd:bs+pl+sh,rev:n(r[3])+n(r[5])+n(r[7])},
@@ -496,7 +514,7 @@ async function loadMedia(){
           google_sa:{spd:n(x[1]),rev:n(x[2])},google_da:{spd:n(x[3]),rev:n(x[4])},
           payco:{spd:n(x[5]),rev:n(x[6])},aedi:{spd:n(x[7]),rev:n(x[8])},toss:{spd:n(x[9]),rev:n(x[10])},
           content_fee:{spd:n(x[11]),rev:0},
-        },c24:C24[d]||{}};
+        },c24:{...c24base,organic:organicMap[d]??c24base.organic??0}};
     });
     setStatus('완료 · '+new Date().toLocaleTimeString('ko-KR'),'#4caf50',true);
     render();
