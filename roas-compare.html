@@ -815,7 +815,7 @@ const CALC_CH=[
   {key:'toss',     label:'토스페이',   group:'toss',  defRoas:396,  gap:0.27, cps:true},
   {key:'aedi',     label:'에디ai',     group:'aedi',  defRoas:396,  gap:1.10},
 ];
-const MM_ORGANIC_DAY=(8.57e8/30+13.04e8/31+9.65e8/30)/3; // 원/일 (4~6월 평균)
+const MM_ORGANIC_RATIO=1.07; // 4~6월 오가닉/광고비 비율 (총오가닉30.94억/총광고비28.91억)
 let mmBuilt=false;
 
 function openMMCalc(){
@@ -849,8 +849,6 @@ function mmSave(){
   });
   const bc=document.getElementById('mm-b-content');
   if(bc)data['b_content']=bc.value;
-  const od=document.getElementById('mm-org-days');
-  if(od)data['org_days']=od.value;
   localStorage.setItem('mm-calc-save',JSON.stringify(data));
   mmSetSavedState(true);
 }
@@ -866,8 +864,6 @@ function mmLoad(){
   });
   const bc=document.getElementById('mm-b-content');
   if(bc&&data['b_content']!==undefined)bc.value=data['b_content'];
-  const od=document.getElementById('mm-org-days');
-  if(od&&data['org_days']!==undefined)od.value=data['org_days'];
   mmRecalc();
 }
 
@@ -975,7 +971,7 @@ function buildMMTable(){
   </tr>`;
   // 오가닉 예측
   html+=`<tr class="mm-organic">
-    <td>오가닉 예측 (<input class="mm-org-days" id="mm-org-days" type="number" min="1" max="31" value="31" oninput="mmRecalc()">일)</td>
+    <td>오가닉 예측 <small style="color:#aaa;font-size:11px">광고비×107% 자동 (4~6월)</small></td>
     <td>—</td><td>—</td>
     <td class="mmh-raw">—</td><td class="mmh-real">—</td><td class="mmh-real-roas">—</td>
     <td class="mmh-gap">—</td>
@@ -1057,9 +1053,8 @@ function mmRecalc(){
   mmSi('mm-perf-c24r',mmFmtR(perfC24r));
   mmSi('mm-perf-c24rr',mmFmt(perfC24real));
   mmSi('mm-perf-c24rrr',mmFmtR(perfC24realr));
-  // 오가닉
-  const days=parseInt(document.getElementById('mm-org-days')?.value)||31;
-  const orgC24=MM_ORGANIC_DAY*days;
+  // 오가닉: 퍼포먼스 총 예산 × 4~6월 오가닉/광고비 비율
+  const orgC24=perfBgt*MM_ORGANIC_RATIO;
   const orgC24real=orgC24*0.86;
   mmSi('mm-org-c24',mmFmt(orgC24));
   mmSi('mm-org-c24rr',mmFmt(orgC24real));
