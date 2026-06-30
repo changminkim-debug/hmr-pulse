@@ -342,10 +342,13 @@ async function loadMedia(){
       fetchGviz(['C','J','K','L','O','Q','T','V','Y','AA']),
       fetchGviz(['C','AY','BA','BJ','BL','BX','BZ','CH','CI','CC','CE','CL'])
     ]);
-    const r1=parseCSV(t1).slice(1),r2=parseCSV(t2).slice(1),m2={};
+    const r1=parseCSV(t1).slice(1),r2=parseCSV(t2).slice(1),m2={},m1={};
     r2.forEach(r=>{if(r[0])m2[r[0].trim()]=r;});
-    rawDays=r1.filter(r=>r[0]).map(r=>{
-      const d=r[0].trim(),x=m2[d]||[];
+    r1.forEach(r=>{if(r[0])m1[r[0].trim()]=r;});
+    // Sheets 행 + C24에만 있는 날짜 모두 포함
+    const allDates=[...new Set([...Object.keys(m1),...Object.keys(C24)])].sort();
+    rawDays=allDates.filter(d=>d>=START&&d<=END).map(d=>{
+      const r=m1[d]||[],x=m2[d]||[];
       const bs=n(r[1])+n(r[2]),pl=n(r[4]),sh=n(r[6]);
       return{date:d,month:d.slice(0,7),
         media:{
