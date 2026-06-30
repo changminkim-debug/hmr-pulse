@@ -142,6 +142,64 @@ td.cb-diff{background:#f0faf1}
 tr.top5-hi td{background:#fff8e1!important}
 .top5-badge{background:#f57f17;color:#fff;font-size:10px;font-weight:800;padding:1px 5px;border-radius:4px;margin-left:7px;vertical-align:middle;letter-spacing:.3px}
 .top5-legend{font-size:12px;color:#aaa;margin-bottom:10px}
+
+/* 미디어믹스 계산기 모달 */
+.mm-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:8000;display:none;align-items:center;justify-content:center;padding:20px}
+.mm-modal-overlay.open{display:flex}
+.mm-modal{background:#fff;border-radius:18px;width:100%;max-width:1200px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.mm-modal-hd{background:#1e2333;border-radius:18px 18px 0 0;padding:22px 28px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+.mm-modal-title{font-size:18px;font-weight:800;color:#fff}
+.mm-modal-badge{font-size:12px;font-weight:700;padding:4px 11px;border-radius:7px;background:#4466cc;color:#fff}
+.mm-modal-close{margin-left:auto;background:none;border:none;color:rgba(255,255,255,.6);font-size:24px;cursor:pointer;line-height:1;padding:4px 8px;border-radius:6px;font-family:inherit}
+.mm-modal-close:hover{color:#fff;background:rgba(255,255,255,.1)}
+.mm-modal-body{padding:24px 28px}
+.mm-roas-note{font-size:12px;color:#5a6380;margin-bottom:16px;padding:10px 14px;background:#f0f2ff;border-radius:8px;border-left:3px solid #4466cc}
+.mm-tbl-wrap{overflow-x:auto;margin-bottom:20px}
+.mm-tbl{width:100%;border-collapse:collapse;font-size:14px}
+.mm-tbl thead th{padding:10px 12px;text-align:right;font-size:12px;font-weight:700;color:#8a91a8;letter-spacing:.4px;border-bottom:2px solid #f0f2f7;background:#fafbfe;white-space:nowrap}
+.mm-tbl thead th:first-child{text-align:left;min-width:130px}
+.mm-tbl thead th.mmh-raw{background:#eef2ff;color:#4466cc}
+.mm-tbl thead th.mmh-real{background:#e8f5e9;color:#2e7d32}
+.mm-tbl thead th.mmh-c24{background:#c8d8ff;color:#2244bb}
+.mm-tbl tbody tr:not(.mm-total):hover td{background:#f5f7ff}
+.mm-tbl tbody tr{border-bottom:1px solid #f0f3f9}
+.mm-tbl tbody td{padding:9px 12px;text-align:right;white-space:nowrap}
+.mm-tbl tbody td:first-child{text-align:left;font-weight:600}
+.mm-tbl tr.mm-naver td{background:#fafbfe}
+.mm-tbl tr.mm-naver td:first-child{padding-left:24px;font-weight:400;color:#444}
+.mm-tbl tr.mm-naver-c24 td{background:#e8f0fe;color:#2244bb;font-weight:700}
+.mm-tbl tr.mm-organic td{color:#2e7d32}
+.mm-tbl tr.mm-total td{background:#1e2333!important;color:#fff!important;font-weight:700;border-top:2px solid #4466cc}
+input.mm-bgt{width:75px;padding:5px 7px;border:1.5px solid #d8dce8;border-radius:7px;font-size:13px;text-align:right;font-family:inherit;outline:none}
+input.mm-bgt:focus{border-color:#4466cc}
+input.mm-roas{width:65px;padding:5px 7px;border:1.5px solid #d8dce8;border-radius:7px;font-size:13px;text-align:right;font-family:inherit;outline:none}
+input.mm-roas:focus{border-color:#4466cc}
+input.mm-org-days{width:48px;padding:3px 5px;border:1.5px solid #d8dce8;border-radius:6px;font-size:13px;text-align:center;font-family:inherit;outline:none}
+input.mm-org-days:focus{border-color:#4466cc}
+.mm-cps-warn{font-size:11px;color:#e65100;cursor:help;margin-left:3px}
+.mm-val-raw{color:#3355cc;font-weight:600}
+.mm-val-real{color:#2e7d32;font-weight:600}
+.mm-val-c24{color:#2244bb;font-weight:600}
+.mm-others-sec{margin-top:8px}
+.mm-others-lbl{font-size:12px;font-weight:700;color:#8a91a8;letter-spacing:.5px;margin-bottom:8px}
+.mm-oth-tbl{width:100%;border-collapse:collapse}
+.mm-oth-tbl tr{border-bottom:1px solid #f0f3f9}
+.mm-oth-tbl td{padding:6px 8px}
+input.mm-other-lbl{width:130px;padding:4px 8px;border:1.5px solid #d8dce8;border-radius:6px;font-size:13px;font-family:inherit;outline:none}
+input.mm-other-lbl:focus{border-color:#4466cc}
+input.mm-other-amt{width:75px;padding:4px 7px;border:1.5px solid #d8dce8;border-radius:6px;font-size:13px;text-align:right;font-family:inherit;outline:none}
+input.mm-other-amt:focus{border-color:#4466cc}
+.mm-add-row-btn{margin-top:8px;padding:6px 15px;border:1.5px dashed #d8dce8;border-radius:8px;background:#fff;color:#8a91a8;font-size:13px;cursor:pointer;font-family:inherit}
+.mm-add-row-btn:hover{border-color:#4466cc;color:#4466cc}
+.mm-del-row-btn{background:none;border:none;color:#ccc;cursor:pointer;font-size:14px;padding:2px 6px;font-family:inherit}
+.mm-del-row-btn:hover{color:#c62828}
+.topbar-mm-btn{padding:7px 15px;background:#4466cc;border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+.topbar-mm-btn:hover{background:#3355bb}
+/* Rev Mode Toggle */
+.rev-mode-wrap{display:inline-flex;align-items:center;gap:5px;margin-left:6px}
+.rev-btn{padding:4px 12px;border:1.5px solid #d8dce8;border-radius:8px;background:#fff;color:#8a91a8;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:.12s}
+.rev-btn:hover{border-color:#4466cc;color:#4466cc}
+.rev-btn.active{background:#4466cc;border-color:#4466cc;color:#fff}
 </style>
 </head>
 <body>
@@ -156,10 +214,45 @@ tr.top5-hi td{background:#fff8e1!important}
   </div>
 </div>
 
+<!-- 미디어믹스 계산기 모달 -->
+<div id="mm-overlay" class="mm-modal-overlay" onclick="if(event.target===this)closeMMCalc()">
+  <div class="mm-modal">
+    <div class="mm-modal-hd">
+      <span class="mm-modal-title">미디어믹스 계산기</span>
+      <span class="mm-modal-badge">7월 시뮬레이션</span>
+      <button class="mm-modal-close" onclick="closeMMCalc()">✕</button>
+    </div>
+    <div class="mm-modal-body">
+      <div class="mm-roas-note">ROAS 기본값은 6월 실적 기준입니다. 예산 단위는 억원(億)입니다. 오가닉은 4~6월 일평균 기준 예측값입니다.</div>
+      <div class="mm-tbl-wrap">
+        <table class="mm-tbl">
+          <thead>
+            <tr>
+              <th>채널</th>
+              <th>예산(억)</th>
+              <th>ROAS(%)</th>
+              <th class="mmh-raw">매체 RAW</th>
+              <th class="mmh-real">실매출 ×0.86</th>
+              <th class="mmh-c24">C24 기준</th>
+            </tr>
+          </thead>
+          <tbody id="mm-tbody"></tbody>
+        </table>
+      </div>
+      <div class="mm-others-sec">
+        <div class="mm-others-lbl">기타 비용 (예산 합계에만 반영)</div>
+        <table class="mm-oth-tbl" id="mm-oth-tbl"></table>
+        <button class="mm-add-row-btn" onclick="addMMOtherRow()">+ 행 추가</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="topbar">
   <span class="topbar-logo">한끼통살</span>
   <span class="topbar-sub">매체 vs Cafe24 ROAS 비교</span>
   <div class="topbar-right">
+    <button class="topbar-mm-btn" onclick="openMMCalc()">미디어믹스 계산기</button>
     <span class="status-dot" id="sdot"></span>
     <span class="status-text" id="stxt">로딩중...</span>
   </div>
@@ -191,7 +284,11 @@ tr.top5-hi td{background:#fff8e1!important}
     <div class="sec-title mb">
       매체별 비교
       <span class="sec-badge" id="tbl-badge">3~6월 합계</span>
-      <span class="sec-note">매체비용 VAT제외 · 매체매출 = 전환매출×0.85</span>
+      <div class="rev-mode-wrap">
+        <button class="rev-btn active" id="rev-raw" onclick="setRevMode('raw')">RAW</button>
+        <button class="rev-btn" id="rev-real" onclick="setRevMode('actual')">실매출 ×0.86</button>
+      </div>
+      <span class="sec-note" id="rev-note">매체비용 VAT제외 · 매출 = 데이터 원본</span>
     </div>
     <div class="tbl-wrap" id="main-table">
       <div class="loader"><div class="spin"></div>집계중...</div>
@@ -282,7 +379,7 @@ tr.top5-hi td{background:#fff8e1!important}
 
 <script>
 // ═══ CAFE24 DATA ═══════════════════════════════════════════════════
-const C24 = {"2026-03-01":{"naver":50565360,"meta":54440060,"google_sa":2491920,"google_da":0,"payco":0,"toss":886750,"aedi":3898620,"organic":37471050},"2026-03-02":{"naver":80781340,"meta":102316770,"google_sa":3871090,"google_da":0,"payco":10980430,"toss":863420,"aedi":5197110,"organic":75416110},"2026-03-03":{"naver":97234740,"meta":124614900,"google_sa":5431940,"google_da":0,"payco":3411620,"toss":2325160,"aedi":6401630,"organic":76774640},"2026-03-04":{"naver":65894360,"meta":108445370,"google_sa":1512850,"google_da":0,"payco":683370,"toss":1432210,"aedi":3975330,"organic":54494660},"2026-03-05":{"naver":61991540,"meta":108852530,"google_sa":35100,"google_da":0,"payco":136380,"toss":1205360,"aedi":4075590,"organic":45839350},"2026-03-06":{"naver":43307810,"meta":91599930,"google_sa":0,"google_da":0,"payco":111490,"toss":818410,"aedi":2937700,"organic":34958160},"2026-03-07":{"naver":37101920,"meta":88881940,"google_sa":0,"google_da":0,"payco":110290,"toss":294960,"aedi":2332380,"organic":30320370},"2026-03-08":{"naver":52616260,"meta":103632710,"google_sa":0,"google_da":0,"payco":603670,"toss":599180,"aedi":3544650,"organic":38364830},"2026-03-09":{"naver":78587840,"meta":121589800,"google_sa":0,"google_da":0,"payco":2537700,"toss":930380,"aedi":3562980,"organic":54349480},"2026-03-10":{"naver":77984930,"meta":138858420,"google_sa":0,"google_da":0,"payco":1858580,"toss":578520,"aedi":4640600,"organic":61659080},"2026-03-11":{"naver":69973970,"meta":128100420,"google_sa":59400,"google_da":0,"payco":956110,"toss":1069720,"aedi":5460400,"organic":58864520},"2026-03-12":{"naver":54658210,"meta":87770710,"google_sa":26900,"google_da":0,"payco":2756720,"toss":928160,"aedi":3943470,"organic":53720330},"2026-03-13":{"naver":39174050,"meta":54992830,"google_sa":0,"google_da":0,"payco":990540,"toss":224890,"aedi":3037000,"organic":36922680},"2026-03-14":{"naver":28429530,"meta":49287980,"google_sa":0,"google_da":0,"payco":276230,"toss":251840,"aedi":2257690,"organic":25106980},"2026-03-15":{"naver":48711180,"meta":64432050,"google_sa":0,"google_da":0,"payco":397820,"toss":308540,"aedi":2993480,"organic":41130730},"2026-03-16":{"naver":72503810,"meta":90855630,"google_sa":0,"google_da":0,"payco":448900,"toss":897890,"aedi":5930140,"organic":59622240},"2026-03-17":{"naver":65425800,"meta":72844630,"google_sa":0,"google_da":0,"payco":515410,"toss":689130,"aedi":4591170,"organic":52858450},"2026-03-18":{"naver":63321450,"meta":68108770,"google_sa":0,"google_da":0,"payco":385190,"toss":608660,"aedi":2935490,"organic":44142320},"2026-03-19":{"naver":52369110,"meta":67517570,"google_sa":0,"google_da":0,"payco":567370,"toss":1054150,"aedi":3583600,"organic":40411490},"2026-03-20":{"naver":40355540,"meta":38018010,"google_sa":0,"google_da":0,"payco":263770,"toss":540370,"aedi":2273900,"organic":31732430},"2026-03-21":{"naver":31804740,"meta":29617140,"google_sa":0,"google_da":0,"payco":157680,"toss":212840,"aedi":1697530,"organic":18321700},"2026-03-22":{"naver":44715710,"meta":31688960,"google_sa":0,"google_da":0,"payco":475820,"toss":596260,"aedi":5402870,"organic":81255890},"2026-03-23":{"naver":66051910,"meta":55216560,"google_sa":0,"google_da":0,"payco":594000,"toss":248650,"aedi":4190240,"organic":66979090},"2026-03-24":{"naver":56395170,"meta":50806910,"google_sa":0,"google_da":0,"payco":895500,"toss":533430,"aedi":3685340,"organic":61444390},"2026-03-25":{"naver":65121570,"meta":46714220,"google_sa":0,"google_da":0,"payco":281030,"toss":871260,"aedi":4984350,"organic":72388040},"2026-03-26":{"naver":61215110,"meta":49582130,"google_sa":0,"google_da":0,"payco":709440,"toss":712580,"aedi":3932820,"organic":49921470},"2026-03-27":{"naver":32203830,"meta":21697900,"google_sa":0,"google_da":0,"payco":108320,"toss":316650,"aedi":1517480,"organic":21980600},"2026-03-28":{"naver":21379960,"meta":12855120,"google_sa":0,"google_da":0,"payco":184290,"toss":270020,"aedi":1413780,"organic":12649260},"2026-03-29":{"naver":30297070,"meta":18507380,"google_sa":0,"google_da":0,"payco":216600,"toss":0,"aedi":1498840,"organic":20997850},"2026-03-30":{"naver":48623620,"meta":23572760,"google_sa":0,"google_da":0,"payco":480740,"toss":484590,"aedi":2778720,"organic":29535450},"2026-03-31":{"naver":45170750,"meta":20996240,"google_sa":0,"google_da":0,"payco":191490,"toss":579390,"aedi":2124380,"organic":32057450},"2026-04-01":{"naver":48391010,"meta":19781830,"google_sa":0,"google_da":0,"payco":485590,"toss":448590,"aedi":2096000,"organic":34027920},"2026-04-02":{"naver":43227570,"meta":20037030,"google_sa":0,"google_da":0,"payco":370450,"toss":472500,"aedi":1572170,"organic":25173680},"2026-04-03":{"naver":32024270,"meta":24248960,"google_sa":0,"google_da":0,"payco":392450,"toss":474990,"aedi":839030,"organic":20748470},"2026-04-04":{"naver":29200300,"meta":53853330,"google_sa":0,"google_da":0,"payco":2075260,"toss":306970,"aedi":1625200,"organic":25545260},"2026-04-05":{"naver":39571040,"meta":37678200,"google_sa":0,"google_da":0,"payco":2790700,"toss":528150,"aedi":3062560,"organic":47388050},"2026-04-06":{"naver":63613080,"meta":52449200,"google_sa":0,"google_da":0,"payco":883860,"toss":593390,"aedi":4070080,"organic":64543240},"2026-04-07":{"naver":52481750,"meta":46798780,"google_sa":0,"google_da":0,"payco":683190,"toss":915170,"aedi":2562320,"organic":44302920},"2026-04-08":{"naver":46528170,"meta":41371240,"google_sa":0,"google_da":0,"payco":158890,"toss":259390,"aedi":2802390,"organic":38965990},"2026-04-09":{"naver":39783640,"meta":40395950,"google_sa":0,"google_da":0,"payco":379290,"toss":673160,"aedi":1983400,"organic":30694880},"2026-04-10":{"naver":35466370,"meta":36469960,"google_sa":0,"google_da":0,"payco":1171880,"toss":138890,"aedi":1793600,"organic":28471700},"2026-04-11":{"naver":26672190,"meta":27627680,"google_sa":0,"google_da":0,"payco":1483410,"toss":273590,"aedi":1899810,"organic":20003860},"2026-04-12":{"naver":40275910,"meta":29732760,"google_sa":0,"google_da":0,"payco":743080,"toss":266090,"aedi":2392030,"organic":28432360},"2026-04-13":{"naver":64450320,"meta":47314460,"google_sa":0,"google_da":0,"payco":343550,"toss":418600,"aedi":2578500,"organic":38799150},"2026-04-14":{"naver":59472540,"meta":46626210,"google_sa":183900,"google_da":0,"payco":579500,"toss":807050,"aedi":3250580,"organic":37959850},"2026-04-15":{"naver":47240650,"meta":48742680,"google_sa":867590,"google_da":0,"payco":509160,"toss":424290,"aedi":3092150,"organic":36056100},"2026-04-16":{"naver":38367830,"meta":47864960,"google_sa":3461290,"google_da":0,"payco":273500,"toss":573500,"aedi":3116760,"organic":75236640},"2026-04-17":{"naver":30702950,"meta":33622370,"google_sa":2507670,"google_da":0,"payco":287230,"toss":722770,"aedi":2002470,"organic":35275970},"2026-04-18":{"naver":24262200,"meta":26794870,"google_sa":1900660,"google_da":0,"payco":122100,"toss":537200,"aedi":2330690,"organic":20473600},"2026-04-19":{"naver":35873890,"meta":32794240,"google_sa":2729590,"google_da":0,"payco":513570,"toss":675070,"aedi":2830930,"organic":28046170},"2026-04-20":{"naver":54111910,"meta":51516310,"google_sa":3801490,"google_da":0,"payco":572500,"toss":636380,"aedi":3523840,"organic":42129160},"2026-04-21":{"naver":46853670,"meta":53278480,"google_sa":3101760,"google_da":0,"payco":693750,"toss":1915770,"aedi":3352640,"organic":44530891},"2026-04-22":{"naver":45167360,"meta":40325620,"google_sa":2492030,"google_da":0,"payco":2125720,"toss":2170560,"aedi":1669140,"organic":33100360},"2026-04-23":{"naver":5017980,"meta":30994140,"google_sa":1987320,"google_da":0,"payco":2265200,"toss":1592440,"aedi":2161970,"organic":66688350},"2026-04-24":{"naver":3324660,"meta":28615020,"google_sa":1914320,"google_da":0,"payco":1194660,"toss":1133550,"aedi":2137220,"organic":64000580},"2026-04-25":{"naver":21772580,"meta":21077376,"google_sa":1961830,"google_da":0,"payco":1677010,"toss":965040,"aedi":1961630,"organic":23596360},"2026-04-26":{"naver":39794090,"meta":39220580,"google_sa":3058220,"google_da":0,"payco":2222840,"toss":826920,"aedi":3775430,"organic":37553360},"2026-04-27":{"naver":57712740,"meta":48479650,"google_sa":3357770,"google_da":0,"payco":2603350,"toss":656180,"aedi":3564470,"organic":50339950},"2026-04-28":{"naver":48257090,"meta":54703480,"google_sa":3944110,"google_da":0,"payco":1331550,"toss":474590,"aedi":3047670,"organic":48357530},"2026-04-29":{"naver":39962090,"meta":47035340,"google_sa":2723290,"google_da":0,"payco":1460940,"toss":361070,"aedi":1867100,"organic":33716700},"2026-04-30":{"naver":25434460,"meta":30473780,"google_sa":2163260,"google_da":0,"payco":868960,"toss":120390,"aedi":1923230,"organic":24430980},"2026-05-01":{"naver":33696540,"meta":43279680,"google_sa":2231860,"google_da":0,"payco":347980,"toss":403790,"aedi":2530860,"organic":23972840},"2026-05-02":{"naver":27062120,"meta":34999670,"google_sa":2404970,"google_da":0,"payco":1001970,"toss":765490,"aedi":2611910,"organic":22678500},"2026-05-03":{"naver":38644250,"meta":45969950,"google_sa":2269370,"google_da":0,"payco":854080,"toss":218890,"aedi":2630150,"organic":27678050},"2026-05-04":{"naver":45514120,"meta":57363970,"google_sa":3948020,"google_da":0,"payco":829600,"toss":933520,"aedi":2554500,"organic":38236810},"2026-05-05":{"naver":50378840,"meta":69280510,"google_sa":3053660,"google_da":0,"payco":350660,"toss":1199280,"aedi":3736040,"organic":43299660},"2026-05-06":{"naver":63595260,"meta":84524860,"google_sa":5599100,"google_da":0,"payco":363950,"toss":710600,"aedi":5071340,"organic":49898580},"2026-05-07":{"naver":60729350,"meta":89536750,"google_sa":4837280,"google_da":0,"payco":295280,"toss":722110,"aedi":4954500,"organic":40021810},"2026-05-08":{"naver":37945030,"meta":64664710,"google_sa":3040460,"google_da":0,"payco":895800,"toss":947560,"aedi":2634350,"organic":31625220},"2026-05-09":{"naver":32070510,"meta":47315810,"google_sa":2212650,"google_da":0,"payco":692760,"toss":204090,"aedi":3030950,"organic":19629350},"2026-05-10":{"naver":44823270,"meta":64901150,"google_sa":4496250,"google_da":0,"payco":569890,"toss":271300,"aedi":4262010,"organic":29261950},"2026-05-11":{"naver":68184270,"meta":92116460,"google_sa":5108960,"google_da":0,"payco":368630,"toss":764800,"aedi":5120630,"organic":68633140},"2026-05-12":{"naver":59009870,"meta":86688090,"google_sa":4821680,"google_da":0,"payco":469250,"toss":447700,"aedi":4864170,"organic":78872790},"2026-05-13":{"naver":48548650,"meta":84770490,"google_sa":4251790,"google_da":0,"payco":136370,"toss":419200,"aedi":3777290,"organic":59899550},"2026-05-14":{"naver":41163210,"meta":68785330,"google_sa":4029410,"google_da":0,"payco":166130,"toss":347870,"aedi":3837580,"organic":52741830},"2026-05-15":{"naver":31543960,"meta":54628470,"google_sa":3087630,"google_da":0,"payco":1409810,"toss":202070,"aedi":2734050,"organic":42332220},"2026-05-16":{"naver":22070840,"meta":38958300,"google_sa":2009860,"google_da":0,"payco":1235210,"toss":236850,"aedi":3403180,"organic":33734490},"2026-05-17":{"naver":39481580,"meta":56111220,"google_sa":3597600,"google_da":0,"payco":938510,"toss":536950,"aedi":4786750,"organic":43098010},"2026-05-18":{"naver":65395090,"meta":65333990,"google_sa":4610220,"google_da":0,"payco":188060,"toss":403350,"aedi":4250310,"organic":71076530},"2026-05-19":{"naver":50918650,"meta":73981310,"google_sa":4052500,"google_da":0,"payco":38700,"toss":790030,"aedi":4234790,"organic":60601590},"2026-05-20":{"naver":45901420,"meta":64316450,"google_sa":3946540,"google_da":0,"payco":294610,"toss":636720,"aedi":4217410,"organic":54790710},"2026-05-21":{"naver":39551090,"meta":57240140,"google_sa":4426850,"google_da":0,"payco":268330,"toss":58500,"aedi":3816700,"organic":44832470},"2026-05-22":{"naver":28318710,"meta":40737370,"google_sa":3552370,"google_da":0,"payco":1253940,"toss":302830,"aedi":3133090,"organic":36799490},"2026-05-23":{"naver":24738720,"meta":30341070,"google_sa":2341950,"google_da":0,"payco":2142020,"toss":113400,"aedi":2691720,"organic":23589350},"2026-05-24":{"naver":26307320,"meta":40067090,"google_sa":2016530,"google_da":0,"payco":692510,"toss":669800,"aedi":3286520,"organic":27500710},"2026-05-25":{"naver":47725140,"meta":55488670,"google_sa":3289220,"google_da":0,"payco":679420,"toss":814340,"aedi":3992770,"organic":54368020},"2026-05-26":{"naver":61835890,"meta":71192210,"google_sa":5692580,"google_da":0,"payco":279830,"toss":746930,"aedi":3753640,"organic":64189670},"2026-05-27":{"naver":52514970,"meta":70924660,"google_sa":3770670,"google_da":0,"payco":94400,"toss":626190,"aedi":4829630,"organic":57593220},"2026-05-28":{"naver":51206180,"meta":56994830,"google_sa":4397060,"google_da":0,"payco":227090,"toss":464240,"aedi":3276700,"organic":48573380},"2026-05-29":{"naver":32826650,"meta":40992200,"google_sa":2913000,"google_da":0,"payco":667550,"toss":237850,"aedi":1987640,"organic":35024700},"2026-05-30":{"naver":24895120,"meta":25305940,"google_sa":2170870,"google_da":0,"payco":1170770,"toss":55900,"aedi":2214450,"organic":26295380},"2026-05-31":{"naver":43758760,"meta":36480830,"google_sa":2504880,"google_da":0,"payco":765780,"toss":689070,"aedi":3375860,"organic":44510170},"2026-06-01":{"naver":84717810,"meta":76059580,"google_sa":6190010,"google_da":0,"payco":635950,"toss":1424080,"aedi":4837570,"organic":59725620},"2026-06-02":{"naver":60075240,"meta":79137250,"google_sa":5492730,"google_da":0,"payco":1354670,"toss":318890,"aedi":5098000,"organic":41580280},"2026-06-03":{"naver":51371010,"meta":70232960,"google_sa":3819160,"google_da":0,"payco":1808030,"toss":789100,"aedi":5225160,"organic":28830420},"2026-06-04":{"naver":54597290,"meta":84613850,"google_sa":4608600,"google_da":0,"payco":829650,"toss":1411080,"aedi":4259060,"organic":38414750},"2026-06-05":{"naver":45488640,"meta":59891650,"google_sa":3038990,"google_da":0,"payco":277140,"toss":831730,"aedi":2726730,"organic":30840870},"2026-06-06":{"naver":32172130,"meta":37532690,"google_sa":2192360,"google_da":0,"payco":785560,"toss":1084280,"aedi":2754840,"organic":21526070},"2026-06-07":{"naver":46992280,"meta":49287790,"google_sa":2862220,"google_da":0,"payco":1833520,"toss":1580770,"aedi":3595840,"organic":28926330},"2026-06-08":{"naver":72833350,"meta":75885690,"google_sa":5434270,"google_da":0,"payco":1071630,"toss":1472320,"aedi":7498260,"organic":167693040},"2026-06-09":{"naver":63180920,"meta":82813900,"google_sa":6726840,"google_da":37600,"payco":289690,"toss":1142060,"aedi":4649620,"organic":78234730},"2026-06-10":{"naver":69266640,"meta":86571190,"google_sa":4779020,"google_da":675190,"payco":690600,"toss":1027620,"aedi":5868890,"organic":75981871},"2026-06-11":{"naver":54889300,"meta":77409110,"google_sa":4523310,"google_da":629100,"payco":364300,"toss":469020,"aedi":4981270,"organic":54519030},"2026-06-12":{"naver":35061440,"meta":58961040,"google_sa":2140760,"google_da":1229300,"payco":471940,"toss":333690,"aedi":2681120,"organic":51031630},"2026-06-13":{"naver":28492470,"meta":37497860,"google_sa":1920640,"google_da":1221900,"payco":1210610,"toss":183490,"aedi":2181930,"organic":27372060},"2026-06-14":{"naver":44142110,"meta":55657120,"google_sa":2337540,"google_da":2367180,"payco":2481110,"toss":631110,"aedi":4101440,"organic":48158570},"2026-06-15":{"naver":58702220,"meta":80332560,"google_sa":4568330,"google_da":1713040,"payco":875450,"toss":505560,"aedi":5020550,"organic":46381470},"2026-06-16":{"naver":56819870,"meta":72286690,"google_sa":4133100,"google_da":1815200,"payco":528300,"toss":590350,"aedi":5040440,"organic":40557600},"2026-06-17":{"naver":51275800,"meta":72446050,"google_sa":3384700,"google_da":2195600,"payco":497000,"toss":684300,"aedi":5968900,"organic":73014640},"2026-06-18":{"naver":45794990,"meta":76476080,"google_sa":2250690,"google_da":2707450,"payco":349350,"toss":1178100,"aedi":4243870,"organic":54777040},"2026-06-19":{"naver":33563200,"meta":47994440,"google_sa":2773300,"google_da":1918200,"payco":220500,"toss":244200,"aedi":1583800,"organic":31111440},"2026-06-20":{"naver":27948640,"meta":46656610,"google_sa":1964200,"google_da":2721450,"payco":586200,"toss":124500,"aedi":2870900,"organic":25965920},"2026-06-21":{"naver":41491250,"meta":57161250,"google_sa":3017400,"google_da":2634500,"payco":2233550,"toss":81300,"aedi":3291060,"organic":42310280},"2026-06-22":{"naver":68857230,"meta":73450940,"google_sa":4639400,"google_da":3202700,"payco":899900,"toss":842900,"aedi":5166190,"organic":68157690},"2026-06-23":{"naver":54876520,"meta":67860250,"google_sa":2448000,"google_da":2343900,"payco":300800,"toss":692160,"aedi":5590200,"organic":48545310},"2026-06-24":{"naver":52408000,"meta":64067130,"google_sa":3158000,"google_da":3174650,"payco":415800,"toss":500800,"aedi":4036190,"organic":41206240},"2026-06-25":{"naver":48227990,"meta":71908050,"google_sa":4784700,"google_da":0,"payco":458500,"toss":652400,"aedi":2663850,"organic":64064440},"2026-06-26":{"naver":34442650,"meta":49522460,"google_sa":3608550,"google_da":0,"payco":102500,"toss":318000,"aedi":3544600,"organic":48503220},"2026-06-27":{"naver":28181260,"meta":44412500,"google_sa":5759350,"google_da":0,"payco":1647800,"toss":366700,"aedi":2505400,"organic":38720180},"2026-06-28":{"naver":40645350,"meta":59474610,"google_sa":5674250,"google_da":0,"payco":2165600,"toss":506800,"aedi":4772890,"organic":48409380},"2026-06-29":{"naver":58939390,"meta":66495060,"google_sa":8182600,"google_da":0,"payco":907100,"toss":1005100,"aedi":4289800,"organic":54081960}};
+const C24 = {"2026-03-01":{"naver":50565360,"meta":54440060,"google_sa":2491920,"google_da":0,"payco":0,"toss":886750,"aedi":3898620,"organic":37471050},"2026-03-02":{"naver":80781340,"meta":102316770,"google_sa":3871090,"google_da":0,"payco":10980430,"toss":863420,"aedi":5197110,"organic":75416110},"2026-03-03":{"naver":97234740,"meta":124614900,"google_sa":5431940,"google_da":0,"payco":3411620,"toss":2325160,"aedi":6401630,"organic":76774640},"2026-03-04":{"naver":65894360,"meta":108445370,"google_sa":1512850,"google_da":0,"payco":683370,"toss":1432210,"aedi":3975330,"organic":54494660},"2026-03-05":{"naver":61991540,"meta":108852530,"google_sa":35100,"google_da":0,"payco":136380,"toss":1205360,"aedi":4075590,"organic":45839350},"2026-03-06":{"naver":43307810,"meta":91599930,"google_sa":0,"google_da":0,"payco":111490,"toss":818410,"aedi":2937700,"organic":34958160},"2026-03-07":{"naver":37101920,"meta":88881940,"google_sa":0,"google_da":0,"payco":110290,"toss":294960,"aedi":2332380,"organic":30320370},"2026-03-08":{"naver":52616260,"meta":103632710,"google_sa":0,"google_da":0,"payco":603670,"toss":599180,"aedi":3544650,"organic":38364830},"2026-03-09":{"naver":78587840,"meta":121589800,"google_sa":0,"google_da":0,"payco":2537700,"toss":930380,"aedi":3562980,"organic":54349480},"2026-03-10":{"naver":77984930,"meta":138858420,"google_sa":0,"google_da":0,"payco":1858580,"toss":578520,"aedi":4640600,"organic":61659080},"2026-03-11":{"naver":69973970,"meta":128100420,"google_sa":59400,"google_da":0,"payco":956110,"toss":1069720,"aedi":5460400,"organic":58864520},"2026-03-12":{"naver":54658210,"meta":87770710,"google_sa":26900,"google_da":0,"payco":2756720,"toss":928160,"aedi":3943470,"organic":53720330},"2026-03-13":{"naver":39174050,"meta":54992830,"google_sa":0,"google_da":0,"payco":990540,"toss":224890,"aedi":3037000,"organic":36922680},"2026-03-14":{"naver":28429530,"meta":49287980,"google_sa":0,"google_da":0,"payco":276230,"toss":251840,"aedi":2257690,"organic":25106980},"2026-03-15":{"naver":48711180,"meta":64432050,"google_sa":0,"google_da":0,"payco":397820,"toss":308540,"aedi":2993480,"organic":41130730},"2026-03-16":{"naver":72503810,"meta":90855630,"google_sa":0,"google_da":0,"payco":448900,"toss":897890,"aedi":5930140,"organic":59622240},"2026-03-17":{"naver":65425800,"meta":72844630,"google_sa":0,"google_da":0,"payco":515410,"toss":689130,"aedi":4591170,"organic":52858450},"2026-03-18":{"naver":63321450,"meta":68108770,"google_sa":0,"google_da":0,"payco":385190,"toss":608660,"aedi":2935490,"organic":44142320},"2026-03-19":{"naver":52369110,"meta":67517570,"google_sa":0,"google_da":0,"payco":567370,"toss":1054150,"aedi":3583600,"organic":40411490},"2026-03-20":{"naver":40355540,"meta":38018010,"google_sa":0,"google_da":0,"payco":263770,"toss":540370,"aedi":2273900,"organic":31732430},"2026-03-21":{"naver":31804740,"meta":29617140,"google_sa":0,"google_da":0,"payco":157680,"toss":212840,"aedi":1697530,"organic":18321700},"2026-03-22":{"naver":44715710,"meta":31688960,"google_sa":0,"google_da":0,"payco":475820,"toss":596260,"aedi":5402870,"organic":81255890},"2026-03-23":{"naver":66051910,"meta":55216560,"google_sa":0,"google_da":0,"payco":594000,"toss":248650,"aedi":4190240,"organic":66979090},"2026-03-24":{"naver":56395170,"meta":50806910,"google_sa":0,"google_da":0,"payco":895500,"toss":533430,"aedi":3685340,"organic":61444390},"2026-03-25":{"naver":65121570,"meta":46714220,"google_sa":0,"google_da":0,"payco":281030,"toss":871260,"aedi":4984350,"organic":72388040},"2026-03-26":{"naver":61215110,"meta":49582130,"google_sa":0,"google_da":0,"payco":709440,"toss":712580,"aedi":3932820,"organic":49921470},"2026-03-27":{"naver":32203830,"meta":21697900,"google_sa":0,"google_da":0,"payco":108320,"toss":316650,"aedi":1517480,"organic":21980600},"2026-03-28":{"naver":21379960,"meta":12855120,"google_sa":0,"google_da":0,"payco":184290,"toss":270020,"aedi":1413780,"organic":12649260},"2026-03-29":{"naver":30297070,"meta":18507380,"google_sa":0,"google_da":0,"payco":216600,"toss":0,"aedi":1498840,"organic":20997850},"2026-03-30":{"naver":48623620,"meta":23572760,"google_sa":0,"google_da":0,"payco":480740,"toss":484590,"aedi":2778720,"organic":29535450},"2026-03-31":{"naver":45170750,"meta":20996240,"google_sa":0,"google_da":0,"payco":191490,"toss":579390,"aedi":2124380,"organic":32057450},"2026-04-01":{"naver":48391010,"meta":19781830,"google_sa":0,"google_da":0,"payco":485590,"toss":448590,"aedi":2096000,"organic":34027920},"2026-04-02":{"naver":43227570,"meta":20037030,"google_sa":0,"google_da":0,"payco":370450,"toss":472500,"aedi":1572170,"organic":25173680},"2026-04-03":{"naver":32024270,"meta":24248960,"google_sa":0,"google_da":0,"payco":392450,"toss":474990,"aedi":839030,"organic":20748470},"2026-04-04":{"naver":29200300,"meta":53853330,"google_sa":0,"google_da":0,"payco":2075260,"toss":306970,"aedi":1625200,"organic":25545260},"2026-04-05":{"naver":39571040,"meta":37678200,"google_sa":0,"google_da":0,"payco":2790700,"toss":528150,"aedi":3062560,"organic":47388050},"2026-04-06":{"naver":63613080,"meta":52449200,"google_sa":0,"google_da":0,"payco":883860,"toss":593390,"aedi":4070080,"organic":64543240},"2026-04-07":{"naver":52481750,"meta":46798780,"google_sa":0,"google_da":0,"payco":683190,"toss":915170,"aedi":2562320,"organic":44302920},"2026-04-08":{"naver":46528170,"meta":41371240,"google_sa":0,"google_da":0,"payco":158890,"toss":259390,"aedi":2802390,"organic":38965990},"2026-04-09":{"naver":39783640,"meta":40395950,"google_sa":0,"google_da":0,"payco":379290,"toss":673160,"aedi":1983400,"organic":30694880},"2026-04-10":{"naver":35466370,"meta":36469960,"google_sa":0,"google_da":0,"payco":1171880,"toss":138890,"aedi":1793600,"organic":28471700},"2026-04-11":{"naver":26672190,"meta":27627680,"google_sa":0,"google_da":0,"payco":1483410,"toss":273590,"aedi":1899810,"organic":20003860},"2026-04-12":{"naver":40275910,"meta":29732760,"google_sa":0,"google_da":0,"payco":743080,"toss":266090,"aedi":2392030,"organic":28432360},"2026-04-13":{"naver":64450320,"meta":47314460,"google_sa":0,"google_da":0,"payco":343550,"toss":418600,"aedi":2578500,"organic":38799150},"2026-04-14":{"naver":59472540,"meta":46626210,"google_sa":183900,"google_da":0,"payco":579500,"toss":807050,"aedi":3250580,"organic":37959850},"2026-04-15":{"naver":47240650,"meta":48742680,"google_sa":867590,"google_da":0,"payco":509160,"toss":424290,"aedi":3092150,"organic":36056100},"2026-04-16":{"naver":38367830,"meta":47864960,"google_sa":3461290,"google_da":0,"payco":273500,"toss":573500,"aedi":3116760,"organic":75236640},"2026-04-17":{"naver":30702950,"meta":33622370,"google_sa":2507670,"google_da":0,"payco":287230,"toss":722770,"aedi":2002470,"organic":35275970},"2026-04-18":{"naver":24262200,"meta":26794870,"google_sa":1900660,"google_da":0,"payco":122100,"toss":537200,"aedi":2330690,"organic":20473600},"2026-04-19":{"naver":35873890,"meta":32794240,"google_sa":2729590,"google_da":0,"payco":513570,"toss":675070,"aedi":2830930,"organic":28046170},"2026-04-20":{"naver":54111910,"meta":51516310,"google_sa":3801490,"google_da":0,"payco":572500,"toss":636380,"aedi":3523840,"organic":42129160},"2026-04-21":{"naver":46853670,"meta":53278480,"google_sa":3101760,"google_da":0,"payco":693750,"toss":1915770,"aedi":3352640,"organic":44530891},"2026-04-22":{"naver":45167360,"meta":40325620,"google_sa":2492030,"google_da":0,"payco":2125720,"toss":2170560,"aedi":1669140,"organic":33100360},"2026-04-23":{"naver":5017980,"meta":30994140,"google_sa":1987320,"google_da":0,"payco":2265200,"toss":1592440,"aedi":2161970,"organic":66688350},"2026-04-24":{"naver":3324660,"meta":28615020,"google_sa":1914320,"google_da":0,"payco":1194660,"toss":1133550,"aedi":2137220,"organic":64000580},"2026-04-25":{"naver":21772580,"meta":21077376,"google_sa":1961830,"google_da":0,"payco":1677010,"toss":965040,"aedi":1961630,"organic":23596360},"2026-04-26":{"naver":39794090,"meta":39220580,"google_sa":3058220,"google_da":0,"payco":2222840,"toss":826920,"aedi":3775430,"organic":37553360},"2026-04-27":{"naver":57712740,"meta":48479650,"google_sa":3357770,"google_da":0,"payco":2603350,"toss":656180,"aedi":3564470,"organic":50339950},"2026-04-28":{"naver":48257090,"meta":54703480,"google_sa":3944110,"google_da":0,"payco":1331550,"toss":474590,"aedi":3047670,"organic":48357530},"2026-04-29":{"naver":39962090,"meta":47035340,"google_sa":2723290,"google_da":0,"payco":1460940,"toss":361070,"aedi":1867100,"organic":33716700},"2026-04-30":{"naver":25434460,"meta":30473780,"google_sa":2163260,"google_da":0,"payco":868960,"toss":120390,"aedi":1923230,"organic":24430980},"2026-05-01":{"naver":33696540,"meta":43279680,"google_sa":2231860,"google_da":0,"payco":347980,"toss":403790,"aedi":2530860,"organic":23972840},"2026-05-02":{"naver":27062120,"meta":34999670,"google_sa":2404970,"google_da":0,"payco":1001970,"toss":765490,"aedi":2611910,"organic":22678500},"2026-05-03":{"naver":38644250,"meta":45969950,"google_sa":2269370,"google_da":0,"payco":854080,"toss":218890,"aedi":2630150,"organic":27678050},"2026-05-04":{"naver":45514120,"meta":57363970,"google_sa":3948020,"google_da":0,"payco":829600,"toss":933520,"aedi":2554500,"organic":38236810},"2026-05-05":{"naver":50378840,"meta":69280510,"google_sa":3053660,"google_da":0,"payco":350660,"toss":1199280,"aedi":3736040,"organic":43299660},"2026-05-06":{"naver":63595260,"meta":84524860,"google_sa":5599100,"google_da":0,"payco":363950,"toss":710600,"aedi":5071340,"organic":49898580},"2026-05-07":{"naver":60729350,"meta":89536750,"google_sa":4837280,"google_da":0,"payco":295280,"toss":722110,"aedi":4954500,"organic":40021810},"2026-05-08":{"naver":37945030,"meta":64664710,"google_sa":3040460,"google_da":0,"payco":895800,"toss":947560,"aedi":2634350,"organic":31625220},"2026-05-09":{"naver":32070510,"meta":47315810,"google_sa":2212650,"google_da":0,"payco":692760,"toss":204090,"aedi":3030950,"organic":19629350},"2026-05-10":{"naver":44823270,"meta":64901150,"google_sa":4496250,"google_da":0,"payco":569890,"toss":271300,"aedi":4262010,"organic":29261950},"2026-05-11":{"naver":68184270,"meta":92116460,"google_sa":5108960,"google_da":0,"payco":368630,"toss":764800,"aedi":5120630,"organic":68633140},"2026-05-12":{"naver":59009870,"meta":86688090,"google_sa":4821680,"google_da":0,"payco":469250,"toss":447700,"aedi":4864170,"organic":78872790},"2026-05-13":{"naver":48548650,"meta":84770490,"google_sa":4251790,"google_da":0,"payco":136370,"toss":419200,"aedi":3777290,"organic":59899550},"2026-05-14":{"naver":41163210,"meta":68785330,"google_sa":4029410,"google_da":0,"payco":166130,"toss":347870,"aedi":3837580,"organic":52741830},"2026-05-15":{"naver":31543960,"meta":54628470,"google_sa":3087630,"google_da":0,"payco":1409810,"toss":202070,"aedi":2734050,"organic":42332220},"2026-05-16":{"naver":22070840,"meta":38958300,"google_sa":2009860,"google_da":0,"payco":1235210,"toss":236850,"aedi":3403180,"organic":33734490},"2026-05-17":{"naver":39481580,"meta":56111220,"google_sa":3597600,"google_da":0,"payco":938510,"toss":536950,"aedi":4786750,"organic":43098010},"2026-05-18":{"naver":65395090,"meta":65333990,"google_sa":4610220,"google_da":0,"payco":188060,"toss":403350,"aedi":4250310,"organic":71076530},"2026-05-19":{"naver":50918650,"meta":73981310,"google_sa":4052500,"google_da":0,"payco":38700,"toss":790030,"aedi":4234790,"organic":60601590},"2026-05-20":{"naver":45901420,"meta":64316450,"google_sa":3946540,"google_da":0,"payco":294610,"toss":636720,"aedi":4217410,"organic":54790710},"2026-05-21":{"naver":39551090,"meta":57240140,"google_sa":4426850,"google_da":0,"payco":268330,"toss":58500,"aedi":3816700,"organic":44832470},"2026-05-22":{"naver":28318710,"meta":40737370,"google_sa":3552370,"google_da":0,"payco":1253940,"toss":302830,"aedi":3133090,"organic":36799490},"2026-05-23":{"naver":24738720,"meta":30341070,"google_sa":2341950,"google_da":0,"payco":2142020,"toss":113400,"aedi":2691720,"organic":23589350},"2026-05-24":{"naver":26307320,"meta":40067090,"google_sa":2016530,"google_da":0,"payco":692510,"toss":669800,"aedi":3286520,"organic":27500710},"2026-05-25":{"naver":47725140,"meta":55488670,"google_sa":3289220,"google_da":0,"payco":679420,"toss":814340,"aedi":3992770,"organic":54368020},"2026-05-26":{"naver":61835890,"meta":71192210,"google_sa":5692580,"google_da":0,"payco":279830,"toss":746930,"aedi":3753640,"organic":64189670},"2026-05-27":{"naver":52514970,"meta":70924660,"google_sa":3770670,"google_da":0,"payco":94400,"toss":626190,"aedi":4829630,"organic":57593220},"2026-05-28":{"naver":51206180,"meta":56994830,"google_sa":4397060,"google_da":0,"payco":227090,"toss":464240,"aedi":3276700,"organic":48573380},"2026-05-29":{"naver":32826650,"meta":40992200,"google_sa":2913000,"google_da":0,"payco":667550,"toss":237850,"aedi":1987640,"organic":35024700},"2026-05-30":{"naver":24895120,"meta":25305940,"google_sa":2170870,"google_da":0,"payco":1170770,"toss":55900,"aedi":2214450,"organic":26295380},"2026-05-31":{"naver":43758760,"meta":36480830,"google_sa":2504880,"google_da":0,"payco":765780,"toss":689070,"aedi":3375860,"organic":44510170},"2026-06-01":{"naver":84717810,"meta":76059580,"google_sa":6190010,"google_da":0,"payco":635950,"toss":1424080,"aedi":4837570,"organic":59725620},"2026-06-02":{"naver":60075240,"meta":79137250,"google_sa":5492730,"google_da":0,"payco":1354670,"toss":318890,"aedi":5098000,"organic":41580280},"2026-06-03":{"naver":51371010,"meta":70232960,"google_sa":3819160,"google_da":0,"payco":1808030,"toss":789100,"aedi":5225160,"organic":28830420},"2026-06-04":{"naver":54597290,"meta":84613850,"google_sa":4608600,"google_da":0,"payco":829650,"toss":1411080,"aedi":4259060,"organic":38414750},"2026-06-05":{"naver":45488640,"meta":59891650,"google_sa":3038990,"google_da":0,"payco":277140,"toss":831730,"aedi":2726730,"organic":30840870},"2026-06-06":{"naver":32172130,"meta":37532690,"google_sa":2192360,"google_da":0,"payco":785560,"toss":1084280,"aedi":2754840,"organic":21526070},"2026-06-07":{"naver":46992280,"meta":49287790,"google_sa":2862220,"google_da":0,"payco":1833520,"toss":1580770,"aedi":3595840,"organic":28926330},"2026-06-08":{"naver":72833350,"meta":75885690,"google_sa":5434270,"google_da":0,"payco":1071630,"toss":1472320,"aedi":7498260,"organic":167693040},"2026-06-09":{"naver":63180920,"meta":82813900,"google_sa":6726840,"google_da":37600,"payco":289690,"toss":1142060,"aedi":4649620,"organic":78234730},"2026-06-10":{"naver":69266640,"meta":86571190,"google_sa":4779020,"google_da":675190,"payco":690600,"toss":1027620,"aedi":5868890,"organic":75981871},"2026-06-11":{"naver":54889300,"meta":77409110,"google_sa":4523310,"google_da":629100,"payco":364300,"toss":469020,"aedi":4981270,"organic":54519030},"2026-06-12":{"naver":35061440,"meta":58961040,"google_sa":2140760,"google_da":1229300,"payco":471940,"toss":333690,"aedi":2681120,"organic":51031630},"2026-06-13":{"naver":28492470,"meta":37497860,"google_sa":1920640,"google_da":1221900,"payco":1210610,"toss":183490,"aedi":2181930,"organic":27372060},"2026-06-14":{"naver":44142110,"meta":55657120,"google_sa":2337540,"google_da":2367180,"payco":2481110,"toss":631110,"aedi":4101440,"organic":48158570},"2026-06-15":{"naver":58702220,"meta":80332560,"google_sa":4568330,"google_da":1713040,"payco":875450,"toss":505560,"aedi":5020550,"organic":46381470},"2026-06-16":{"naver":56819870,"meta":72286690,"google_sa":4133100,"google_da":1815200,"payco":528300,"toss":590350,"aedi":5040440,"organic":40557600},"2026-06-17":{"naver":51275800,"meta":72446050,"google_sa":3384700,"google_da":2195600,"payco":497000,"toss":684300,"aedi":5968900,"organic":73014640},"2026-06-18":{"naver":45794990,"meta":76476080,"google_sa":2250690,"google_da":2707450,"payco":349350,"toss":1178100,"aedi":4243870,"organic":54777040},"2026-06-19":{"naver":33563200,"meta":47994440,"google_sa":2773300,"google_da":1918200,"payco":220500,"toss":244200,"aedi":1583800,"organic":31111440},"2026-06-20":{"naver":27948640,"meta":46656610,"google_sa":1964200,"google_da":2721450,"payco":586200,"toss":124500,"aedi":2870900,"organic":25965920},"2026-06-21":{"naver":41491250,"meta":57161250,"google_sa":3017400,"google_da":2634500,"payco":2233550,"toss":81300,"aedi":3291060,"organic":42310280},"2026-06-22":{"naver":68857230,"meta":73450940,"google_sa":4639400,"google_da":3202700,"payco":899900,"toss":842900,"aedi":5166190,"organic":68157690},"2026-06-23":{"naver":54876520,"meta":67860250,"google_sa":2448000,"google_da":2343900,"payco":300800,"toss":692160,"aedi":5590200,"organic":48545310},"2026-06-24":{"naver":52408000,"meta":64067130,"google_sa":3158000,"google_da":3174650,"payco":415800,"toss":500800,"aedi":4036190,"organic":41206240},"2026-06-25":{"naver":48227990,"meta":69623050,"google_sa":4784700,"google_da":0,"payco":458500,"toss":652400,"aedi":2663850,"organic":39718280},"2026-06-26":{"naver":34442650,"meta":47645860,"google_sa":3608550,"google_da":0,"payco":102500,"toss":318000,"aedi":3544600,"organic":29473560},"2026-06-27":{"naver":28181260,"meta":43175200,"google_sa":5759350,"google_da":0,"payco":1647800,"toss":366700,"aedi":2505400,"organic":25164930},"2026-06-28":{"naver":40645350,"meta":56790810,"google_sa":5674250,"google_da":0,"payco":2165600,"toss":506800,"aedi":4772890,"organic":33407330},"2026-06-29":{"naver":58939390,"meta":66495060,"google_sa":8182600,"google_da":0,"payco":907100,"toss":1005100,"aedi":4289800,"organic":54081960}};
 
 // ═══ CONFIG ═══════════════════════════════════════════════════════
 const SHEET_ID='1VB0ND3448Ao0inegNeUk0O1aXcn7tiZ-3CXglqRmkvQ',GID='1140301783';
@@ -298,7 +395,9 @@ const CH_META={
   aedi:     {label:'에디ai',  ci:'ci-aedi',   color:'#9c27b0'},
 };
 const NAVER_SUBS=[{key:'naver_brand',label:'브랜드검색'},{key:'naver_pl',label:'파워링크'},{key:'naver_sh',label:'쇼핑검색'}];
-let rawDays=[],activeMonth='all',activeView='monthly',activeCh='all',naverExpanded=false;
+let rawDays=[],activeMonth='all',activeView='monthly',activeCh='all',naverExpanded=false,revMode='raw';
+function mRev(v){return revMode==='actual'?v*(0.86/0.85):v;}
+function cRev(v){return revMode==='actual'?v*0.86:v;}
 
 // ═══ HELPERS ══════════════════════════════════════════════════════
 function n(v){return parseFloat((v||'0').replace(/,/g,''))||0;}
@@ -374,15 +473,15 @@ function filteredDays(){return activeMonth==='all'?rawDays:rawDays.filter(d=>d.m
 function aggDays(days){
   const res={};PAID_CH.forEach(k=>res[k]={spd:0,mrev:0,crev:0});res.organic={crev:0};res.content_fee={spd:0};
   days.forEach(d=>{
-    PAID_CH.forEach(k=>{res[k].spd+=(d.media[k]||{spd:0}).spd;res[k].mrev+=(d.media[k]||{rev:0}).rev;res[k].crev+=(d.c24[k]||0);});
-    res.organic.crev+=(d.c24.organic||0);
+    PAID_CH.forEach(k=>{res[k].spd+=(d.media[k]||{spd:0}).spd;res[k].mrev+=mRev((d.media[k]||{rev:0}).rev);res[k].crev+=cRev(d.c24[k]||0);});
+    res.organic.crev+=cRev(d.c24.organic||0);
     res.content_fee.spd+=(d.media.content_fee||{spd:0}).spd;
   });return res;
 }
 function chMetrics(day,ch){
   if(!day)return{spd:0,mrev:0,crev:0};
-  if(ch==='all')return{spd:PAID_CH.reduce((s,k)=>s+(day.media[k]||{spd:0}).spd,0),mrev:PAID_CH.reduce((s,k)=>s+(day.media[k]||{rev:0}).rev,0),crev:PAID_CH.reduce((s,k)=>s+(day.c24[k]||0),0)};
-  return{spd:(day.media[ch]||{spd:0}).spd,mrev:(day.media[ch]||{rev:0}).rev,crev:(day.c24[ch]||0)};
+  if(ch==='all')return{spd:PAID_CH.reduce((s,k)=>s+(day.media[k]||{spd:0}).spd,0),mrev:mRev(PAID_CH.reduce((s,k)=>s+(day.media[k]||{rev:0}).rev,0)),crev:cRev(PAID_CH.reduce((s,k)=>s+(day.c24[k]||0),0))};
+  return{spd:(day.media[ch]||{spd:0}).spd,mrev:mRev((day.media[ch]||{rev:0}).rev),crev:cRev(day.c24[ch]||0)};
 }
 
 // ═══ RENDER ═══════════════════════════════════════════════════════
@@ -408,8 +507,8 @@ function renderKPI(agg){
   const ratioVal=_gap!==null?(_gap>=0?'+':'')+_gap+'%p':'—';
   document.getElementById('kpi-grid').innerHTML=`
     <div class="kpi-card hl"><div class="kpi-label">총 매체비용</div><div class="kpi-value">${fmtV(spd)}</div><div class="kpi-sub">VAT 제외</div></div>
-    <div class="kpi-card"><div class="kpi-label">매체 보고 매출</div><div class="kpi-value">${fmtV(mRev)}</div><div class="kpi-sub">${rc(mR)} 매체 ROAS</div></div>
-    <div class="kpi-card"><div class="kpi-label">Cafe24 실매출</div><div class="kpi-value">${fmtV(cRev)}</div><div class="kpi-sub">${rc(cR)} Cafe24 ROAS</div></div>
+    <div class="kpi-card"><div class="kpi-label">매체 매출</div><div class="kpi-value">${fmtV(mRev)}</div><div class="kpi-sub">${rc(mR)} 매체 ROAS · ${revMode==='actual'?'÷0.85×0.86':'원본값'}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Cafe24 매출</div><div class="kpi-value">${fmtV(cRev)}</div><div class="kpi-sub">${rc(cR)} C24 ROAS · ${revMode==='actual'?'RAW×0.86':'원본값'}</div></div>
     <div class="kpi-card hl2"><div class="kpi-label">실매출 갭</div><div class="kpi-value">${ratioVal}</div><div class="kpi-sub">C24매출 ÷ 매체매출 − 100%</div></div>
     <div class="kpi-card hl2"><div class="kpi-label">매출액 차이</div><div class="kpi-value">${fmtDiff(revDiff)}</div><div class="kpi-sub">Cafe24 − 매체</div></div>
     <div class="kpi-card"><div class="kpi-label">오가닉 매출</div><div class="kpi-value">${fmtV(agg.organic.crev)}</div><div class="kpi-sub">채널없음 Cafe24</div></div>
@@ -419,7 +518,7 @@ function renderKPI(agg){
 // ── Main Table ─────────────────────────────────────────────────────
 function renderMainTable(agg,days){
   const subAgg={};
-  NAVER_SUBS.forEach(({key})=>{subAgg[key]={spd:0,mrev:0};days.forEach(d=>{subAgg[key].spd+=(d.media[key]||{spd:0}).spd;subAgg[key].mrev+=(d.media[key]||{rev:0}).rev;});});
+  NAVER_SUBS.forEach(({key})=>{subAgg[key]={spd:0,mrev:0};days.forEach(d=>{subAgg[key].spd+=(d.media[key]||{spd:0}).spd;subAgg[key].mrev+=mRev((d.media[key]||{rev:0}).rev);});});
   let rows='';
   PAID_CH.forEach(k=>{
     const{spd,mrev,crev}=agg[k],m=CH_META[k];
@@ -568,8 +667,8 @@ function renderDailyTable(days){
   // 오가닉 특별 처리
   if(ch==='organic'){
     let rows='';
-    days.forEach(d=>{rows+=`<tr><td>${d.date}</td><td>${fmtV(d.c24.organic||0)}</td></tr>`;});
-    const tot=days.reduce((s,d)=>s+(d.c24.organic||0),0);
+    days.forEach(d=>{rows+=`<tr><td>${d.date}</td><td>${fmtV(cRev(d.c24.organic||0))}</td></tr>`;});
+    const tot=days.reduce((s,d)=>s+cRev(d.c24.organic||0),0);
     rows+=`<tr class="tr-total"><td>합계 (${days.length}일)</td><td>${fmtV(tot)}</td></tr>`;
     document.getElementById('daily-table').innerHTML=`<table>
       <thead><tr><th style="text-align:left">날짜</th><th class="gb">오가닉 매출 (Cafe24)</th></tr></thead>
@@ -619,8 +718,8 @@ function renderDailyTable(days){
 // 항상 전체 기간 표시 (기간 필터 무관)
 function renderOrganicTable(){
   const byM={};
-  rawDays.forEach(d=>{if(!byM[d.month])byM[d.month]={crev:0,cnt:0};byM[d.month].crev+=(d.c24.organic||0);byM[d.month].cnt++;});
-  const totalRev=rawDays.reduce((s,d)=>s+(d.c24.organic||0),0);
+  rawDays.forEach(d=>{if(!byM[d.month])byM[d.month]={crev:0,cnt:0};byM[d.month].crev+=cRev(d.c24.organic||0);byM[d.month].cnt++;});
+  const totalRev=rawDays.reduce((s,d)=>s+cRev(d.c24.organic||0),0);
   const totalCnt=rawDays.length;
   let rows='';
   Object.keys(byM).sort().forEach(m=>{
@@ -633,6 +732,18 @@ function renderOrganicTable(){
     <thead><tr><th style="text-align:left">월</th><th>일수</th><th>오가닉 매출 (Cafe24)</th><th>일평균</th></tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
+}
+
+// ─── Rev Mode ─────────────────────────────────────────────────────
+function setRevMode(mode){
+  revMode=mode;
+  document.getElementById('rev-raw').classList.toggle('active',mode==='raw');
+  document.getElementById('rev-real').classList.toggle('active',mode==='actual');
+  const noteEl=document.getElementById('rev-note');
+  if(noteEl)noteEl.textContent=mode==='actual'
+    ?'매체비용 VAT제외 · 매체 ÷0.85×0.86 / C24 RAW×0.86 — 동일 기준 비교'
+    :'매체비용 VAT제외 · 매출 = 데이터 원본';
+  if(rawDays.length)render();
 }
 
 // ═══ TOGGLE ═══════════════════════════════════════════════════════
@@ -678,6 +789,151 @@ document.querySelectorAll('#ch-filter .ch-btn').forEach(btn=>{
 document.querySelector('[data-m="all"]').classList.add('active');
 document.querySelector('[data-view="monthly"]').classList.add('active');
 loadMedia();
+
+// ═══ 미디어믹스 계산기 ════════════════════════════════════════════
+const CALC_CH=[
+  {key:'brand',    label:'브랜드검색', group:'naver', defRoas:7310, gap:0.82},
+  {key:'power',    label:'파워링크',   group:'naver', defRoas:688,  gap:0.82},
+  {key:'shop',     label:'쇼핑검색',   group:'naver', defRoas:602,  gap:0.82},
+  {key:'meta',     label:'메타',       group:'meta',  defRoas:233,  gap:0.74},
+  {key:'google_sa',label:'구글 SA',    group:'gsa',   defRoas:774,  gap:0.71},
+  {key:'aedi',     label:'에디ai',     group:'aedi',  defRoas:396,  gap:1.10},
+  {key:'toss',     label:'토스',       group:'toss',  defRoas:396,  gap:0.27, cps:true},
+  {key:'payco',    label:'페이코',     group:'payco', defRoas:396,  gap:0.33, cps:true},
+  {key:'google_da',label:'구글 DA',    group:'gda',   defRoas:258,  gap:0.70},
+];
+const MM_ORGANIC_DAY=(8.57/30+13.04/31+9.65/30)/3; // 억/일 (4~6월 평균)
+let mmOtherRows=[];
+let mmBuilt=false;
+
+function openMMCalc(){
+  document.getElementById('mm-overlay').classList.add('open');
+  if(!mmBuilt){buildMMTable();mmBuilt=true;}
+  document.addEventListener('keydown',mmEsc);
+}
+function closeMMCalc(){
+  document.getElementById('mm-overlay').classList.remove('open');
+  document.removeEventListener('keydown',mmEsc);
+}
+function mmEsc(e){if(e.key==='Escape')closeMMCalc();}
+
+function mmFmt(v){
+  if(v===0)return'<span class="dash">—</span>';
+  return v.toFixed(2)+'억';
+}
+
+function buildMMTable(){
+  let html='';
+  CALC_CH.forEach(ch=>{
+    const isNaver=ch.group==='naver';
+    const rowCls=isNaver?' class="mm-naver"':'';
+    const lpad=isNaver?' style="padding-left:24px;font-weight:400"':'';
+    let c24cell;
+    if(isNaver){
+      c24cell=`<span style="color:#bbb;font-size:11px">네이버 통합↓</span>`;
+    }else{
+      const cps=ch.cps?`<span class="mm-cps-warn" title="CPS 채널 - C24 포착 낮음 (유실 인지)">⚠️</span>`:'';
+      c24cell=`<span class="mm-val-c24" id="mm-c24-${ch.key}">${mmFmt(0)}</span>${cps}`;
+    }
+    html+=`<tr${rowCls}><td${lpad}>${ch.label}</td>
+      <td><input class="mm-bgt" id="mm-b-${ch.key}" type="number" min="0" step="0.1" placeholder="0" oninput="mmRecalc()"></td>
+      <td><input class="mm-roas" id="mm-r-${ch.key}" type="number" min="1" step="1" value="${ch.defRoas}" oninput="mmRecalc()"></td>
+      <td class="mmh-raw"><span class="mm-val-raw" id="mm-raw-${ch.key}">${mmFmt(0)}</span></td>
+      <td class="mmh-real"><span class="mm-val-real" id="mm-rel-${ch.key}">${mmFmt(0)}</span></td>
+      <td class="mmh-c24">${c24cell}</td></tr>`;
+    if(ch.key==='shop'){
+      html+=`<tr class="mm-naver-c24"><td style="padding-left:12px">└ 네이버 C24 합계</td>
+        <td>—</td><td>—</td><td class="mmh-raw">—</td><td class="mmh-real">—</td>
+        <td class="mmh-c24"><span class="mm-val-c24" id="mm-naver-c24">${mmFmt(0)}</span></td></tr>`;
+    }
+  });
+  html+=`<tr class="mm-organic"><td>오가닉 예측 (<input class="mm-org-days" id="mm-org-days" type="number" min="1" max="31" value="31" oninput="mmRecalc()">일)</td>
+    <td>—</td><td>—</td><td class="mmh-raw">—</td><td class="mmh-real">—</td>
+    <td class="mmh-c24"><span class="mm-val-c24" id="mm-org-c24">${mmFmt(0)}</span></td></tr>`;
+  html+=`<tr class="mm-total"><td>TOTAL <small style="font-size:11px;font-weight:400;color:rgba(255,255,255,.5)">(기타비용 포함)</small></td>
+    <td id="mm-tot-bgt">0.00억</td><td>—</td>
+    <td id="mm-tot-raw">${mmFmt(0)}</td>
+    <td id="mm-tot-rel">${mmFmt(0)}</td>
+    <td id="mm-tot-c24">${mmFmt(0)}</td></tr>`;
+  document.getElementById('mm-tbody').innerHTML=html;
+  mmRecalc();
+}
+
+function mmRecalc(){
+  let totBgt=0,totRaw=0,totRel=0,totC24=0,naverRaw=0;
+  CALC_CH.forEach(ch=>{
+    const bgt=parseFloat(document.getElementById(`mm-b-${ch.key}`)?.value)||0;
+    const r=parseFloat(document.getElementById(`mm-r-${ch.key}`)?.value)||ch.defRoas;
+    const raw=bgt*r/100, rel=raw*0.86;
+    const rawEl=document.getElementById(`mm-raw-${ch.key}`);
+    const relEl=document.getElementById(`mm-rel-${ch.key}`);
+    if(rawEl)rawEl.innerHTML=mmFmt(raw);
+    if(relEl)relEl.innerHTML=mmFmt(rel);
+    if(ch.group==='naver'){naverRaw+=raw;}
+    else{
+      const c24=raw*ch.gap;
+      const el=document.getElementById(`mm-c24-${ch.key}`);
+      if(el)el.innerHTML=mmFmt(c24);
+      totC24+=c24;
+    }
+    totBgt+=bgt; totRaw+=raw; totRel+=rel;
+  });
+  const naverC24=naverRaw*0.82;
+  const nc24el=document.getElementById('mm-naver-c24');
+  if(nc24el)nc24el.innerHTML=mmFmt(naverC24);
+  totC24+=naverC24;
+
+  const days=parseInt(document.getElementById('mm-org-days')?.value)||31;
+  const orgC24=MM_ORGANIC_DAY*days;
+  const ocel=document.getElementById('mm-org-c24');
+  if(ocel)ocel.innerHTML=mmFmt(orgC24);
+  totC24+=orgC24;
+
+  let otherBgt=0;
+  mmOtherRows.forEach((_,i)=>{
+    otherBgt+=parseFloat(document.getElementById(`mm-oth-${i}`)?.value)||0;
+  });
+  totBgt+=otherBgt;
+
+  const rRaw=totBgt>0?Math.round(totRaw/totBgt*100):0;
+  const rRel=totBgt>0?Math.round(totRel/totBgt*100):0;
+  const rC24=totBgt>0?Math.round(totC24/totBgt*100):0;
+  const sml=(t)=>`<br><small style="font-size:11px;color:rgba(255,255,255,.5)">ROAS ${t}%</small>`;
+  const b=document.getElementById('mm-tot-bgt');if(b)b.textContent=totBgt.toFixed(2)+'억';
+  const tr=document.getElementById('mm-tot-raw');if(tr)tr.innerHTML=mmFmt(totRaw)+sml(rRaw);
+  const trel=document.getElementById('mm-tot-rel');if(trel)trel.innerHTML=mmFmt(totRel)+sml(rRel);
+  const tc24=document.getElementById('mm-tot-c24');if(tc24)tc24.innerHTML=mmFmt(totC24)+sml(rC24);
+}
+
+function saveMMOtherVals(){
+  mmOtherRows.forEach((row,i)=>{
+    const a=document.getElementById(`mm-oth-${i}`);
+    const l=document.getElementById(`mm-othl-${i}`);
+    if(a)row.amt=parseFloat(a.value)||0;
+    if(l)row.lbl=l.value||'';
+  });
+}
+function addMMOtherRow(){
+  saveMMOtherVals();
+  mmOtherRows.push({lbl:'',amt:0});
+  renderMMOtherRows();
+}
+function delMMOtherRow(i){
+  saveMMOtherVals();
+  mmOtherRows.splice(i,1);
+  renderMMOtherRows();
+  mmRecalc();
+}
+function renderMMOtherRows(){
+  const tbl=document.getElementById('mm-oth-tbl');
+  if(!tbl)return;
+  if(!mmOtherRows.length){tbl.innerHTML='';return;}
+  tbl.innerHTML=mmOtherRows.map((row,i)=>`<tr>
+    <td><input class="mm-other-lbl" id="mm-othl-${i}" type="text" placeholder="항목명" value="${row.lbl||''}"></td>
+    <td style="text-align:right"><input class="mm-other-amt" id="mm-oth-${i}" type="number" min="0" step="0.1" placeholder="0" value="${row.amt||''}" oninput="mmRecalc()"> 억</td>
+    <td><button class="mm-del-row-btn" onclick="delMMOtherRow(${i})">✕</button></td>
+  </tr>`).join('');
+}
 </script>
 <script>
 (function(){
