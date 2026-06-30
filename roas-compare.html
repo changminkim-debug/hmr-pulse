@@ -495,8 +495,14 @@ async function loadMedia(){
       fetchGviz(['C','AY','BA','BJ','BL','BX','BZ','CH','CI','CC','CE','CL']),
       fetchMetaC1Rev(),
     ]);
-    let organicMap={};
-    try{organicMap=await fetchOrganicSheet();}catch(e){console.warn('오가닉 시트 로드 실패, C24 fallback:',e.message);}
+    let organicMap={};let organicSrc='채널없음 Cafe24';
+    try{
+      organicMap=await fetchOrganicSheet();
+      const cnt=Object.keys(organicMap).length;
+      organicSrc=cnt>0?'공구제외 (스프레드시트)':'채널없음 Cafe24';
+      console.log('[오가닉] 시트 로드 OK, '+cnt+'건:', Object.entries(organicMap).slice(0,3));
+    }catch(e){console.warn('[오가닉] 시트 로드 실패 → C24 fallback:',e.message);}
+    window._organicSrc=organicSrc;
     const r1=parseCSV(t1).slice(1),r2=parseCSV(t2).slice(1),m2={},m1={};
     r2.forEach(r=>{if(r[0])m2[r[0].trim()]=r;});
     r1.forEach(r=>{if(r[0])m1[r[0].trim()]=r;});
@@ -572,7 +578,7 @@ function renderKPI(agg){
     <div class="kpi-card"><div class="kpi-label">Cafe24 매출</div><div class="kpi-value">${fmtV(cRev)}</div><div class="kpi-sub">${rc(cR)} C24 ROAS · ${revMode==='actual'?'RAW×0.86':'원본값'}</div></div>
     <div class="kpi-card hl2"><div class="kpi-label">실매출 갭</div><div class="kpi-value">${ratioVal}</div><div class="kpi-sub">C24매출 ÷ 매체매출 − 100%</div></div>
     <div class="kpi-card hl2"><div class="kpi-label">매출액 차이</div><div class="kpi-value">${fmtDiff(revDiff)}</div><div class="kpi-sub">Cafe24 − 매체</div></div>
-    <div class="kpi-card"><div class="kpi-label">오가닉 매출</div><div class="kpi-value">${fmtV(agg.organic.crev)}</div><div class="kpi-sub">채널없음 Cafe24</div></div>
+    <div class="kpi-card"><div class="kpi-label">오가닉 매출</div><div class="kpi-value">${fmtV(agg.organic.crev)}</div><div class="kpi-sub">${window._organicSrc||'채널없음 Cafe24'}</div></div>
   `;
 }
 
