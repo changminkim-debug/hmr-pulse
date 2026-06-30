@@ -215,7 +215,6 @@ input.mm-org-days:focus{border-color:#4466cc}
 .rev-btn:hover{border-color:#4466cc;color:#4466cc}
 .rev-btn.active{background:#4466cc;border-color:#4466cc;color:#fff}
 </style>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -946,11 +945,16 @@ function mmDownloadCSV(){
   a.click();URL.revokeObjectURL(a.href);
 }
 function mmDownloadXLSX(){
+  if(typeof XLSX!=='undefined'){_mmDoXLSX();return;}
+  const s=document.createElement('script');
+  s.src='https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
+  s.onload=()=>_mmDoXLSX();
+  document.head.appendChild(s);
+}
+function _mmDoXLSX(){
   const rows=mmGetTableData();
   const ws=XLSX.utils.aoa_to_sheet(rows);
-  // 숫자 열 너비 자동 조정
   ws['!cols']=[{wch:14},{wch:14},{wch:12},{wch:14},{wch:14},{wch:12},{wch:10},{wch:14},{wch:12},{wch:14},{wch:14},{wch:20}];
-  // 헤더 행 스타일 (SheetJS CE에서는 제한적)
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,'미디어믹스',ws);
   XLSX.writeFile(wb,'미디어믹스_'+new Date().toISOString().slice(0,10)+'.xlsx');
