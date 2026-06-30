@@ -413,7 +413,6 @@ const NAVER_SUBS=[{key:'naver_brand',label:'브랜드검색'},{key:'naver_pl',la
 let rawDays=[],activeMonth='all',activeView='monthly',activeCh='all',naverExpanded=false,revMode='raw';
 function mRev(v,ch){
   if(ch==='aedi') return revMode==='actual'?v/0.9*0.86:v/0.9;
-  if(ch==='meta') return revMode==='actual'?v*0.86:v; // C1=RAW: 실매출=C1×0.86
   return revMode==='actual'?v:v/0.86;
 }
 function cRev(v,ch){return revMode==='actual'?v*0.86:v;}
@@ -489,7 +488,7 @@ async function loadMedia(){
         media:{
           naver:{spd:bs+pl+sh,rev:n(r[3])+n(r[5])+n(r[7])},
           naver_brand:{spd:bs,rev:n(r[3])},naver_pl:{spd:pl,rev:n(r[5])},naver_sh:{spd:sh,rev:n(r[7])},
-          meta:{spd:n(r[8]),rev:metaC1[d]||0}, // C1 전환값 기준 (02.메타 시트 U열)
+          meta:{spd:n(r[8]),rev:metaC1[d]||0}, // C1 기준 (02.메타 U열)
           google_sa:{spd:n(x[1]),rev:n(x[2])},google_da:{spd:n(x[3]),rev:n(x[4])},
           payco:{spd:n(x[5]),rev:n(x[6])},aedi:{spd:n(x[7]),rev:n(x[8])},toss:{spd:n(x[9]),rev:n(x[10])},
           content_fee:{spd:n(x[11]),rev:0},
