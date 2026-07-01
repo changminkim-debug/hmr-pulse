@@ -353,6 +353,7 @@ input.mm-org-days:focus{border-color:#4466cc}
             <option value="payco">페이코</option>
             <option value="toss">토스페이</option>
             <option value="aedi">에디ai</option>
+            <option value="organic">오가닉</option>
           </select>
         </div>
       </div>
@@ -549,6 +550,7 @@ function aggDays(days){
 function chMetrics(day,ch){
   if(!day)return{spd:0,mrev:0,crev:0};
   if(ch==='all')return{spd:PAID_CH.reduce((s,k)=>s+(day.media[k]||{spd:0}).spd,0),mrev:PAID_CH.reduce((s,k)=>s+mRev((day.media[k]||{rev:0}).rev,k),0),crev:PAID_CH.reduce((s,k)=>s+cRev(day.c24[k]||0,k),0)};
+  if(ch==='organic')return{spd:0,mrev:0,crev:cRev(day.c24.organic||0,'organic')};
   return{spd:(day.media[ch]||{spd:0}).spd,mrev:mRev((day.media[ch]||{rev:0}).rev,ch),crev:cRev(day.c24[ch]||0,ch)};
 }
 
