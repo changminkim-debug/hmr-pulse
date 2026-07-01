@@ -231,6 +231,7 @@ input.mm-org-days:focus{border-color:#4466cc}
       <button class="mm-save-btn" id="mm-btn-save" onclick="mmSave()">💾 저장</button>
       <span class="mm-saved-label" id="mm-saved-label" style="display:none">✅ 저장됨</span>
       <button class="mm-edit-btn" id="mm-btn-edit" onclick="mmEdit()" style="display:none">✏️ 수정</button>
+      <button class="mm-edit-btn" id="mm-btn-link" onclick="mmCopyLink()" style="font-size:12px">🔗 링크 복사</button>
       <button class="mm-modal-close" onclick="closeMMCalc()">✕</button>
     </div>
     <div class="mm-modal-body">
@@ -873,11 +874,22 @@ const CALC_CH=[
 const MM_ORGANIC_RATIO=1.07; // 4~6월 오가닉/광고비 비율 (총오가닉30.94억/총광고비28.91억)
 let mmBuilt=false;
 
+function mmDataFromUrl(){
+  try{
+    const p=new URLSearchParams(location.search).get('mm');
+    if(p)return JSON.parse(decodeURIComponent(atob(p)));
+  }catch(e){}
+  return null;
+}
 function openMMCalc(){
   document.getElementById('mm-overlay').classList.add('open');
   if(!mmBuilt){buildMMTable();mmBuilt=true;}
-  const saved=localStorage.getItem('mm-calc-save');
-  if(saved){mmLoad();mmSetSavedState(true);}
+  const urlData=mmDataFromUrl();
+  if(urlData){mmLoadData(urlData);mmSetSavedState(true);}
+  else{
+    const saved=localStorage.getItem('mm-calc-save');
+    if(saved){mmLoadData(JSON.parse(saved));mmSetSavedState(true);}
+  }
   document.addEventListener('keydown',mmEsc);
 }
 function mmSetSavedState(isSaved){
@@ -895,7 +907,7 @@ function closeMMCalc(){
 }
 function mmEsc(e){if(e.key==='Escape')closeMMCalc();}
 
-function mmSave(){
+function mmCollectData(){
   const data={};
   CALC_CH.forEach(ch=>{
     const b=document.getElementById(`mm-b-${ch.key}`);
@@ -909,13 +921,28 @@ function mmSave(){
   if(bc)data['b_content']=bc.value;
   const nc=document.getElementById('mm-note-content');
   if(nc)data['note_content']=nc.value;
+  return data;
+}
+function mmSave(){
+  const data=mmCollectData();
+  const encoded=btoa(encodeURIComponent(JSON.stringify(data)));
   localStorage.setItem('mm-calc-save',JSON.stringify(data));
+  const url=new URL(location.href);
+  url.searchParams.set('mm',encoded);
+  history.replaceState(null,'',url.toString());
   mmSetSavedState(true);
 }
-function mmLoad(){
-  const raw=localStorage.getItem('mm-calc-save');
-  if(!raw){alert('저장된 값이 없습니다.');return;}
-  const data=JSON.parse(raw);
+function mmCopyLink(){
+  const data=mmCollectData();
+  const encoded=btoa(encodeURIComponent(JSON.stringify(data)));
+  const url=new URL(location.href);
+  url.searchParams.set('mm',encoded);
+  navigator.clipboard.writeText(url.toString()).then(()=>{
+    const btn=document.getElementById('mm-btn-link');
+    if(btn){const orig=btn.textContent;btn.textContent='✅ 복사됨';setTimeout(()=>btn.textContent=orig,2000);}
+  });
+}
+function mmLoadData(data){
   CALC_CH.forEach(ch=>{
     const b=document.getElementById(`mm-b-${ch.key}`);
     const r=document.getElementById(`mm-r-${ch.key}`);
@@ -929,6 +956,13 @@ function mmLoad(){
   const nc=document.getElementById('mm-note-content');
   if(nc&&data['note_content']!==undefined)nc.value=data['note_content'];
   mmRecalc();
+}
+function mmLoad(){
+  const urlData=mmDataFromUrl();
+  if(urlData){mmLoadData(urlData);return;}
+  const raw=localStorage.getItem('mm-calc-save');
+  if(!raw){alert('저장된 값이 없습니다.');return;}
+  mmLoadData(JSON.parse(raw));
 }
 
 function mmFmt(v){
