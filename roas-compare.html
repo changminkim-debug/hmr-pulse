@@ -280,12 +280,13 @@ input.mm-org-days:focus{border-color:#4466cc}
   <!-- 기간 필터 -->
   <div class="filter-bar">
     <span class="flabel">기간</span>
-    <button class="fbtn" data-m="all">전체 (3~6월)</button>
-    <button class="fbtn" data-m="q2">4~6월</button>
+    <button class="fbtn" data-m="all">전체 (3~7월)</button>
+    <button class="fbtn" data-m="q2">4~7월</button>
     <button class="fbtn" data-m="2026-03">3월</button>
     <button class="fbtn" data-m="2026-04">4월</button>
     <button class="fbtn" data-m="2026-05">5월</button>
     <button class="fbtn" data-m="2026-06">6월 (~30일)</button>
+    <button class="fbtn" data-m="2026-07">7월</button>
     <div class="fsep"></div>
     <button class="fbtn" data-view="monthly">월별</button>
     <button class="fbtn" data-view="daily">일별</button>
@@ -329,6 +330,7 @@ input.mm-org-days:focus{border-color:#4466cc}
             <option value="2026-04">4월</option>
             <option value="2026-05">5월</option>
             <option value="2026-06">6월</option>
+            <option value="2026-07">7월</option>
           </select>
         </div>
         <span class="cmp-vs">vs</span>
@@ -336,9 +338,10 @@ input.mm-org-days:focus{border-color:#4466cc}
           <span class="side-chip b">B</span>
           <select id="sel-b">
             <option value="2026-03">3월</option>
-            <option value="2026-04" selected>4월</option>
-            <option value="2026-05">5월</option>
+            <option value="2026-04">4월</option>
+            <option value="2026-05" selected>5월</option>
             <option value="2026-06">6월</option>
+            <option value="2026-07">7월</option>
           </select>
         </div>
         <div class="cmp-sep"></div>
@@ -402,7 +405,7 @@ const C24 = {"2026-03-01":{"naver":50565360,"meta":54440060,"google_sa":2491920,
 
 // ═══ CONFIG ═══════════════════════════════════════════════════════
 const SHEET_ID='1VB0ND3448Ao0inegNeUk0O1aXcn7tiZ-3CXglqRmkvQ',GID='1140301783';
-const START='2026-03-01',END='2026-06-30';
+const START='2026-03-01',END='2026-07-31';
 const PAID_CH=['naver','meta','google_sa','google_da','payco','toss','aedi'];
 const CH_META={
   naver:    {label:'네이버',   ci:'ci-naver',  color:'#03c75a'},
