@@ -396,14 +396,24 @@ async function main() {
   // Load historical data
   let records = [];
   if (CI_MODE) {
-    // CI: Meta API에서 당해년도 전체 직접 fetch (CSV 불필요)
+    // CI: Meta API에서 당해년도 전체 월별 청크 fetch (한 번에 요청 시 용량 초과 에러 방지)
     const fetchFrom = process.env.FETCH_FROM || `${today.slice(0, 4)}-01-01`;
-    console.log(`[dashboard] CI모드: ${fetchFrom} ~ ${yd} 전체 fetch`);
+    console.log(`[dashboard] CI모드: ${fetchFrom} ~ ${yd} 월별 fetch`);
     try {
       const { productMap, personMap } = buildLookups([]);
-      const apiRows = await fetchNewAdRows(fetchFrom, yd);
-      console.log(`[dashboard] Meta API ${apiRows.length}행 수신`);
-      records = await appendAndConvert(apiRows, productMap, personMap);
+      const allApiRows = [];
+      let chunkStart = fetchFrom;
+      while (chunkStart <= yd) {
+        const [cy, cm] = chunkStart.split("-").map(Number);
+        const lastOfMonth = ds(new Date(Date.UTC(cy, cm, 0)));
+        const chunkEnd = lastOfMonth < yd ? lastOfMonth : yd;
+        console.log(`[dashboard] fetch chunk: ${chunkStart} ~ ${chunkEnd}`);
+        const rows = await fetchNewAdRows(chunkStart, chunkEnd);
+        allApiRows.push(...rows);
+        chunkStart = ds(new Date(Date.UTC(cy, cm, 1)));
+      }
+      console.log(`[dashboard] Meta API 총 ${allApiRows.length}행 수신`);
+      records = await appendAndConvert(allApiRows, productMap, personMap);
     } catch (e) {
       console.error("[dashboard] Meta API 오류:", e.message);
       process.exit(1);
@@ -472,14 +482,14 @@ async function main() {
 
   // 일자별 드릴다운은 단기 기간만 (파일 크기 제어)
   const FULL_DAILY = new Set(["yesterday", "thisMonth", "lastMonth", "last30d", "last7d"]);
-  // 커스텀 날짜 범위 확장: 최근 4개월 monthly periods도 adDay 포함 (thisMonth/lastMonth 제외 - 중복 방지)
+  // 커스텀 날짜 범위 확장: 최근 4개월 monthly periods도 adDay 포함
+  // (연도→월 사이드바 네비게이션은 curPeriod를 'm202607' 같은 월별 id로 설정하므로
+  //  'thisMonth'/'lastMonth' shortcut id와는 별개 항목 — 제외하면 그 경로에서 드릴다운이 깨짐)
   {
-    const thisMonthId = 'm' + y + pad(mo);
-    const lastMonthId = 'm' + lastY + pad(lastMo);
     const cutoff = new Date(Date.UTC(y, mo - 5, 1));
     for (const md of monthDefs) {
       const mId = 'm' + md.year + pad(md.month);
-      if (new Date(Date.UTC(md.year, md.month - 1, 1)) >= cutoff && mId !== thisMonthId && mId !== lastMonthId) {
+      if (new Date(Date.UTC(md.year, md.month - 1, 1)) >= cutoff) {
         FULL_DAILY.add(mId);
       }
     }
