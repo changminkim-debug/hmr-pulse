@@ -208,6 +208,13 @@ input.mm-org-days:focus{border-color:#4466cc}
 .rev-btn{padding:4px 12px;border:1.5px solid #d8dce8;border-radius:8px;background:#fff;color:#8a91a8;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:.12s}
 .rev-btn:hover{border-color:#4466cc;color:#4466cc}
 .rev-btn.active{background:#4466cc;border-color:#4466cc;color:#fff}
+/* 총 예산 입력 */
+.mm-total-bgt-wrap{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:14px 16px;background:#eef2ff;border-radius:10px;border:1.5px solid #c8d4ff;flex-wrap:wrap}
+.mm-total-bgt-label{font-size:13px;font-weight:800;color:#1e2333;white-space:nowrap}
+input.mm-total-bgt{width:160px;padding:7px 9px;border:1.5px solid #b8c4f0;border-radius:7px;font-size:14px;font-weight:700;text-align:right;font-family:inherit;outline:none;background:#fff}
+input.mm-total-bgt:focus{border-color:#4466cc}
+.mm-total-bgt-diff{font-size:12px;font-weight:600;color:#5a6380}
+.mm-bgt-pct-val{font-size:11px;color:#8a91a8;font-weight:700;margin-left:4px;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -236,6 +243,11 @@ input.mm-org-days:focus{border-color:#4466cc}
     </div>
     <div class="mm-modal-body">
       <div class="mm-roas-note">RAW ROAS 기본값은 6월 실적 기준 · 예산은 원(₩) 단위 입력 · C24 갭비율은 4~6월 평균 기준 · 오가닉은 4~6월 일평균 예측값</div>
+      <div class="mm-total-bgt-wrap">
+        <span class="mm-total-bgt-label">총 예산(원)</span>
+        <input class="mm-total-bgt" id="mm-total-budget" type="text" inputmode="numeric" placeholder="0" oninput="mmBgtFmt(this)">
+        <span class="mm-total-bgt-diff" id="mm-total-budget-diff"></span>
+      </div>
       <div class="mm-tbl-wrap">
         <table class="mm-tbl">
           <thead>
@@ -944,6 +956,8 @@ function mmCollectData(){
   if(bc)data['b_content']=bc.value;
   const nc=document.getElementById('mm-note-content');
   if(nc)data['note_content']=nc.value;
+  const tb=document.getElementById('mm-total-budget');
+  if(tb)data['total_budget']=tb.value;
   return data;
 }
 function mmSave(){
@@ -978,6 +992,8 @@ function mmLoadData(data){
   if(bc&&data['b_content']!==undefined)bc.value=data['b_content'];
   const nc=document.getElementById('mm-note-content');
   if(nc&&data['note_content']!==undefined)nc.value=data['note_content'];
+  const tb=document.getElementById('mm-total-budget');
+  if(tb&&data['total_budget']!==undefined)tb.value=data['total_budget'];
   mmRecalc();
 }
 function mmLoad(){
@@ -1009,6 +1025,14 @@ function mmFmtRPill(v){
   return`<span class="mm-roas-pill">${Math.round(v)}%</span>`;
 }
 function mmSi(id,html){const el=document.getElementById(id);if(el)el.innerHTML=html;}
+function mmFmtBudgetDiff(totalBudget,perfBgt){
+  if(!totalBudget)return'';
+  const diff=totalBudget-perfBgt;
+  if(diff===0)return`채널 합계 <b>${mmFmtWon(perfBgt)}</b> · <span style="color:#2e7d32;font-weight:700">✓ 총 예산과 일치</span>`;
+  const label=diff>0?'미배정(잔여)':'초과 배정';
+  const color=diff>0?'#2e7d32':'#c62828';
+  return`채널 합계 <b>${mmFmtWon(perfBgt)}</b> · <span style="color:${color};font-weight:700">${label} ${mmFmtWon(Math.abs(diff))}</span>`;
+}
 function mmFmtGap(c24,raw){
   if(!raw&&!c24)return'<span class="dash">—</span>';
   const diff=c24-raw;
@@ -1050,7 +1074,7 @@ function buildMMTable(){
     }
     html+=`<tr${rowCls}>
       <td${lpad}>${ch.label}</td>
-      <td><input class="mm-bgt" id="mm-b-${ch.key}" type="text" inputmode="numeric" placeholder="0" oninput="mmBgtFmt(this)"></td>
+      <td><input class="mm-bgt" id="mm-b-${ch.key}" type="text" inputmode="numeric" placeholder="0" oninput="mmBgtFmt(this)"><span class="mm-bgt-pct-val" id="mm-b-pct-${ch.key}"></span></td>
       <td><input class="mm-roas" id="mm-r-${ch.key}" type="number" min="1" step="1" value="${ch.defRoas}" oninput="mmRecalc()"></td>
       <td class="mmh-raw"><span class="mm-val-raw" id="mm-raw-${ch.key}">—</span></td>
       <td class="mmh-real"><span class="mm-val-real" id="mm-rel-${ch.key}">—</span></td>
@@ -1061,7 +1085,7 @@ function buildMMTable(){
     if(ch.key==='shop'){
       html+=`<tr class="mm-naver-c24">
         <td style="padding-left:12px">└ 네이버 합계</td>
-        <td><span id="mm-naver-bgt">—</span></td>
+        <td><span id="mm-naver-bgt">—</span><span class="mm-bgt-pct-val" id="mm-naver-bgt-pct"></span></td>
         <td><span id="mm-naver-rawroas">—</span></td>
         <td class="mmh-raw"><span id="mm-naver-raw">—</span></td>
         <td class="mmh-real"><span id="mm-naver-rel">—</span></td>
@@ -1078,7 +1102,7 @@ function buildMMTable(){
   // 콘텐츠 비용 (예산만)
   html+=`<tr class="mm-content-fee">
     <td>콘텐츠 비용</td>
-    <td><input class="mm-bgt" id="mm-b-content" type="text" inputmode="numeric" placeholder="0" oninput="mmBgtFmt(this)"></td>
+    <td><input class="mm-bgt" id="mm-b-content" type="text" inputmode="numeric" placeholder="0" oninput="mmBgtFmt(this)"><span class="mm-bgt-pct-val" id="mm-b-pct-content"></span></td>
     <td>—</td>
     <td class="mmh-raw">—</td><td class="mmh-real">—</td><td class="mmh-real-roas">—</td>
     <td class="mmh-gap">—</td>
@@ -1130,18 +1154,33 @@ function buildMMTable(){
 }
 
 function mmRecalc(){
-  let perfBgt=0,perfRaw=0,perfReal=0,perfC24=0,naverRaw=0,naverBgt=0;
+  // 1차: 예산만 먼저 집계 (퍼포먼스 TOTAL 예산 = 비중 계산의 분모)
+  const bgtMap={};
+  let perfBgt=0,naverBgt=0;
   CALC_CH.forEach(ch=>{
     const bgt=parseInt((document.getElementById(`mm-b-${ch.key}`)?.value||'').replace(/,/g,''))||0;
+    bgtMap[ch.key]=bgt;
+    perfBgt+=bgt;
+    if(ch.group==='naver')naverBgt+=bgt;
+  });
+  const cfBgt=parseInt((document.getElementById('mm-b-content')?.value||'').replace(/,/g,''))||0;
+  perfBgt+=cfBgt;
+
+  // 2차: 매출/ROAS 계산 + 채널별 예산 비중(%) 렌더
+  let perfRaw=0,perfReal=0,perfC24=0,naverRaw=0;
+  CALC_CH.forEach(ch=>{
+    const bgt=bgtMap[ch.key];
     const r=parseFloat(document.getElementById(`mm-r-${ch.key}`)?.value)||ch.defRoas;
     const raw=bgt*r/100;
     const real=raw*0.86;
     const realRoas=bgt>0?real/bgt*100:0;
+    const pct=perfBgt>0?Math.round(bgt/perfBgt*100):0;
     mmSi(`mm-raw-${ch.key}`,mmFmt(raw));
     mmSi(`mm-rel-${ch.key}`,mmFmt(real));
     mmSi(`mm-relr-${ch.key}`,mmFmtRPill(realRoas));
+    mmSi(`mm-b-pct-${ch.key}`,bgt>0?`${pct}%`:'');
     if(ch.group==='naver'){
-      naverRaw+=raw; naverBgt+=bgt;
+      naverRaw+=raw;
     }else{
       const c24=raw*ch.gap;
       const c24r=bgt>0?c24/bgt*100:0;
@@ -1153,14 +1192,18 @@ function mmRecalc(){
       mmSi(`mm-c24rrr-${ch.key}`,mmFmtRPill(c24RealRoas));
       perfC24+=c24;
     }
-    perfBgt+=bgt; perfRaw+=raw; perfReal+=real;
+    perfRaw+=raw; perfReal+=real;
   });
+  const cfPct=perfBgt>0?Math.round(cfBgt/perfBgt*100):0;
+  mmSi('mm-b-pct-content',cfBgt>0?`${cfPct}%`:'');
   // 네이버 C24 합계
   const naverC24=naverRaw*NAVER_GAP;
   const naverC24r=naverBgt>0?naverC24/naverBgt*100:0;
   const naverC24real=naverC24*0.86;
   const naverC24realr=naverBgt>0?naverC24real/naverBgt*100:0;
   const naverGapPct=Math.round(NAVER_GAP*100-100);
+  const naverPct=perfBgt>0?Math.round(naverBgt/perfBgt*100):0;
+  mmSi('mm-naver-bgt-pct',naverBgt>0?`${naverPct}%`:'');
   mmSi('mm-naver-bgt',mmFmtWon(naverBgt));
   mmSi('mm-naver-rawroas',naverBgt>0?`<span class="mm-roas-pill">${Math.round(naverRaw/naverBgt*100)}%</span>`:'—');
   mmSi('mm-naver-raw',mmFmt(naverRaw));
@@ -1173,9 +1216,6 @@ function mmRecalc(){
   mmSi('mm-naver-c24rr',mmFmt(naverC24real));
   mmSi('mm-naver-c24rrr',mmFmtRPill(naverC24realr));
   perfC24+=naverC24;
-  // 콘텐츠 비용 예산
-  const cfBgt=parseInt((document.getElementById('mm-b-content')?.value||'').replace(/,/g,''))||0;
-  perfBgt+=cfBgt;
   // 퍼포먼스 TOTAL
   const perfRealRoas=perfBgt>0?perfReal/perfBgt*100:0;
   const perfC24r=perfBgt>0?perfC24/perfBgt*100:0;
@@ -1192,6 +1232,9 @@ function mmRecalc(){
   mmSi('mm-perf-c24r',mmFmtRPill(perfC24r));
   mmSi('mm-perf-c24rr',mmFmt(perfC24real));
   mmSi('mm-perf-c24rrr',mmFmtRPill(perfC24realr));
+  // 총 예산 대비 채널 배정 차이
+  const totalBudget=parseInt((document.getElementById('mm-total-budget')?.value||'').replace(/,/g,''))||0;
+  mmSi('mm-total-budget-diff',mmFmtBudgetDiff(totalBudget,perfBgt));
   // 오가닉: 퍼포먼스 총 예산 × 4~6월 오가닉/광고비 비율
   const orgC24=perfBgt*MM_ORGANIC_RATIO;
   const orgC24real=orgC24*0.86;
