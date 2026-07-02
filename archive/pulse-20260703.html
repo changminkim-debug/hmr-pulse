@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>한끼통살 · 메타 펄스 · 00:00</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI','Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:#e8ebf0;color:#222836;font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}
+
+/* 헤더 */
+.hd{background:#fff;padding:15px 36px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #dce0ea;position:sticky;top:0;z-index:20;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.hd-left{display:flex;align-items:center;gap:14px}
+.hd-logo{font-size:13px;font-weight:700;color:#5a6a8a;padding:4px 11px;border-radius:4px;background:#eef0f6}
+.hd-title{font-size:20px;font-weight:700;color:#1a2030;letter-spacing:-.2px}
+.hd-sub{font-size:13px;color:#8c96ae;margin-top:2px}
+.hd-right{text-align:right}
+.hd-date{font-size:16px;font-weight:600;color:#3a4460}
+.hd-gen{font-size:13px;color:#b4bece;margin-top:2px}
+
+/* 필터바 */
+.fbar{background:#fff;padding:9px 36px;border-bottom:1px solid #dce0ea;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.fg{display:flex;align-items:center;gap:7px}
+.fl{font-size:13px;color:#8c96ae;font-weight:700;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap}
+.sel{padding:5px 11px;border:1px solid #dce0ea;border-radius:5px;font-size:14px;color:#2c3347;font-family:inherit;background:#fff;cursor:pointer}
+.sel:hover{border-color:#8c96ae}
+.warn-note{font-size:13px;color:#b4bece;margin-left:auto}
+
+/* 페이지 본문 */
+.page-body{padding:20px 32px;display:flex;flex-direction:column;gap:16px}
+
+/* KPI 카드 */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{background:#fff;border-radius:10px;padding:24px 26px;box-shadow:0 1px 3px rgba(0,0,0,.07),0 2px 8px rgba(0,0,0,.04);transition:box-shadow .15s,transform .15s}
+.card:hover{box-shadow:0 4px 14px rgba(0,0,0,.1);transform:translateY(-1px)}
+.cl{font-size:13px;color:#8c96ae;letter-spacing:.3px;margin-bottom:11px;text-transform:uppercase;font-weight:600}
+.cv{font-size:38px;font-weight:700;line-height:1.0;letter-spacing:-.6px;color:#1a2030}
+.cv-roas{font-size:38px;font-weight:700;line-height:1.0;letter-spacing:-.4px}
+.cs{font-size:13px;color:#b4bece;margin-top:8px}
+
+/* 섹션 패널 */
+.panel{background:#fff;border-radius:10px;padding:20px 22px;box-shadow:0 1px 3px rgba(0,0,0,.07),0 2px 8px rgba(0,0,0,.04)}
+.sec-title{font-size:16px;font-weight:700;color:#1a2030;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.hint{font-size:13px;color:#c0c6d4;font-weight:400;margin-left:4px}
+
+/* 테이블 */
+table{width:100%;border-collapse:collapse;background:#fff}
+thead tr{background:#f0f2f8}
+th{padding:11px 16px;color:#505870;font-size:14px;font-weight:700;text-align:right;white-space:nowrap;border-top:1px solid #dde0ea;border-bottom:2px solid #dde0ea}
+th.left{text-align:left;padding-left:16px;width:170px}
+th.th-cum{background:#e6e9f2;color:#3c4468;font-weight:700}
+td{padding:11px 16px;font-size:17px;text-align:right;border-bottom:1px solid #eceef5;white-space:nowrap;color:#2c3347}
+td.left{text-align:left;padding-left:16px;white-space:nowrap}
+td.name{font-weight:600;color:#1a2030}
+td.cum{background:#f6f7fb!important;font-weight:600}
+
+/* 행 줄무늬 */
+tbody tr:nth-child(even) td{background:#f8f9fd}
+tbody tr:nth-child(even) td.cum{background:#f0f2f8!important}
+tbody tr:hover td{background:#edf1f8!important}
+
+/* 현재 시간대 행 */
+tr.hour-row{cursor:pointer}
+tr.camp-row{cursor:pointer}
+tr.now-row td{font-weight:700;background:#eef2fc!important;border-top:1px solid #c6d0ee;border-bottom:1px solid #c6d0ee}
+tr.now-row td:first-child{border-left:3px solid #4466cc;padding-left:11px}
+tr.now-row td.cum{background:#e4eaf8!important}
+tr.now-row:hover td{background:#e6ecf8!important}
+
+/* 펼침 상세 행 */
+tr.detail-row td{background:#f2f4fa!important;cursor:default;padding:12px 10px}
+tr.detail-row:hover td{background:#f2f4fa!important}
+.detail-wrap{padding:4px 2px}
+.detail-wrap table{border:1px solid #dde0ea;border-radius:6px;overflow:hidden}
+.detail-wrap thead tr{background:#484e64}
+.detail-wrap th{font-size:14px;padding:10px 15px;border:none;color:rgba(255,255,255,.9);font-weight:600;background:transparent}
+.detail-wrap th.dh-now{background:#545e78}
+.detail-wrap th.dh-cum{background:#484e64}
+.detail-wrap td{font-size:15px;padding:9px 15px;background:#fff}
+.detail-wrap tbody tr:nth-child(even) td{background:#f8f9fc}
+.detail-title{font-size:12px;color:#3a4460;font-weight:700;margin-bottom:8px;padding-left:2px}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable:hover{background:#dde0ea;color:#2c3347}
+th.sort-active{color:#2c3347!important;background:#d8dcec!important}
+.sort-ic{font-size:10px;margin-left:3px;opacity:.4}
+th.sort-active .sort-ic{opacity:1;color:#4466cc}
+tr.grp-hour-row{cursor:pointer}
+tr.grp-hour-row:hover td{background:#e4eaf8!important}
+tr.grp-hour-row.row-bad td{background:rgba(192,48,48,.07)!important}
+tr.grp-hour-row.row-bad:hover td{background:rgba(192,48,48,.14)!important}
+tr.grp-hour-row.row-bad.now-grp td{background:rgba(192,48,48,.13)!important}
+tr.grp-detail-row td{background:#eceff8!important;padding:10px 6px!important}
+tr.grp-detail-row:hover td{background:#eceff8!important}
+
+/* ROAS — 250% 기준 초록/빨강 */
+.badge{font-size:17px;font-weight:700}
+.roas400{color:#146028}.roas300{color:#208040}.roas250{color:#349050}
+.roas200{color:#c03030}.roas150{color:#a02020}.roas100{color:#801818}.roas0{color:#601010}
+.cv-roas.roas400{color:#146028}.cv-roas.roas300{color:#208040}.cv-roas.roas250{color:#349050}
+.cv-roas.roas200{color:#c03030}.cv-roas.roas150{color:#a02020}.cv-roas.roas100{color:#801818}.cv-roas.roas0{color:#601010}
+
+/* A/B 시간대 비교 패널 */
+.cmp-wrap{border-left:4px solid #4466cc}
+.cmp-ctrl{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.cmp-mode-wrap{display:flex;gap:6px;background:#eef0f6;border-radius:6px;padding:3px}
+.cmp-mode-btn{border:none;background:transparent;padding:6px 14px;border-radius:5px;font-size:13px;font-weight:700;color:#8c96ae;cursor:pointer;font-family:inherit}
+.cmp-mode-btn.active{background:#fff;color:#2c3347;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.cmp-sel-group{display:flex;align-items:center;gap:7px}
+.side-chip{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:5px;font-size:12px;font-weight:800;color:#fff}
+.side-chip.a{background:#4466cc}
+.side-chip.b{background:#7a4dc0}
+.cmp-vs{font-size:12px;font-weight:700;color:#b4bece}
+.cmp-empty{font-size:14px;color:#b4bece;padding:4px 0}
+.toggle-btn{border:1px solid #dce0ea;background:#fff;padding:4px 12px;border-radius:5px;font-size:12px;font-weight:700;color:#5a6a8a;cursor:pointer;margin-left:auto;font-family:inherit}
+.toggle-btn:hover{background:#f0f2f8}
+.sec-body.collapsed{display:none}
+th.cmp-a{background:#e8ecfa;color:#2a4090}
+th.cmp-b{background:#f1e8fa;color:#5a2a90}
+td.cmp-a{background:#f6f7fc!important}
+td.cmp-b{background:#faf6fc!important}
+
+/* 기타 */
+.na{color:#c8cdd8;font-size:12px}
+.cum-inc{font-size:13px;color:#7a90c0;font-weight:500;margin-left:3px}
+.up{color:#2a6040;font-weight:600}
+.rd{display:inline-block;font-size:15px;font-weight:700;margin-left:4px;white-space:nowrap}
+.rd.up{color:#2a58b0}.rd.down{color:#a02828}.rd.flat{color:#b4bece;font-weight:600}
+.flat{color:#b8bece}
+.ft{text-align:center;padding:8px 32px 22px;font-size:11px;color:#c0c6d4}
+@media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="hd">
+  <div class="hd-left">
+    <div class="hd-logo">Egnis Ads</div>
+    <div>
+      <div class="hd-title">한끼통살 메타 실시간 펄스 · 지난 기록</div>
+      <div class="hd-sub">HMR 사업본부 · 2026-07-03 00:00 ~ 00:00</div>
+    </div>
+  </div>
+  <div class="hd-right">
+    <div class="hd-date">마감 <strong>00:00</strong></div>
+    <div class="hd-gen">갱신: 2026. 7. 3. AM 12:10:37</div>
+  </div>
+</div>
+<div class="fbar">
+  <div class="fg"><span class="fl">품목</span>
+    <select class="sel" id="cat-sel"><option value="">전체</option></select>
+  </div>
+  <div class="fg"><span class="fl">기록</span><select class="sel" id="archive-sel" onchange="if(this.value)location.href=this.value"><option value="../pulse.html">오늘 (2026-07-03)</option><option value="pulse-20260702.html">2026-07-02</option><option value="pulse-20260701.html">2026-07-01</option><option value="pulse-20260630.html">2026-06-30</option><option value="pulse-20260629.html">2026-06-29</option><option value="pulse-20260628.html">2026-06-28</option><option value="pulse-20260627.html">2026-06-27</option><option value="pulse-20260626.html">2026-06-26</option><option value="pulse-20260625.html">2026-06-25</option><option value="pulse-20260624.html">2026-06-24</option><option value="pulse-20260623.html">2026-06-23</option><option value="pulse-20260622.html">2026-06-22</option><option value="pulse-20260621.html">2026-06-21</option><option value="pulse-20260620.html">2026-06-20</option><option value="pulse-20260619.html">2026-06-19</option><option value="pulse-20260618.html">2026-06-18</option><option value="pulse-20260617.html">2026-06-17</option></select></div>
+  <span class="warn-note">⚠ ROAS·전환은 클릭 후 1일 귀속 — 최근 시간대일수록 잠정치</span>
+</div>
+<div class="page-body">
+<div class="cards" id="kpi"></div>
+<div class="panel cmp-wrap">
+  <div class="sec-title">
+    A/B 날짜 비교
+    <span class="hint">시간대별 광고비·전환값·ROAS · 필터 반영</span>
+    <button class="toggle-btn" id="cmp-toggle-btn" onclick="toggleCmpSection()">펼치기 ▼</button>
+  </div>
+  <div class="sec-body collapsed" id="cmp-body">
+    <div class="cmp-ctrl">
+      <div class="cmp-mode-wrap">
+        <button class="cmp-mode-btn active" id="cmp-mode-single" onclick="setHourCmpMode('single')">해당 시간대</button>
+        <button class="cmp-mode-btn" id="cmp-mode-cum" onclick="setHourCmpMode('cum')">누적 시간대</button>
+      </div>
+      <div class="cmp-sel-group"><span class="side-chip a">A</span><select class="sel" id="cmp-date-a"></select></div>
+      <span class="cmp-vs">vs</span>
+      <div class="cmp-sel-group"><span class="side-chip b">B</span><select class="sel" id="cmp-date-b"></select></div>
+    </div>
+    <div style="overflow-x:auto"><div id="cmp-hour-table"></div></div>
+  </div>
+</div>
+<div class="panel">
+  <div class="sec-title">시간대별 누적 페이스<span class="hint">행 클릭 → 10분 단위 상세</span></div>
+  <div style="overflow-x:auto">
+    <table><thead>
+      <tr>
+        <th class="left">시간대</th>
+        <th>시간 소진</th>
+        <th class="th-cum">누적 소진</th>
+        <th class="th-cum">누적 전환수</th>
+        <th class="th-cum">누적 전환값</th>
+        <th class="th-cum">ROAS</th>
+        <th>증감</th>
+      </tr>
+    </thead><tbody id="hour-tb"></tbody></table>
+  </div>
+</div>
+<div class="panel">
+  <div class="sec-title" id="camp-sec-title">품목별 누적 (00:00 ~ 00:00)<span class="hint" id="camp-hint">클릭 → 시간대별 추이</span></div>
+  <div style="overflow-x:auto">
+    <table>
+      <thead id="camp-thead"><tr>
+        <th class="left">품목</th>
+        <th>소진금액</th><th>전환수</th><th>전환값</th><th>ROAS</th>
+      </tr></thead>
+      <tbody id="camp-tb"></tbody>
+    </table>
+  </div>
+</div>
+</div>
+<div class="ft">한끼통살 HMR 사업본부 · data/pulse-20260703.csv</div>
+<script>
+var DAY = [{"account":"906987379684182","accountLabel":"1팀","campaignId":"120244128322750200","campaignName":"01.통살(ASC)(101010)_TCPA16000_A+SC 캠페인_ALL_V1C7_수_표준기여_2336_03","hour":"00:00","spend":1437,"impressions":136,"clicks":1,"purchases":0,"purchaseValue":0},{"account":"906987379684182","accountLabel":"1팀","campaignId":"120244370408130200","campaignName":"17.안심볶음밥(ASC)(메가딜)_TCPA_A+SC 캠페인_ALL_C7_수_표준기여_2903_260409","hour":"00:00","spend":974,"impressions":39,"clicks":1,"purchases":0,"purchaseValue":0},{"account":"906987379684182","accountLabel":"1팀","campaignId":"120244432587130200","campaignName":"01.통살(ASC)(101010)_A+SC 캠페인_구매최적화_수_표준기여_2336_260410_intern","hour":"00:00","spend":198,"impressions":24,"clicks":0,"purchases":0,"purchaseValue":0},{"account":"906987379684182","accountLabel":"1팀","campaignId":"120244432728820200","campaignName":"03.닭다리살(ASC)(101010)_A+SC 캠페인_구매최적화_수_표준기여_2358_260410_intern","hour":"00:00","spend":754,"impressions":122,"clicks":0,"purchases":0,"purchaseValue":0},{"account":"906987379684182","accountLabel":"1팀","campaignId":"120244785115700200","campaignName":"07.크리스피(ASC)(메가딜)_A+SC 캠페인_구매최적화_수_표준기여_2464_260416_intern","hour":"00:00","spend":13015,"impressions":1070,"clicks":7,"purchases":0,"purchaseValue":0},{"account":"906987379684182","accountLabel":"1팀","campaignId":"120246816084290200","campaignName":"16.안심크리스피(ASC)(메가딜)_TROAS_A+SC 캠페인_구매최적화_값_표준기여_2908_260518","hour":"00:00","spend":695,"impressions":40,"clicks":0,"purchases":0,"purchaseValue":0},{"account":"906987379684182","accountLabel":"1팀","campaignId":"120247354343980200","campaignName":"20.김자반밥(ASC)(메가딜)_TCPA_A+SC캠페인_ALL_C7_수_표준기여_3003_260527","hour":"00:00","spend":11046,"impressions":724,"clicks":14,"purchases":0,"purchaseValue":0},{"account":"906987379684182","accountLabel":"1팀","campaignId":"120247379361950200","campaignName":"07.크리스피(ASC)(1010)_A+SC캠페인_구매최적화_수_표준기여_2992_260527","hour":"00:00","spend":1437,"impressions":100,"clicks":0,"purchases":0,"purchaseValue":0},{"account":"906987379684182","accountLabel":"1팀","campaignId":"120248762624190200","campaignName":"17.안심볶음밥(ASC)(메가딜)_TCPA_A+SC캠페인_ALL_C7_수_표준기여_2903_260705","hour":"00:00","spend":64,"impressions":1,"clicks":0,"purchases":0,"purchaseValue":0},{"account":"906987379684182","accountLabel":"1팀","campaignId":"120248844983100200","campaignName":"03.닭다리살(ASC)(1010)_A+SC캠페인_구매최적화_수_표준기여_2604_260618_유정","hour":"00:00","spend":218,"impressions":8,"clicks":0,"purchases":0,"purchaseValue":0},{"account":"906987379684182","accountLabel":"1팀","campaignId":"120249172615610200","campaignName":"18.크리스피닭다리(ASC)_A+SC 캠페인_구매최적화_수_표준기여_2910_260705","hour":"00:00","spend":305,"impressions":15,"clicks":0,"purchases":0,"purchaseValue":0},{"account":"906987379684182","accountLabel":"1팀","campaignId":"120249172615620200","campaignName":"18.크리스피닭다리(ASC)_TCPA14000_A+SC 캠페인_ALL_C7_수_표준기여_2910_260705","hour":"00:00","spend":230,"impressions":20,"clicks":0,"purchases":0,"purchaseValue":0}];
+var HIST = [{"pollTime":"2026-07-03 00:10:28","hour":"00:00","account":"906987379684182","accountLabel":"1팀","campaignId":"120244128322750200","campaignName":"01.통살(ASC)(101010)_TCPA16000_A+SC 캠페인_ALL_V1C7_수_표준기여_2336_03","spend":1437,"purchases":0,"purchaseValue":0,"roas":0},{"pollTime":"2026-07-03 00:10:28","hour":"00:00","account":"906987379684182","accountLabel":"1팀","campaignId":"120244370408130200","campaignName":"17.안심볶음밥(ASC)(메가딜)_TCPA_A+SC 캠페인_ALL_C7_수_표준기여_2903_260409","spend":974,"purchases":0,"purchaseValue":0,"roas":0},{"pollTime":"2026-07-03 00:10:28","hour":"00:00","account":"906987379684182","accountLabel":"1팀","campaignId":"120244432587130200","campaignName":"01.통살(ASC)(101010)_A+SC 캠페인_구매최적화_수_표준기여_2336_260410_intern","spend":198,"purchases":0,"purchaseValue":0,"roas":0},{"pollTime":"2026-07-03 00:10:28","hour":"00:00","account":"906987379684182","accountLabel":"1팀","campaignId":"120244432728820200","campaignName":"03.닭다리살(ASC)(101010)_A+SC 캠페인_구매최적화_수_표준기여_2358_260410_intern","spend":754,"purchases":0,"purchaseValue":0,"roas":0},{"pollTime":"2026-07-03 00:10:28","hour":"00:00","account":"906987379684182","accountLabel":"1팀","campaignId":"120244785115700200","campaignName":"07.크리스피(ASC)(메가딜)_A+SC 캠페인_구매최적화_수_표준기여_2464_260416_intern","spend":13015,"purchases":0,"purchaseValue":0,"roas":0},{"pollTime":"2026-07-03 00:10:28","hour":"00:00","account":"906987379684182","accountLabel":"1팀","campaignId":"120246816084290200","campaignName":"16.안심크리스피(ASC)(메가딜)_TROAS_A+SC 캠페인_구매최적화_값_표준기여_2908_260518","spend":695,"purchases":0,"purchaseValue":0,"roas":0},{"pollTime":"2026-07-03 00:10:28","hour":"00:00","account":"906987379684182","accountLabel":"1팀","campaignId":"120247354343980200","campaignName":"20.김자반밥(ASC)(메가딜)_TCPA_A+SC캠페인_ALL_C7_수_표준기여_3003_260527","spend":11046,"purchases":0,"purchaseValue":0,"roas":0},{"pollTime":"2026-07-03 00:10:28","hour":"00:00","account":"906987379684182","accountLabel":"1팀","campaignId":"120247379361950200","campaignName":"07.크리스피(ASC)(1010)_A+SC캠페인_구매최적화_수_표준기여_2992_260527","spend":1437,"purchases":0,"purchaseValue":0,"roas":0},{"pollTime":"2026-07-03 00:10:28","hour":"00:00","account":"906987379684182","accountLabel":"1팀","campaignId":"120248762624190200","campaignName":"17.안심볶음밥(ASC)(메가딜)_TCPA_A+SC캠페인_ALL_C7_수_표준기여_2903_260705","spend":64,"purchases":0,"purchaseValue":0,"roas":0},{"pollTime":"2026-07-03 00:10:28","hour":"00:00","account":"906987379684182","accountLabel":"1팀","campaignId":"120248844983100200","campaignName":"03.닭다리살(ASC)(1010)_A+SC캠페인_구매최적화_수_표준기여_2604_260618_유정","spend":218,"purchases":0,"purchaseValue":0,"roas":0},{"pollTime":"2026-07-03 00:10:28","hour":"00:00","account":"906987379684182","accountLabel":"1팀","campaignId":"120249172615610200","campaignName":"18.크리스피닭다리(ASC)_A+SC 캠페인_구매최적화_수_표준기여_2910_260705","spend":305,"purchases":0,"purchaseValue":0,"roas":0},{"pollTime":"2026-07-03 00:10:28","hour":"00:00","account":"906987379684182","accountLabel":"1팀","campaignId":"120249172615620200","campaignName":"18.크리스피닭다리(ASC)_TCPA14000_A+SC 캠페인_ALL_C7_수_표준기여_2910_260705","spend":230,"purchases":0,"purchaseValue":0,"roas":0}];
+var ADS = [{"account":"906987379684182","campaignId":"120244432728820200","campaignName":"03.닭다리살(ASC)(101010)_A+SC 캠페인_구매최적화_수_표준기여_2358_260410_intern","adsetName":"03.닭다리살(ASC)(101010)_A+SC 캠페인_ALL_V1C7_구매최적화_수_표준기여_2358_260410_intern","adName":"260614_HSL_FB_new_all_벌써샀어_가격_제품력_릴스_prod_2358_jjy_og"},{"account":"906987379684182","campaignId":"120247379361950200","campaignName":"07.크리스피(ASC)(1010)_A+SC캠페인_구매최적화_수_표준기여_2992_260527","adsetName":"07.크리스피(ASC)(1010)_A+SC캠페인_ALL_C7_구매최적화_수_표준기여_2992_260527","adName":"260614_HCP_FB_new_all_언니들_맛_가격_릴스_prod_2992_chy_og"}];
+var NOW_HOUR = "00:00";
+var TODAY_DATE = "2026-07-03";
+var ARCHIVE_DATES = ["2026-07-02","2026-07-01","2026-06-30","2026-06-29","2026-06-28","2026-06-27","2026-06-26","2026-06-25","2026-06-24","2026-06-23","2026-06-22","2026-06-21","2026-06-20","2026-06-19","2026-06-18","2026-06-17"];
+var S = { cat: '' };
+var expandedHour = null;
+var expandedGroupKey = null;
+var expandedGroupHour = null;
+var campSortKey = 'spend';
+var campSortDir = 'desc';
+
+var PRODUCT_CODES = [
+  ["HTR","안심폭탄볶음밥"],["HEVENT","이벤트"],
+  ["HCPL","크리스피닭다리"],["HCPK","크리스피치킨"],["HCPT","크리스피안심"],["HCP","크리스피"],
+  ["HBPD","블랙페퍼닭가슴살"],["HKOG","칼집오븐구이"],["HKBB","김자반밥바"],
+  ["HMS","마녀스프"],["HSM","실온마녀스프"],
+  ["HSSD","슬림슬라이스"],["HSD","슬라이스닭가슴살"],
+  ["HTG","통살+그릴드"],["HDG","닭가슴살"],["HG","그릴드닭가슴살"],
+  ["HSL","닭다리살(순살)"],["HJB","주먹밥"]
+];
+
+function resolveProductFromNames(names) {
+  for (var ni = 0; ni < names.length; ni++) {
+    if (!names[ni]) continue;
+    var n = names[ni];
+    for (var i = 0; i < PRODUCT_CODES.length; i++) {
+      var re = new RegExp('(?:^|[^A-Z])' + PRODUCT_CODES[i][0] + '(?:[^A-Z]|$)');
+      if (re.test(n)) return PRODUCT_CODES[i][1];
+    }
+  }
+  return "미분류";
+}
+
+function buildCategoryMap(dayRows, adRows) {
+  var campCat = {};
+  var campNames = {}; // campaignId → campaignName (fallback용)
+  adRows.forEach(function(ad) {
+    var cat = resolveProductFromNames([ad.adName, ad.adsetName, ad.campaignName]);
+    if (!campCat[ad.campaignId]) campCat[ad.campaignId] = {};
+    campCat[ad.campaignId][cat] = (campCat[ad.campaignId][cat] || 0) + 1;
+    if (!campNames[ad.campaignId]) campNames[ad.campaignId] = ad.campaignName;
+  });
+  // dayRows에만 있고 adRows에 없는 캠페인도 캠페인명 수집
+  dayRows.forEach(function(r) {
+    if (!campNames[r.campaignId]) campNames[r.campaignId] = r.campaignName;
+  });
+  var map = {};
+  Object.keys(campCat).forEach(function(cid) {
+    var counts = campCat[cid];
+    var keys = Object.keys(counts).filter(function(k) { return k !== '미분류'; });
+    map[cid] = keys.length
+      ? keys.reduce(function(a, b) { return counts[a] >= counts[b] ? a : b; })
+      : '미분류';
+  });
+  // 소재명 분류 실패 시 캠페인명 패턴으로 fallback
+  Object.keys(campNames).forEach(function(cid) {
+    if (map[cid] && map[cid] !== '미분류') return;
+    var cn = campNames[cid] || '';
+    if (cn.indexOf('통살+그릴드') !== -1) map[cid] = '통살+그릴드';
+    else if (/^01.통살/.test(cn))         map[cid] = '닭가슴살';
+  });
+  return map;
+}
+
+var CAMPAIGN_CATEGORY = buildCategoryMap(DAY, ADS);
+DAY.forEach(function(r) { r.category = CAMPAIGN_CATEGORY[r.campaignId] || '미분류'; });
+
+// ── 전일 대비 비교 (시간 단위) ──────────────────────────────
+function aggregateHourly(dayRows, categoryMap) {
+  var total = {}, byCat = {}, byCamp = {};
+  function bump(map, key, hour, r) {
+    if (!map[key]) map[key] = {};
+    if (!map[key][hour]) map[key][hour] = { spend: 0, purchases: 0, val: 0 };
+    map[key][hour].spend += r.spend;
+    map[key][hour].purchases += r.purchases;
+    map[key][hour].val += r.purchaseValue;
+  }
+  dayRows.forEach(function(r) {
+    if (!total[r.hour]) total[r.hour] = { spend: 0, purchases: 0, val: 0 };
+    total[r.hour].spend += r.spend; total[r.hour].purchases += r.purchases; total[r.hour].val += r.purchaseValue;
+    bump(byCat, categoryMap[r.campaignId] || '미분류', r.hour, r);
+    bump(byCamp, r.campaignId, r.hour, r);
+  });
+  function toCumulative(hourMap) {
+    var hours = Object.keys(hourMap).sort();
+    var cumSpend = 0, cumPur = 0, cumVal = 0;
+    var out = {};
+    hours.forEach(function(h) {
+      var d = hourMap[h];
+      cumSpend += d.spend; cumPur += d.purchases; cumVal += d.val;
+      out[h] = {
+        spend: d.spend, purchases: d.purchases, val: d.val,
+        cumSpend: cumSpend, cumPurchases: cumPur, cumVal: cumVal,
+        cumRoas: cumSpend > 0 ? cumVal / cumSpend * 100 : 0
+      };
+    });
+    return out;
+  }
+  var byCatCum = {}, byCampCum = {};
+  Object.keys(byCat).forEach(function(k) { byCatCum[k] = toCumulative(byCat[k]); });
+  Object.keys(byCamp).forEach(function(k) { byCampCum[k] = toCumulative(byCamp[k]); });
+  return { total: toCumulative(total), byCategory: byCatCum, byCampaign: byCampCum };
+}
+
+(function populateDropdown() {
+  var catEl = document.getElementById('cat-sel');
+  var present = {};
+  DAY.forEach(function(r) { present[r.category] = true; });
+  PRODUCT_CODES.forEach(function(c) {
+    if (!present[c[1]]) return;
+    var opt = document.createElement('option');
+    opt.value = c[1]; opt.textContent = c[1]; catEl.appendChild(opt);
+  });
+  if (present['미분류']) {
+    var unk = document.createElement('option'); unk.value = '미분류'; unk.textContent = '미분류'; catEl.appendChild(unk);
+  }
+})();
+
+function fmtWon(n) { return n > 0 ? Math.round(n).toLocaleString() + '원' : '-'; }
+function fmtNum(n) { return n > 0 ? Math.round(n).toLocaleString() : '-'; }
+function fmtRoas(n) { return n > 0 ? Math.round(n).toLocaleString() + '%' : '-'; }
+function roasClass(n) {
+  return n >= 400 ? 'roas400' : n >= 300 ? 'roas300' : n >= 250 ? 'roas250'
+       : n >= 200 ? 'roas200' : n >= 150 ? 'roas150' : n >= 100 ? 'roas100' : 'roas0';
+}
+
+function roasDeltaHTML(curr, prev) {
+  if (prev === null) return '';
+  var diff = Math.round(curr - prev);
+  if (diff === 0) return '<span class="rd flat">― 0%p</span>';
+  var cls = diff > 0 ? 'up' : 'down';
+  var arrow = diff > 0 ? '▲' : '▼';
+  return '<span class="rd ' + cls + '">' + arrow + ' ' + Math.abs(diff).toLocaleString() + '%p</span>';
+}
+
+function passFilter(campaignId) {
+  return !S.cat || (CAMPAIGN_CATEGORY[campaignId] || '미분류') === S.cat;
+}
+
+function filteredDay() {
+  return DAY.filter(function(r) { return passFilter(r.campaignId); });
+}
+
+function renderKpi(rows) {
+  var spend = 0, pur = 0, val = 0;
+  rows.forEach(function(r) { spend += r.spend; pur += r.purchases; val += r.purchaseValue; });
+  var roas = spend > 0 ? (val / spend) * 100 : 0;
+  var rc = roasClass(roas);
+  document.getElementById('kpi').innerHTML =
+    '<div class="card"><div class="cl">오늘 누적 소진금액</div><div class="cv">' + fmtWon(spend) + '</div><div class="cs">00:00 ~ ' + NOW_HOUR + '</div></div>' +
+    '<div class="card"><div class="cl">누적 전환수</div><div class="cv">' + fmtNum(pur) + '</div><div class="cs">클릭 후 1일 전환</div></div>' +
+    '<div class="card"><div class="cl">누적 전환값</div><div class="cv">' + fmtWon(val) + '</div><div class="cs">클릭 후 1일</div></div>' +
+    '<div class="card"><div class="cl">누적 ROAS</div><div class="cv-roas ' + rc + '">' + fmtRoas(roas) + '</div><div class="cs">목표 250% · 잠정치</div></div>';
+}
+
+function buildHourDetailHTML(hour) {
+  var polls = HIST.filter(function(r) { return r.hour === hour && passFilter(r.campaignId); });
+  var byPoll = {};
+  polls.forEach(function(r) {
+    if (!byPoll[r.pollTime]) byPoll[r.pollTime] = { spend: 0, purchases: 0, purchaseValue: 0 };
+    var p = byPoll[r.pollTime];
+    p.spend += r.spend; p.purchases += r.purchases; p.purchaseValue += r.purchaseValue;
+  });
+  var times = Object.keys(byPoll).sort();
+  if (!times.length) return '<div class="detail-wrap"><div class="detail-title">' + hour + ' — 10분 기록 없음</div></div>';
+
+  var prevSpend = 0, prevPur = 0, prevVal = 0, prevRoas = null;
+  var rows = times.map(function(t) {
+    var p = byPoll[t];
+    var dSpend = p.spend - prevSpend, dPur = p.purchases - prevPur, dVal = p.purchaseValue - prevVal;
+    prevSpend = p.spend; prevPur = p.purchases; prevVal = p.purchaseValue;
+    var roas = p.spend > 0 ? (p.purchaseValue / p.spend) * 100 : 0;
+    var rc = roasClass(roas);
+    var deltaHTML = roasDeltaHTML(roas, prevRoas);
+    prevRoas = roas;
+    var hhmm = t.slice(-8, -3);
+    var dSpendS = dSpend > 0 ? '<span class="up">+' + Math.round(dSpend).toLocaleString() + '원</span>' : '<span class="flat">-</span>';
+    var dPurS = dPur > 0 ? '<span class="up">+' + Math.round(dPur).toLocaleString() + '</span>' : '<span class="flat">-</span>';
+    var dValS = dVal > 0 ? '<span class="up">+' + Math.round(dVal).toLocaleString() + '원</span>' : '<span class="flat">-</span>';
+    return '<tr>' +
+      '<td class="left">' + hhmm + '</td>' +
+      '<td>' + dSpendS + '</td><td>' + dPurS + '</td><td>' + dValS + '</td>' +
+      '<td>' + fmtWon(p.spend) + '</td><td>' + fmtNum(p.purchases) + '</td><td>' + fmtWon(p.purchaseValue) + '</td>' +
+      '<td><span class="badge ' + rc + '">' + fmtRoas(roas) + '</span></td><td>' + deltaHTML + '</td>' +
+      '</tr>';
+  }).join('');
+
+  return '<div class="detail-wrap">' +
+    '<div class="detail-title">' + hour + ' 시간대 — 10분 단위 (' + times.length + '회)</div>' +
+    '<table><thead><tr>' +
+    '<th class="left">시각</th>' +
+    '<th class="dh-now">구간 소진</th><th class="dh-now">구간 전환수</th><th class="dh-now">구간 전환값</th>' +
+    '<th class="dh-cum">누적 소진</th><th class="dh-cum">누적 전환수</th><th class="dh-cum">누적 전환값</th>' +
+    '<th class="dh-cum">ROAS</th><th class="dh-cum">증감</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+}
+
+var hourCmpMode = 'single'; // 'single' = 해당 시간대만, 'cum' = 00:00부터 누적
+
+function toggleCmpSection() {
+  var body = document.getElementById('cmp-body');
+  var collapsed = body.classList.toggle('collapsed');
+  document.getElementById('cmp-toggle-btn').textContent = collapsed ? '펼치기 ▼' : '접기 ▲';
+  if (!collapsed) renderHourCompare();
+}
+
+function setHourCmpMode(mode) {
+  hourCmpMode = mode;
+  document.getElementById('cmp-mode-single').classList.toggle('active', mode === 'single');
+  document.getElementById('cmp-mode-cum').classList.toggle('active', mode === 'cum');
+  renderHourCompare();
+}
+
+function populateDateSelects() {
+  var optsHtml = '<option value="' + TODAY_DATE + '">오늘 (' + TODAY_DATE + ')</option>' +
+    ARCHIVE_DATES.map(function(d) { return '<option value="' + d + '">' + d + '</option>'; }).join('');
+  var selA = document.getElementById('cmp-date-a');
+  var selB = document.getElementById('cmp-date-b');
+  selA.innerHTML = optsHtml;
+  selB.innerHTML = optsHtml;
+  selA.value = TODAY_DATE;
+  selB.value = ARCHIVE_DATES.length ? ARCHIVE_DATES[0] : TODAY_DATE;
+}
+
+var dateRawCache = {}; // dateStr -> Promise<{dayRows, categoryMap} | null>
+
+function loadDateRaw(dateStr) {
+  if (dateRawCache[dateStr]) return dateRawCache[dateStr];
+  var p;
+  if (dateStr === TODAY_DATE) {
+    p = Promise.resolve({ dayRows: DAY, categoryMap: CAMPAIGN_CATEGORY });
+  } else {
+    p = fetch('archive/raw-' + dateStr.replace(/-/g, '') + '.json')
+      .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function(json) { return { dayRows: json.dayRows, categoryMap: buildCategoryMap(json.dayRows, json.adRows) }; })
+      .catch(function() { return null; });
+  }
+  dateRawCache[dateStr] = p;
+  return p;
+}
+
+function filterRowsByCat(rows, categoryMap) {
+  if (!S.cat) return rows;
+  return rows.filter(function(r) { return (categoryMap[r.campaignId] || '미분류') === S.cat; });
+}
+
+function computeDateHourly(dateStr) {
+  return loadDateRaw(dateStr).then(function(raw) {
+    if (!raw) return null;
+    var rows = filterRowsByCat(raw.dayRows, raw.categoryMap);
+    return aggregateHourly(rows, raw.categoryMap).total;
+  });
+}
+
+var abReqSeq = 0;
+
+function renderHourCompare() {
+  var boxEl = document.getElementById('cmp-hour-table');
+  var dA = document.getElementById('cmp-date-a').value;
+  var dB = document.getElementById('cmp-date-b').value;
+  if (!dA || !dB) { boxEl.innerHTML = '<div class="cmp-empty">비교할 날짜를 선택하세요.</div>'; return; }
+
+  boxEl.innerHTML = '<div class="cmp-empty">불러오는 중...</div>';
+  var reqId = ++abReqSeq;
+  var cum = hourCmpMode === 'cum';
+
+  Promise.all([computeDateHourly(dA), computeDateHourly(dB)]).then(function(res) {
+    if (reqId !== abReqSeq) return; // 더 최신 요청이 이미 진행됨
+    var aMap = res[0], bMap = res[1];
+    if (!aMap && !bMap) { boxEl.innerHTML = '<div class="cmp-empty">두 날짜 모두 데이터가 없습니다.</div>'; return; }
+
+    var hourSet = {};
+    if (aMap) Object.keys(aMap).forEach(function(h) { hourSet[h] = true; });
+    if (bMap) Object.keys(bMap).forEach(function(h) { hourSet[h] = true; });
+    var hours = Object.keys(hourSet).sort();
+
+    function pick(map, h) {
+      if (!map || !map[h]) return null;
+      var d = map[h];
+      return cum
+        ? { spend: d.cumSpend, val: d.cumVal, roas: d.cumRoas }
+        : { spend: d.spend, val: d.val, roas: d.spend > 0 ? d.val / d.spend * 100 : 0 };
+    }
+    function cell(v, side) {
+      if (!v) return '<td class="cmp-' + side + '"><span class="na">—</span></td><td class="cmp-' + side + '"><span class="na">—</span></td><td class="cmp-' + side + '"><span class="na">—</span></td>';
+      return '<td class="cmp-' + side + '">' + fmtWon(v.spend) + '</td>' +
+             '<td class="cmp-' + side + '">' + fmtWon(v.val) + '</td>' +
+             '<td class="cmp-' + side + '"><span class="badge ' + roasClass(v.roas) + '">' + fmtRoas(v.roas) + '</span></td>';
+    }
+
+    // 합계행: 시간대 표시 모드와 무관하게 항상 하루 전체(순증분) 합
+    function daySum(map) {
+      if (!map) return null;
+      var spend = 0, val = 0;
+      Object.keys(map).forEach(function(h) { spend += map[h].spend; val += map[h].val; });
+      return { spend: spend, val: val, roas: spend > 0 ? val / spend * 100 : 0 };
+    }
+    var rows = '<tr class="now-row"><td class="left">합계</td>' + cell(daySum(aMap), 'a') + cell(daySum(bMap), 'b') + '</tr>';
+    rows += hours.map(function(h) {
+      return '<tr><td class="left">' + h + '</td>' + cell(pick(aMap, h), 'a') + cell(pick(bMap, h), 'b') + '</tr>';
+    }).join('');
+
+    boxEl.innerHTML =
+      '<table><thead><tr>' +
+        '<th class="left" rowspan="2">시간대</th>' +
+        '<th class="cmp-a" colspan="3">A · ' + dA + '</th>' +
+        '<th class="cmp-b" colspan="3">B · ' + dB + '</th>' +
+      '</tr><tr>' +
+        '<th class="cmp-a">광고비</th><th class="cmp-a">전환값</th><th class="cmp-a">ROAS</th>' +
+        '<th class="cmp-b">광고비</th><th class="cmp-b">전환값</th><th class="cmp-b">ROAS</th>' +
+      '</tr></thead><tbody>' + rows + '</tbody></table>';
+  });
+}
+
+function renderHourTable(rows) {
+  var byHour = {};
+  rows.forEach(function(r) {
+    if (!byHour[r.hour]) byHour[r.hour] = { spend: 0, purchases: 0, purchaseValue: 0 };
+    var h = byHour[r.hour];
+    h.spend += r.spend; h.purchases += r.purchases; h.purchaseValue += r.purchaseValue;
+  });
+  var hours = Object.keys(byHour).sort();
+  var cumSpend = 0, cumPur = 0, cumVal = 0, prevRoas = null;
+  var html = hours.map(function(h, idx) {
+    var d = byHour[h];
+    cumSpend += d.spend; cumPur += d.purchases; cumVal += d.purchaseValue;
+    var cumRoas = cumSpend > 0 ? (cumVal / cumSpend) * 100 : 0;
+    var rc = roasClass(cumRoas);
+    var deltaHTML = roasDeltaHTML(cumRoas, prevRoas);
+    prevRoas = cumRoas;
+    var isNow = h === NOW_HOUR;
+    var cls = 'hour-row' + (isNow ? ' now-row' : '');
+    var purIncHTML = (idx > 0 && d.purchases > 0)
+      ? '<span class="cum-inc">(+' + Math.round(d.purchases).toLocaleString() + ')</span>' : '';
+    var row = '<tr class="' + cls + '" data-hour="' + h + '">' +
+      '<td class="left">' + h + (isNow ? ' ◀ 현재' : '') + '</td>' +
+      '<td>' + fmtWon(d.spend) + '</td>' +
+      '<td class="cum">' + fmtWon(cumSpend) + '</td>' +
+      '<td class="cum">' + fmtNum(cumPur) + (purIncHTML ? ' ' + purIncHTML : '') + '</td>' +
+      '<td class="cum">' + fmtWon(cumVal) + '</td>' +
+      '<td class="cum"><span class="badge ' + rc + '">' + fmtRoas(cumRoas) + '</span></td>' +
+      '<td>' + deltaHTML + '</td>' +
+      '</tr>';
+    if (expandedHour === h) {
+      row += '<tr class="detail-row"><td colspan="7">' + buildHourDetailHTML(h) + '</td></tr>';
+    }
+    return row;
+  }).join('');
+  document.getElementById('hour-tb').innerHTML = html || '<tr><td class="left" colspan="7">데이터 없음</td></tr>';
+  document.querySelectorAll('#hour-tb tr.hour-row').forEach(function(tr) {
+    tr.addEventListener('click', function() {
+      var h = tr.dataset.hour;
+      expandedHour = expandedHour === h ? null : h;
+      render();
+    });
+  });
+}
+
+function buildGroupHourDetailHTML(hour, groupKey, isCategoryMode) {
+  var polls = HIST.filter(function(r) {
+    if (r.hour !== hour) return false;
+    return isCategoryMode
+      ? (CAMPAIGN_CATEGORY[r.campaignId] || '미분류') === groupKey
+      : r.campaignId === groupKey;
+  });
+  var byPoll = {};
+  polls.forEach(function(r) {
+    if (!byPoll[r.pollTime]) byPoll[r.pollTime] = { spend: 0, purchases: 0, purchaseValue: 0 };
+    var p = byPoll[r.pollTime];
+    p.spend += r.spend; p.purchases += r.purchases; p.purchaseValue += r.purchaseValue;
+  });
+  var times = Object.keys(byPoll).sort();
+  if (!times.length) return '<div style="padding:8px 12px;color:#8c96ae;font-size:13px">' + hour + ' — 10분 기록 없음</div>';
+
+  var prevSpend = 0, prevPur = 0, prevVal = 0, prevRoas = null;
+  var trs = times.map(function(t) {
+    var p = byPoll[t];
+    var dSpend = p.spend - prevSpend, dPur = p.purchases - prevPur, dVal = p.purchaseValue - prevVal;
+    prevSpend = p.spend; prevPur = p.purchases; prevVal = p.purchaseValue;
+    var roas = p.spend > 0 ? (p.purchaseValue / p.spend) * 100 : 0;
+    var rc = roasClass(roas);
+    var deltaHTML = roasDeltaHTML(roas, prevRoas);
+    prevRoas = roas;
+    var hhmm = t.slice(-8, -3);
+    var dSpendS = dSpend > 0 ? '<span class="up">+' + Math.round(dSpend).toLocaleString() + '원</span>' : '<span class="flat">-</span>';
+    var dPurS = dPur > 0 ? '<span class="up">+' + Math.round(dPur).toLocaleString() + '</span>' : '<span class="flat">-</span>';
+    var dValS = dVal > 0 ? '<span class="up">+' + Math.round(dVal).toLocaleString() + '원</span>' : '<span class="flat">-</span>';
+    return '<tr>' +
+      '<td class="left">' + hhmm + '</td>' +
+      '<td>' + dSpendS + '</td><td>' + dPurS + '</td><td>' + dValS + '</td>' +
+      '<td>' + fmtWon(p.spend) + '</td><td>' + fmtNum(p.purchases) + '</td><td>' + fmtWon(p.purchaseValue) + '</td>' +
+      '<td><span class="badge ' + rc + '">' + fmtRoas(roas) + '</span></td><td>' + deltaHTML + '</td>' +
+      '</tr>';
+  }).join('');
+
+  return '<div class="detail-wrap" style="margin-top:6px">' +
+    '<div class="detail-title">' + hour + ' 10분 단위 (' + times.length + '회)</div>' +
+    '<table><thead><tr>' +
+    '<th class="left">시각</th>' +
+    '<th class="dh-now">구간 소진</th><th class="dh-now">구간 전환수</th><th class="dh-now">구간 전환값</th>' +
+    '<th class="dh-cum">누적 소진</th><th class="dh-cum">누적 전환수</th><th class="dh-cum">누적 전환값</th>' +
+    '<th class="dh-cum">ROAS</th><th class="dh-cum">증감</th>' +
+    '</tr></thead><tbody>' + trs + '</tbody></table></div>';
+}
+
+function buildHourSeriesDetailHTML(label, rows, groupKey, isCategoryMode) {
+  var byHour = {};
+  rows.forEach(function(r) {
+    if (!byHour[r.hour]) byHour[r.hour] = { spend: 0, purchases: 0, purchaseValue: 0 };
+    var h = byHour[r.hour];
+    h.spend += r.spend; h.purchases += r.purchases; h.purchaseValue += r.purchaseValue;
+  });
+  var hours = Object.keys(byHour).sort();
+  if (!hours.length) return '<div class="detail-wrap"><div class="detail-title">' + label + ' — 데이터 없음</div></div>';
+
+  var cumSpend = 0, cumPur = 0, cumVal = 0, prevCumRoas = null;
+  var trs = hours.map(function(h) {
+    var d = byHour[h];
+    cumSpend += d.spend; cumPur += d.purchases; cumVal += d.purchaseValue;
+    var hourRoas = d.spend > 0 ? (d.purchaseValue / d.spend) * 100 : 0;
+    var cumRoas = cumSpend > 0 ? (cumVal / cumSpend) * 100 : 0;
+    var rc = roasClass(hourRoas), cumRc = roasClass(cumRoas);
+    var deltaHTML = roasDeltaHTML(cumRoas, prevCumRoas);
+    prevCumRoas = cumRoas;
+    var isNow = h === NOW_HOUR;
+    var badRow = d.spend > 0 && hourRoas < 250;
+    var rowCls = 'grp-hour-row' + (badRow ? ' row-bad' : '') + (isNow ? ' now-grp' : '');
+    var nowStyle = isNow && !badRow ? ' style="background:#eef2fc!important;font-weight:700"' : (isNow ? ' style="font-weight:700"' : '');
+    var row = '<tr class="' + rowCls + '" data-ghour="' + h + '"' + nowStyle + '>' +
+      '<td class="left">' + h + (isNow ? ' ◀ 현재' : '') + '</td>' +
+      '<td>' + fmtWon(d.spend) + '</td><td>' + fmtNum(d.purchases) + '</td><td>' + fmtWon(d.purchaseValue) + '</td>' +
+      '<td><span class="badge ' + rc + '">' + fmtRoas(hourRoas) + '</span></td>' +
+      '<td>' + fmtWon(cumSpend) + '</td><td>' + fmtNum(cumPur) + '</td><td>' + fmtWon(cumVal) + '</td>' +
+      '<td><span class="badge ' + cumRc + '">' + fmtRoas(cumRoas) + '</span></td>' +
+      '<td>' + deltaHTML + '</td>' +
+      '</tr>';
+    if (expandedGroupHour === h) {
+      row += '<tr class="grp-detail-row"><td colspan="10">' + buildGroupHourDetailHTML(h, groupKey, isCategoryMode) + '</td></tr>';
+    }
+    return row;
+  }).join('');
+
+  return '<div class="detail-wrap">' +
+    '<div class="detail-title">' + label + ' — 시간대별 추이 <span style="font-weight:400;color:#b4bece">(시간대 클릭 → 10분 상세)</span></div>' +
+    '<table><thead><tr>' +
+    '<th class="left">시간대</th>' +
+    '<th class="dh-now">소진</th><th class="dh-now">전환수</th><th class="dh-now">전환값</th><th class="dh-now">ROAS</th>' +
+    '<th class="dh-cum">누적 소진</th><th class="dh-cum">누적 전환수</th><th class="dh-cum">누적 전환값</th><th class="dh-cum">누적 ROAS</th><th class="dh-cum">증감</th>' +
+    '</tr></thead><tbody>' + trs + '</tbody></table></div>';
+}
+
+function renderCampaignTable(rows) {
+  var byCategoryMode = !S.cat;
+  document.getElementById('camp-hint').textContent = '클릭 → 시간대별 추이';
+
+  var groups = {};
+  rows.forEach(function(r) {
+    var key = byCategoryMode ? r.category : r.campaignId;
+    if (!groups[key]) groups[key] = { key: key, label: byCategoryMode ? r.category : r.campaignName, spend: 0, purchases: 0, purchaseValue: 0 };
+    var g = groups[key];
+    g.spend += r.spend; g.purchases += r.purchases; g.purchaseValue += r.purchaseValue;
+  });
+  var groupRows = Object.values(groups);
+  groupRows.forEach(function(r) { r.roas = r.spend > 0 ? (r.purchaseValue / r.spend) * 100 : 0; });
+  groupRows.sort(function(a, b) {
+    var av = a[campSortKey] || 0, bv = b[campSortKey] || 0;
+    return campSortDir === 'desc' ? bv - av : av - bv;
+  });
+
+  var SORT_COLS = [
+    { key: 'spend', label: '소진금액' },
+    { key: 'purchases', label: '전환수' },
+    { key: 'purchaseValue', label: '전환값' },
+    { key: 'roas', label: 'ROAS' }
+  ];
+  var thHTML = '<th class="left">' + (byCategoryMode ? '품목' : '캠페인') + '</th>' +
+    SORT_COLS.map(function(c) {
+      var isActive = campSortKey === c.key;
+      var icon = isActive ? (campSortDir === 'desc' ? '▼' : '▲') : '⇅';
+      var cls = 'sortable' + (isActive ? ' sort-active' : '');
+      return '<th class="' + cls + '" data-sort="' + c.key + '">' + c.label + '<span class="sort-ic">' + icon + '</span></th>';
+    }).join('');
+
+  var html = groupRows.map(function(r) {
+    var rc = roasClass(r.roas);
+    var row = '<tr class="camp-row" data-key="' + r.key + '">' +
+      '<td class="left name">' + r.label + '</td>' +
+      '<td>' + fmtWon(r.spend) + '</td>' +
+      '<td>' + fmtNum(r.purchases) + '</td>' +
+      '<td>' + fmtWon(r.purchaseValue) + '</td>' +
+      '<td><span class="badge ' + rc + '">' + fmtRoas(r.roas) + '</span></td>' +
+      '</tr>';
+    if (expandedGroupKey === r.key) {
+      var detailRows = byCategoryMode
+        ? DAY.filter(function(d) { return d.category === r.key; })
+        : DAY.filter(function(d) { return d.campaignId === r.key; });
+      row += '<tr class="detail-row"><td colspan="5">' + buildHourSeriesDetailHTML(r.label, detailRows, r.key, byCategoryMode) + '</td></tr>';
+    }
+    return row;
+  }).join('');
+  document.getElementById('camp-thead').innerHTML = '<tr>' + thHTML + '</tr>';
+  document.getElementById('camp-tb').innerHTML = html || '<tr><td class="left" colspan="5">데이터 없음</td></tr>';
+  document.querySelectorAll('#camp-thead th.sortable').forEach(function(th) {
+    th.addEventListener('click', function() {
+      var key = th.dataset.sort;
+      if (campSortKey === key) {
+        campSortDir = campSortDir === 'desc' ? 'asc' : 'desc';
+      } else {
+        campSortKey = key;
+        campSortDir = 'desc';
+      }
+      render();
+    });
+  });
+  document.querySelectorAll('#camp-tb tr.camp-row').forEach(function(tr) {
+    tr.addEventListener('click', function() {
+      var key = tr.dataset.key;
+      if (expandedGroupKey !== key) expandedGroupHour = null;
+      expandedGroupKey = expandedGroupKey === key ? null : key;
+      render();
+    });
+  });
+  document.querySelectorAll('#camp-tb tr.grp-hour-row').forEach(function(tr) {
+    tr.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var h = tr.dataset.ghour;
+      expandedGroupHour = expandedGroupHour === h ? null : h;
+      render();
+    });
+  });
+}
+
+function render() {
+  var rows = filteredDay();
+  renderKpi(rows);
+  if (!document.getElementById('cmp-body').classList.contains('collapsed')) renderHourCompare();
+  renderHourTable(rows);
+  renderCampaignTable(rows);
+}
+
+document.getElementById('cat-sel').addEventListener('change', function(e) {
+  S.cat = e.target.value; expandedGroupKey = null; render();
+});
+document.getElementById('cmp-date-a').addEventListener('change', renderHourCompare);
+document.getElementById('cmp-date-b').addEventListener('change', renderHourCompare);
+
+populateDateSelects();
+render();
+
+// archive/index.json 에서 최신 날짜 목록을 가져와 드롭다운 갱신
+(function() {
+  var isArchivePage = true;
+  fetch(isArchivePage ? 'index.json' : 'archive/index.json')
+    .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+    .then(function(idx) {
+      if (!idx || !Array.isArray(idx.dates)) return;
+      var sel = document.getElementById('archive-sel');
+      if (!sel) return;
+      var currentDate = '2026-07-03';
+      var todayLink = isArchivePage ? '../pulse.html' : '#';
+      var opts = '<option value="' + todayLink + '"' + (isArchivePage ? '' : ' selected') + '>오늘 (' + idx.today + ')</option>';
+      idx.dates.forEach(function(d) {
+        if (d === idx.today) return;
+        var link = isArchivePage
+          ? ('pulse-' + d.replace(/-/g, '') + '.html')
+          : ('archive/pulse-' + d.replace(/-/g, '') + '.html');
+        var sel = (isArchivePage && d === currentDate) ? ' selected' : '';
+        opts += '<option value="' + link + '"' + sel + '>' + d + '</option>';
+      });
+      sel.innerHTML = opts;
+    })
+    .catch(function() { /* file:// 직접 열기 등 — 임베딩된 목록 유지 */ });
+})();
+</script>
+</body>
+</html>
