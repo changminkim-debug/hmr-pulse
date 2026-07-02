@@ -217,6 +217,8 @@ input.mm-total-bgt:focus{border-color:#4466cc}
 .mm-tbl thead th.mmh-pct{background:#f3f0ff;color:#6a4fd8;text-align:center}
 .mm-tbl tbody td.mmh-pct{background:#faf9ff;text-align:center}
 .mm-pct-pill{display:inline-block;padding:3px 11px;border-radius:99px;font-size:13px;font-weight:800;background:#ece7ff;color:#5b3fc4}
+.mm-toggle-val{cursor:pointer;border-bottom:1px dotted rgba(255,255,255,.5)}
+.mm-toggle-val:hover{opacity:.75}
 </style>
 </head>
 <body>
@@ -1023,6 +1025,18 @@ function mmFmtFullWon(v){
   if(!v||v===0)return'—';
   return Math.round(v).toLocaleString();
 }
+// 클릭 시 축약(억/만) ↔ 전체 숫자 토글 (퍼포먼스/전체 TOTAL 행 전용)
+const mmToggleMode={},mmToggleVal={};
+function mmRenderToggle(id,v){
+  mmToggleVal[id]=v;
+  const mode=mmToggleMode[id]||'abbr';
+  const text=mode==='full'?mmFmtFullWon(v):mmFmtWon(v);
+  mmSi(id,`<span class="mm-toggle-val" onclick="mmToggleClick('${id}')" title="클릭: 전체 숫자 ↔ 축약 전환">${text}</span>`);
+}
+function mmToggleClick(id){
+  mmToggleMode[id]=mmToggleMode[id]==='full'?'abbr':'full';
+  mmRenderToggle(id,mmToggleVal[id]);
+}
 function mmFmtR(v){
   if(!v||v===0)return'<span class="dash">—</span>';
   return Math.round(v)+'%';
@@ -1236,16 +1250,16 @@ function mmRecalc(){
   const perfC24real=perfC24*0.86;
   const perfC24realr=perfBgt>0?perfC24real/perfBgt*100:0;
   const perfRawRoas=perfBgt>0?perfRaw/perfBgt*100:0;
-  mmSi('mm-perf-bgt',mmFmtFullWon(perfBgt));
+  mmRenderToggle('mm-perf-bgt',perfBgt);
   mmSi('mm-perf-bgt-pct',mmFmtPctPill(perfBgt>0?100:0));
   mmSi('mm-perf-rawroas',mmFmtRPill(perfRawRoas));
-  mmSi('mm-perf-raw',mmFmt(perfRaw));
-  mmSi('mm-perf-real',mmFmt(perfReal));
+  mmRenderToggle('mm-perf-raw',perfRaw);
+  mmRenderToggle('mm-perf-real',perfReal);
   mmSi('mm-perf-realr',mmFmtRPill(perfRealRoas));
   mmSi('mm-perf-gap',mmFmtGap(perfC24,perfRaw));
-  mmSi('mm-perf-c24',mmFmt(perfC24));
+  mmRenderToggle('mm-perf-c24',perfC24);
   mmSi('mm-perf-c24r',mmFmtRPill(perfC24r));
-  mmSi('mm-perf-c24rr',mmFmt(perfC24real));
+  mmRenderToggle('mm-perf-c24rr',perfC24real);
   mmSi('mm-perf-c24rrr',mmFmtRPill(perfC24realr));
   // 총 예산 대비 채널 배정 차이
   const totalBudget=parseInt((document.getElementById('mm-total-budget')?.value||'').replace(/,/g,''))||0;
@@ -1265,16 +1279,16 @@ function mmRecalc(){
   const totC24real=totC24*0.86;
   const totC24realr=totBgt>0?totC24real/totBgt*100:0;
   const totRawRoas=totBgt>0?totRaw/totBgt*100:0;
-  mmSi('mm-tot-bgt',mmFmtFullWon(totBgt));
+  mmRenderToggle('mm-tot-bgt',totBgt);
   mmSi('mm-tot-bgt-pct',mmFmtPctPill(totBgt>0?100:0));
   mmSi('mm-tot-rawroas',mmFmtRPill(totRawRoas));
-  mmSi('mm-tot-raw',mmFmt(totRaw));
-  mmSi('mm-tot-rel',mmFmt(totReal));
+  mmRenderToggle('mm-tot-raw',totRaw);
+  mmRenderToggle('mm-tot-rel',totReal);
   mmSi('mm-tot-relr',mmFmtRPill(totRealRoas));
   mmSi('mm-tot-gap',mmFmtGap(totC24,totRaw));
-  mmSi('mm-tot-c24',mmFmt(totC24));
+  mmRenderToggle('mm-tot-c24',totC24);
   mmSi('mm-tot-c24r',mmFmtRPill(totC24r));
-  mmSi('mm-tot-c24rr',mmFmt(totC24real));
+  mmRenderToggle('mm-tot-c24rr',totC24real);
   mmSi('mm-tot-c24rrr',mmFmtRPill(totC24realr));
 }
 </script>
