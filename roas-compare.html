@@ -290,7 +290,7 @@ input.mm-org-days:focus{border-color:#4466cc}
     <div class="fsep"></div>
     <button class="fbtn" data-view="monthly">월별</button>
     <button class="fbtn" data-view="daily">일별</button>
-    <span class="data-badge">✓ Cafe24 연동</span>
+    <span class="data-badge" id="c24-badge">✓ Cafe24 연동</span>
   </div>
 
   <!-- KPI 카드 -->
@@ -535,6 +535,23 @@ async function loadMedia(){
   }
 }
 function setStatus(m,c,ok){document.getElementById('stxt').textContent=m;const d=document.getElementById('sdot');d.style.background=c;d.className='status-dot'+(ok?' ok':'');}
+function checkC24Freshness(){
+  const dates=Object.keys(C24).sort();
+  if(!dates.length)return;
+  const last=dates[dates.length-1];
+  const badge=document.getElementById('c24-badge');
+  if(!badge)return;
+  // KST 어제 날짜
+  const kstYesterday=new Date(Date.now()+9*3600000-86400000).toISOString().slice(0,10);
+  if(last>=kstYesterday){
+    badge.textContent='✓ C24 '+last+' 최신';
+    badge.style.background='';
+  }else{
+    badge.textContent='⚠️ C24 '+last+' — 업데이트 필요';
+    badge.style.background='#e53935';
+    badge.style.color='#fff';
+  }
+}
 
 // ═══ AGGREGATE ════════════════════════════════════════════════════
 function filteredDays(){
@@ -862,6 +879,7 @@ document.querySelectorAll('#ch-filter .ch-btn').forEach(btn=>{
 document.querySelector('[data-m="all"]').classList.add('active');
 document.querySelector('[data-view="monthly"]').classList.add('active');
 loadMedia();
+checkC24Freshness();
 
 // ═══ 미디어믹스 계산기 ════════════════════════════════════════════
 const NAVER_GAP=0.69; // 4~6월 평균 (4월-30% / 5월-35% / 6월-29%) — 대시보드 동일 기준
