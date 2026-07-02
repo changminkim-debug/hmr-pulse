@@ -214,7 +214,9 @@ input.mm-org-days:focus{border-color:#4466cc}
 input.mm-total-bgt{width:160px;padding:7px 9px;border:1.5px solid #b8c4f0;border-radius:7px;font-size:14px;font-weight:700;text-align:right;font-family:inherit;outline:none;background:#fff}
 input.mm-total-bgt:focus{border-color:#4466cc}
 .mm-total-bgt-diff{font-size:12px;font-weight:600;color:#5a6380}
-.mm-bgt-pct-val{font-size:11px;color:#8a91a8;font-weight:700;margin-left:4px;white-space:nowrap}
+.mm-tbl thead th.mmh-pct{background:#f3f0ff;color:#6a4fd8;text-align:center}
+.mm-tbl tbody td.mmh-pct{background:#faf9ff;text-align:center}
+.mm-pct-pill{display:inline-block;padding:3px 11px;border-radius:99px;font-size:13px;font-weight:800;background:#ece7ff;color:#5b3fc4}
 </style>
 </head>
 <body>
@@ -254,6 +256,7 @@ input.mm-total-bgt:focus{border-color:#4466cc}
             <tr>
               <th rowspan="2" style="text-align:left;vertical-align:bottom">채널</th>
               <th rowspan="2">예산(원)</th>
+              <th rowspan="2" class="mmh-pct">예산 비중</th>
               <th rowspan="2">RAW ROAS</th>
               <th class="mmh-raw" rowspan="2">매체 RAW<br>매출</th>
               <th class="mmh-real" colspan="2">매체 실매출</th>
@@ -1024,6 +1027,10 @@ function mmFmtRPill(v){
   if(!v||v===0)return'<span class="dash">—</span>';
   return`<span class="mm-roas-pill">${Math.round(v)}%</span>`;
 }
+function mmFmtPctPill(v){
+  if(!v||v===0)return'<span class="dash">—</span>';
+  return`<span class="mm-pct-pill">${Math.round(v)}%</span>`;
+}
 function mmSi(id,html){const el=document.getElementById(id);if(el)el.innerHTML=html;}
 function mmFmtBudgetDiff(totalBudget,perfBgt){
   if(!totalBudget)return'';
@@ -1074,7 +1081,8 @@ function buildMMTable(){
     }
     html+=`<tr${rowCls}>
       <td${lpad}>${ch.label}</td>
-      <td><input class="mm-bgt" id="mm-b-${ch.key}" type="text" inputmode="numeric" placeholder="0" oninput="mmBgtFmt(this)"><span class="mm-bgt-pct-val" id="mm-b-pct-${ch.key}"></span></td>
+      <td><input class="mm-bgt" id="mm-b-${ch.key}" type="text" inputmode="numeric" placeholder="0" oninput="mmBgtFmt(this)"></td>
+      <td class="mmh-pct"><span id="mm-b-pct-${ch.key}">—</span></td>
       <td><input class="mm-roas" id="mm-r-${ch.key}" type="number" min="1" step="1" value="${ch.defRoas}" oninput="mmRecalc()"></td>
       <td class="mmh-raw"><span class="mm-val-raw" id="mm-raw-${ch.key}">—</span></td>
       <td class="mmh-real"><span class="mm-val-real" id="mm-rel-${ch.key}">—</span></td>
@@ -1085,7 +1093,8 @@ function buildMMTable(){
     if(ch.key==='shop'){
       html+=`<tr class="mm-naver-c24">
         <td style="padding-left:12px">└ 네이버 합계</td>
-        <td><span id="mm-naver-bgt">—</span><span class="mm-bgt-pct-val" id="mm-naver-bgt-pct"></span></td>
+        <td><span id="mm-naver-bgt">—</span></td>
+        <td class="mmh-pct"><span id="mm-naver-bgt-pct">—</span></td>
         <td><span id="mm-naver-rawroas">—</span></td>
         <td class="mmh-raw"><span id="mm-naver-raw">—</span></td>
         <td class="mmh-real"><span id="mm-naver-rel">—</span></td>
@@ -1102,7 +1111,8 @@ function buildMMTable(){
   // 콘텐츠 비용 (예산만)
   html+=`<tr class="mm-content-fee">
     <td>콘텐츠 비용</td>
-    <td><input class="mm-bgt" id="mm-b-content" type="text" inputmode="numeric" placeholder="0" oninput="mmBgtFmt(this)"><span class="mm-bgt-pct-val" id="mm-b-pct-content"></span></td>
+    <td><input class="mm-bgt" id="mm-b-content" type="text" inputmode="numeric" placeholder="0" oninput="mmBgtFmt(this)"></td>
+    <td class="mmh-pct"><span id="mm-b-pct-content">—</span></td>
     <td>—</td>
     <td class="mmh-raw">—</td><td class="mmh-real">—</td><td class="mmh-real-roas">—</td>
     <td class="mmh-gap">—</td>
@@ -1112,7 +1122,7 @@ function buildMMTable(){
   // 퍼포먼스 TOTAL
   html+=`<tr class="mm-perf-total">
     <td>퍼포먼스 TOTAL</td>
-    <td id="mm-perf-bgt">—</td><td id="mm-perf-rawroas">—</td>
+    <td id="mm-perf-bgt">—</td><td class="mmh-pct" id="mm-perf-bgt-pct">—</td><td id="mm-perf-rawroas">—</td>
     <td id="mm-perf-raw">—</td>
     <td id="mm-perf-real">—</td>
     <td id="mm-perf-realr">—</td>
@@ -1126,7 +1136,7 @@ function buildMMTable(){
   // 오가닉 예측
   html+=`<tr class="mm-organic">
     <td>오가닉 예측 <small style="color:#aaa;font-size:11px">광고비×107% 자동 (4~6월)</small></td>
-    <td>—</td><td>—</td>
+    <td>—</td><td class="mmh-pct">—</td><td>—</td>
     <td class="mmh-raw">—</td><td class="mmh-real">—</td><td class="mmh-real-roas">—</td>
     <td class="mmh-gap">—</td>
     <td class="mmh-c24"><span id="mm-org-c24">—</span></td>
@@ -1138,7 +1148,7 @@ function buildMMTable(){
   // 전체 TOTAL
   html+=`<tr class="mm-total">
     <td>전체 TOTAL</td>
-    <td id="mm-tot-bgt">—</td><td id="mm-tot-rawroas">—</td>
+    <td id="mm-tot-bgt">—</td><td class="mmh-pct" id="mm-tot-bgt-pct">—</td><td id="mm-tot-rawroas">—</td>
     <td id="mm-tot-raw">—</td>
     <td id="mm-tot-rel">—</td>
     <td id="mm-tot-relr">—</td>
@@ -1178,7 +1188,7 @@ function mmRecalc(){
     mmSi(`mm-raw-${ch.key}`,mmFmt(raw));
     mmSi(`mm-rel-${ch.key}`,mmFmt(real));
     mmSi(`mm-relr-${ch.key}`,mmFmtRPill(realRoas));
-    mmSi(`mm-b-pct-${ch.key}`,bgt>0?`${pct}%`:'');
+    mmSi(`mm-b-pct-${ch.key}`,mmFmtPctPill(pct));
     if(ch.group==='naver'){
       naverRaw+=raw;
     }else{
@@ -1195,7 +1205,7 @@ function mmRecalc(){
     perfRaw+=raw; perfReal+=real;
   });
   const cfPct=perfBgt>0?Math.round(cfBgt/perfBgt*100):0;
-  mmSi('mm-b-pct-content',cfBgt>0?`${cfPct}%`:'');
+  mmSi('mm-b-pct-content',mmFmtPctPill(cfPct));
   // 네이버 C24 합계
   const naverC24=naverRaw*NAVER_GAP;
   const naverC24r=naverBgt>0?naverC24/naverBgt*100:0;
@@ -1203,7 +1213,7 @@ function mmRecalc(){
   const naverC24realr=naverBgt>0?naverC24real/naverBgt*100:0;
   const naverGapPct=Math.round(NAVER_GAP*100-100);
   const naverPct=perfBgt>0?Math.round(naverBgt/perfBgt*100):0;
-  mmSi('mm-naver-bgt-pct',naverBgt>0?`${naverPct}%`:'');
+  mmSi('mm-naver-bgt-pct',mmFmtPctPill(naverPct));
   mmSi('mm-naver-bgt',mmFmtWon(naverBgt));
   mmSi('mm-naver-rawroas',naverBgt>0?`<span class="mm-roas-pill">${Math.round(naverRaw/naverBgt*100)}%</span>`:'—');
   mmSi('mm-naver-raw',mmFmt(naverRaw));
@@ -1223,6 +1233,7 @@ function mmRecalc(){
   const perfC24realr=perfBgt>0?perfC24real/perfBgt*100:0;
   const perfRawRoas=perfBgt>0?perfRaw/perfBgt*100:0;
   mmSi('mm-perf-bgt',mmFmtWon(perfBgt));
+  mmSi('mm-perf-bgt-pct',mmFmtPctPill(perfBgt>0?100:0));
   mmSi('mm-perf-rawroas',mmFmtRPill(perfRawRoas));
   mmSi('mm-perf-raw',mmFmt(perfRaw));
   mmSi('mm-perf-real',mmFmt(perfReal));
@@ -1251,6 +1262,7 @@ function mmRecalc(){
   const totC24realr=totBgt>0?totC24real/totBgt*100:0;
   const totRawRoas=totBgt>0?totRaw/totBgt*100:0;
   mmSi('mm-tot-bgt',mmFmtWon(totBgt));
+  mmSi('mm-tot-bgt-pct',mmFmtPctPill(totBgt>0?100:0));
   mmSi('mm-tot-rawroas',mmFmtRPill(totRawRoas));
   mmSi('mm-tot-raw',mmFmt(totRaw));
   mmSi('mm-tot-rel',mmFmt(totReal));
