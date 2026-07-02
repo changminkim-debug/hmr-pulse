@@ -1019,10 +1019,6 @@ function mmFmtWon(v){
   if(v>=1e4)return Math.round(v/1e4)+'만';
   return Math.round(v).toLocaleString()+'원';
 }
-function mmFmtFull(v){
-  if(!v||v===0)return'<span class="dash">—</span>';
-  return Math.round(v).toLocaleString();
-}
 function mmFmtFullWon(v){
   if(!v||v===0)return'—';
   return Math.round(v).toLocaleString();
@@ -1055,7 +1051,7 @@ function mmFmtGap(c24,raw){
   const color=diff>=0?'#2e7d32':'#c62828';
   const sign=diff>=0?'+':'';
   const pctStr=pct!==null?`<span style="font-weight:700;color:${color}">${pct>=0?'+':''}${pct}%</span><br>`:'';
-  const diffStr=`<small style="font-size:11px;color:#888">${sign}${mmFmtFull(Math.abs(diff))}</small>`;
+  const diffStr=`<small style="font-size:11px;color:#888">${sign}${mmFmtWon(Math.abs(diff))}</small>`;
   return pctStr+diffStr;
 }
 function mmBgtFmt(el){
@@ -1243,13 +1239,13 @@ function mmRecalc(){
   mmSi('mm-perf-bgt',mmFmtFullWon(perfBgt));
   mmSi('mm-perf-bgt-pct',mmFmtPctPill(perfBgt>0?100:0));
   mmSi('mm-perf-rawroas',mmFmtRPill(perfRawRoas));
-  mmSi('mm-perf-raw',mmFmtFull(perfRaw));
-  mmSi('mm-perf-real',mmFmtFull(perfReal));
+  mmSi('mm-perf-raw',mmFmt(perfRaw));
+  mmSi('mm-perf-real',mmFmt(perfReal));
   mmSi('mm-perf-realr',mmFmtRPill(perfRealRoas));
   mmSi('mm-perf-gap',mmFmtGap(perfC24,perfRaw));
-  mmSi('mm-perf-c24',mmFmtFull(perfC24));
+  mmSi('mm-perf-c24',mmFmt(perfC24));
   mmSi('mm-perf-c24r',mmFmtRPill(perfC24r));
-  mmSi('mm-perf-c24rr',mmFmtFull(perfC24real));
+  mmSi('mm-perf-c24rr',mmFmt(perfC24real));
   mmSi('mm-perf-c24rrr',mmFmtRPill(perfC24realr));
   // 총 예산 대비 채널 배정 차이
   const totalBudget=parseInt((document.getElementById('mm-total-budget')?.value||'').replace(/,/g,''))||0;
@@ -1272,13 +1268,13 @@ function mmRecalc(){
   mmSi('mm-tot-bgt',mmFmtFullWon(totBgt));
   mmSi('mm-tot-bgt-pct',mmFmtPctPill(totBgt>0?100:0));
   mmSi('mm-tot-rawroas',mmFmtRPill(totRawRoas));
-  mmSi('mm-tot-raw',mmFmtFull(totRaw));
-  mmSi('mm-tot-rel',mmFmtFull(totReal));
+  mmSi('mm-tot-raw',mmFmt(totRaw));
+  mmSi('mm-tot-rel',mmFmt(totReal));
   mmSi('mm-tot-relr',mmFmtRPill(totRealRoas));
   mmSi('mm-tot-gap',mmFmtGap(totC24,totRaw));
-  mmSi('mm-tot-c24',mmFmtFull(totC24));
+  mmSi('mm-tot-c24',mmFmt(totC24));
   mmSi('mm-tot-c24r',mmFmtRPill(totC24r));
-  mmSi('mm-tot-c24rr',mmFmtFull(totC24real));
+  mmSi('mm-tot-c24rr',mmFmt(totC24real));
   mmSi('mm-tot-c24rrr',mmFmtRPill(totC24realr));
 }
 </script>
