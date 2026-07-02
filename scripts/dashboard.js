@@ -408,10 +408,15 @@ async function main() {
         const lastOfMonth = ds(new Date(Date.UTC(cy, cm, 0)));
         const chunkEnd = lastOfMonth < yd ? lastOfMonth : yd;
         console.log(`[dashboard] fetch chunk: ${chunkStart} ~ ${chunkEnd}`);
-        const rows = await fetchNewAdRows(chunkStart, chunkEnd);
-        allApiRows.push(...rows);
+        try {
+          const rows = await fetchNewAdRows(chunkStart, chunkEnd);
+          allApiRows.push(...rows);
+        } catch (e) {
+          console.warn(`[dashboard] chunk ${chunkStart}~${chunkEnd} 실패, 스킵: ${e.message}`);
+        }
         chunkStart = ds(new Date(Date.UTC(cy, cm, 1)));
       }
+      if (allApiRows.length === 0) throw new Error("모든 chunk 실패 — 데이터 없음");
       console.log(`[dashboard] Meta API 총 ${allApiRows.length}행 수신`);
       records = await appendAndConvert(allApiRows, productMap, personMap);
     } catch (e) {
