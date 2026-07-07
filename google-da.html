@@ -142,7 +142,7 @@ tbody tr:hover td{background:#edf2ff!important}
       <div class="hd-date" id="hd-range"></div>
     </div>
     <div class="hd-right">
-      <div class="hd-gen">생성: 2026. 7. 7. 오후 2:40:26</div>
+      <div class="hd-gen">생성: 2026. 7. 7. 오후 2:42:53</div>
     </div>
   </div>
 
@@ -180,7 +180,7 @@ tbody tr:hover td{background:#edf2ff!important}
           <thead>
             <tr>
               <th class="left">캠페인</th>
-              <th>비용</th><th>전환수</th><th>전환가치</th><th>매체ROAS</th><th>Cafe24ROAS</th>
+              <th>비용</th><th>전환수</th><th>전환가치</th><th>매체ROAS</th><th>Cafe24순매출</th><th>Cafe24ROAS</th>
             </tr>
           </thead>
           <tbody id="camp-daily-tbody"></tbody>
@@ -205,7 +205,7 @@ tbody tr:hover td{background:#edf2ff!important}
           <thead>
             <tr>
               <th class="left">날짜</th>
-              <th>비용</th><th>전환수</th><th>전환가치</th><th>매체ROAS</th><th>Cafe24ROAS</th>
+              <th>비용</th><th>전환수</th><th>전환가치</th><th>매체ROAS</th><th>Cafe24순매출</th><th>Cafe24ROAS</th>
             </tr>
           </thead>
           <tbody id="modal-tbody"></tbody>
@@ -514,6 +514,7 @@ function campRowHTML(campaignId, name, m, badge) {
     <td>${fmtK(m.conv)}</td>
     <td>${fmtW(m.convValue)}</td>
     <td><span class="${roasCls(m.roasGoogle)}">${fmtPct(m.roasGoogle)}</span></td>
+    <td>${fmtW(m.netRevenue)}</td>
     <td><span class="${roasCls(m.roasCafe)}">${fmtPct(m.roasCafe)}</span></td>
   </tr>`;
 }
@@ -524,6 +525,7 @@ function dayRowHTML(date, m) {
     <td>${fmtK(m.conv)}</td>
     <td>${fmtW(m.convValue)}</td>
     <td><span class="${roasCls(m.roasGoogle)}">${fmtPct(m.roasGoogle)}</span></td>
+    <td>${fmtW(m.netRevenue)}</td>
     <td><span class="${roasCls(m.roasCafe)}">${fmtPct(m.roasCafe)}</span></td>
   </tr>`;
 }
@@ -543,7 +545,7 @@ function renderCampaignDaily() {
     if (m.cost === 0 && m.orderAmount === 0 && m.impr === 0) continue;
     rows.push(campRowHTML(c.campaignId, campDisplayName(c.product, c.type, c.name), m, typeBadge(c.type, c.subtype)));
   }
-  document.getElementById('camp-daily-tbody').innerHTML = rows.join('') || '<tr><td colspan="6" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
+  document.getElementById('camp-daily-tbody').innerHTML = rows.join('') || '<tr><td colspan="7" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
 }
 
 function findCampaign(campaignId) {
@@ -575,7 +577,7 @@ function openCampaignModal(campaignId) {
     if (m.cost === 0 && m.orderAmount === 0 && m.impr === 0) continue;
     rows.push(dayRowHTML(d, m));
   }
-  document.getElementById('modal-tbody').innerHTML = rows.join('') || '<tr><td colspan="6" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
+  document.getElementById('modal-tbody').innerHTML = rows.join('') || '<tr><td colspan="7" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
 
   const ctx = document.getElementById('modal-chart').getContext('2d');
   if (modalChart) modalChart.destroy();
