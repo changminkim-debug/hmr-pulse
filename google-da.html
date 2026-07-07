@@ -142,7 +142,7 @@ tbody tr:hover td{background:#edf2ff!important}
       <div class="hd-date" id="hd-range"></div>
     </div>
     <div class="hd-right">
-      <div class="hd-gen">생성: 2026. 7. 7. 오후 2:42:53</div>
+      <div class="hd-gen">생성: 2026. 7. 7. 오후 2:46:27</div>
     </div>
   </div>
 
@@ -340,6 +340,22 @@ function fmtShort(s) {
   const [, m, d] = s.split('-').map(Number);
   return m + '/' + d;
 }
+// 토요일 파랑, 일요일 빨강 — 날짜가 보이는 모든 곳에 공통 적용
+function weekdayColor(s) {
+  const day = parseISO(s).getDay(); // 0=일, 6=토
+  if (day === 6) return '#2a58b0';
+  if (day === 0) return '#c0304a';
+  return null;
+}
+function fmtShortColored(s) {
+  const c = weekdayColor(s);
+  const txt = fmtShort(s);
+  return c ? `<span style="color:${c}">${txt}</span>` : txt;
+}
+function dateColorSpan(s) {
+  const c = weekdayColor(s);
+  return c ? `<span style="color:${c}">${s}</span>` : s;
+}
 
 function renderPeriodPills() {
   const el = document.getElementById('period-pills');
@@ -364,7 +380,7 @@ function esc(s){ return String(s).replace(/'/g,"\\'"); }
 
 function renderKPI() {
   const [start, end] = getRange(CUR_PERIOD);
-  document.getElementById('hd-range').textContent = start === end ? fmtShort(start) : fmtShort(start) + ' ~ ' + fmtShort(end);
+  document.getElementById('hd-range').innerHTML = start === end ? fmtShortColored(start) : fmtShortColored(start) + ' ~ ' + fmtShortColored(end);
   const total = emptyTotals();
   for (const p of DATA.byProduct) {
     if (!productMatch(p.product)) continue;
@@ -389,10 +405,10 @@ function renderKPI() {
 function roasLabels(color) {
   return { display: true, align: 'top', anchor: 'end', offset: 4, font: { size: 10, weight: '700' }, color, formatter: (v) => v + '%' };
 }
-function roasChartConfig(labels, roasG, roasC, costArr) {
+function roasChartConfig(fullDates, roasG, roasC, costArr) {
   return {
     data: {
-      labels,
+      labels: fullDates.map(d => d.slice(5)),
       datasets: [
         { type: 'bar', label: '비용', data: costArr, backgroundColor: 'rgba(68,102,204,.15)', yAxisID: 'y1', order: 3 },
         { type: 'line', label: '매체 ROAS(%)', data: roasG, borderColor: '#4466cc', backgroundColor: '#4466cc', tension: .25, yAxisID: 'y', order: 1, datalabels: roasLabels('#4466cc') },
@@ -404,6 +420,7 @@ function roasChartConfig(labels, roasG, roasC, costArr) {
       layout: { padding: { top: 20 } },
       interaction: { mode: 'index', intersect: false },
       scales: {
+        x: { ticks: { color: (ctx) => weekdayColor(fullDates[ctx.index]) || '#4a5578' } },
         y: { position: 'left', title: { display: true, text: 'ROAS(%)' } },
         y1: { position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: '비용(원)' } },
       },
@@ -429,7 +446,7 @@ function renderChart() {
   }
   const ctx = document.getElementById('trend-chart').getContext('2d');
   if (trendChart) trendChart.destroy();
-  trendChart = new Chart(ctx, roasChartConfig(dates.map(d => d.slice(5)), roasG, roasC, costArr));
+  trendChart = new Chart(ctx, roasChartConfig(dates, roasG, roasC, costArr));
 }
 
 function renderWarnings() {
@@ -520,7 +537,7 @@ function campRowHTML(campaignId, name, m, badge) {
 }
 function dayRowHTML(date, m) {
   return `<tr class="lvl-ad">
-    <td class="left name" style="cursor:default">${date}</td>
+    <td class="left name" style="cursor:default">${dateColorSpan(date)}</td>
     <td>${fmtW(m.cost)}</td>
     <td>${fmtK(m.conv)}</td>
     <td>${fmtW(m.convValue)}</td>
@@ -581,7 +598,7 @@ function openCampaignModal(campaignId) {
 
   const ctx = document.getElementById('modal-chart').getContext('2d');
   if (modalChart) modalChart.destroy();
-  modalChart = new Chart(ctx, roasChartConfig(dates.map(d => d.slice(5)), roasG, roasC, costArr));
+  modalChart = new Chart(ctx, roasChartConfig(dates, roasG, roasC, costArr));
 }
 function closeCampaignModal() {
   document.getElementById('modal-overlay').classList.remove('show');
