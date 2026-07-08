@@ -142,7 +142,7 @@ tbody tr:hover td{background:#edf2ff!important}
       <div class="hd-date" id="hd-range"></div>
     </div>
     <div class="hd-right">
-      <div class="hd-gen">생성: 2026. 7. 8. 오전 9:05:32</div>
+      <div class="hd-gen">생성: 2026. 7. 8. 오전 9:57:53</div>
     </div>
   </div>
 
@@ -300,6 +300,7 @@ function metrics(t) {
 
 const PERIODS = [
   { key: 'yesterday', label: '어제' },
+  { key: 'thisWeek', label: '이번주' },
   { key: 'last7', label: '최근 7일' },
   { key: 'last30', label: '최근 30일' },
   { key: 'thisMonth', label: '이번달' },
@@ -313,6 +314,11 @@ function getRange(period) {
   const maxDate = dates[dates.length-1];
   const d = parseISO(maxDate);
   if (period === 'yesterday') return [maxDate, maxDate];
+  if (period === 'thisWeek') {
+    const daysSinceMonday = (d.getDay() + 6) % 7; // 월요일 시작
+    const s = new Date(d); s.setDate(s.getDate() - daysSinceMonday);
+    return [iso(s), maxDate];
+  }
   if (period === 'last7') { const s=new Date(d); s.setDate(s.getDate()-6); return [iso(s), maxDate]; }
   if (period === 'last30') { const s=new Date(d); s.setDate(s.getDate()-29); return [iso(s), maxDate]; }
   if (period === 'thisMonth') { const s=new Date(d.getFullYear(), d.getMonth(), 1); return [iso(s), maxDate]; }
