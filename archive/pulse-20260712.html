@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="refresh" content="300">
+
 <title>한끼통살 · 메타 펄스 · 03:00</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -137,12 +137,12 @@ td.cmp-b{background:#faf6fc!important}
   <div class="hd-left">
     <div class="hd-logo">Egnis Ads</div>
     <div>
-      <div class="hd-title">한끼통살 메타 실시간 펄스</div>
-      <div class="hd-sub">HMR 사업본부 · 2026-07-12 00:00 ~ 03:00 · 10분 자동 갱신</div>
+      <div class="hd-title">한끼통살 메타 실시간 펄스 · 지난 기록</div>
+      <div class="hd-sub">HMR 사업본부 · 2026-07-12 00:00 ~ 03:00</div>
     </div>
   </div>
   <div class="hd-right">
-    <div class="hd-date">현재 <strong>03:00</strong></div>
+    <div class="hd-date">마감 <strong>03:00</strong></div>
     <div class="hd-gen">갱신: 2026. 7. 12. 오전 3:19:24</div>
   </div>
 </div>
@@ -150,7 +150,7 @@ td.cmp-b{background:#faf6fc!important}
   <div class="fg"><span class="fl">품목</span>
     <select class="sel" id="cat-sel"><option value="">전체</option></select>
   </div>
-  <div class="fg"><span class="fl">기록</span><select class="sel" id="archive-sel" onchange="if(this.value)location.href=this.value"><option value="#" selected>오늘 (2026-07-12)</option><option value="archive/pulse-20260711.html">2026-07-11</option><option value="archive/pulse-20260710.html">2026-07-10</option><option value="archive/pulse-20260709.html">2026-07-09</option><option value="archive/pulse-20260708.html">2026-07-08</option><option value="archive/pulse-20260707.html">2026-07-07</option><option value="archive/pulse-20260706.html">2026-07-06</option><option value="archive/pulse-20260705.html">2026-07-05</option><option value="archive/pulse-20260704.html">2026-07-04</option><option value="archive/pulse-20260703.html">2026-07-03</option><option value="archive/pulse-20260702.html">2026-07-02</option><option value="archive/pulse-20260701.html">2026-07-01</option><option value="archive/pulse-20260630.html">2026-06-30</option><option value="archive/pulse-20260629.html">2026-06-29</option><option value="archive/pulse-20260628.html">2026-06-28</option><option value="archive/pulse-20260627.html">2026-06-27</option><option value="archive/pulse-20260626.html">2026-06-26</option><option value="archive/pulse-20260625.html">2026-06-25</option><option value="archive/pulse-20260624.html">2026-06-24</option><option value="archive/pulse-20260623.html">2026-06-23</option><option value="archive/pulse-20260622.html">2026-06-22</option><option value="archive/pulse-20260621.html">2026-06-21</option><option value="archive/pulse-20260620.html">2026-06-20</option><option value="archive/pulse-20260619.html">2026-06-19</option><option value="archive/pulse-20260618.html">2026-06-18</option><option value="archive/pulse-20260617.html">2026-06-17</option></select></div>
+  <div class="fg"><span class="fl">기록</span><select class="sel" id="archive-sel" onchange="if(this.value)location.href=this.value"><option value="../pulse.html">오늘 (2026-07-12)</option><option value="pulse-20260711.html">2026-07-11</option><option value="pulse-20260710.html">2026-07-10</option><option value="pulse-20260709.html">2026-07-09</option><option value="pulse-20260708.html">2026-07-08</option><option value="pulse-20260707.html">2026-07-07</option><option value="pulse-20260706.html">2026-07-06</option><option value="pulse-20260705.html">2026-07-05</option><option value="pulse-20260704.html">2026-07-04</option><option value="pulse-20260703.html">2026-07-03</option><option value="pulse-20260702.html">2026-07-02</option><option value="pulse-20260701.html">2026-07-01</option><option value="pulse-20260630.html">2026-06-30</option><option value="pulse-20260629.html">2026-06-29</option><option value="pulse-20260628.html">2026-06-28</option><option value="pulse-20260627.html">2026-06-27</option><option value="pulse-20260626.html">2026-06-26</option><option value="pulse-20260625.html">2026-06-25</option><option value="pulse-20260624.html">2026-06-24</option><option value="pulse-20260623.html">2026-06-23</option><option value="pulse-20260622.html">2026-06-22</option><option value="pulse-20260621.html">2026-06-21</option><option value="pulse-20260620.html">2026-06-20</option><option value="pulse-20260619.html">2026-06-19</option><option value="pulse-20260618.html">2026-06-18</option><option value="pulse-20260617.html">2026-06-17</option></select></div>
   <span class="warn-note">⚠ ROAS·전환은 클릭 후 1일 귀속 — 최근 시간대일수록 잠정치</span>
 </div>
 <div class="page-body">
@@ -760,7 +760,7 @@ render();
 
 // archive/index.json 에서 최신 날짜 목록을 가져와 드롭다운 갱신
 (function() {
-  var isArchivePage = false;
+  var isArchivePage = true;
   fetch(isArchivePage ? 'index.json' : 'archive/index.json')
     .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
     .then(function(idx) {
