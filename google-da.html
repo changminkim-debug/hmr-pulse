@@ -23,6 +23,13 @@ body{font-family:'Segoe UI','Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR'
 .sb-pill{width:100%;text-align:left;padding:8px 10px;background:transparent;border:none;border-radius:6px;color:#4a5578;font-size:13px;font-family:inherit;cursor:pointer;transition:background .12s,color .12s}
 .sb-pill:hover{background:#f0f4ff;color:#4466cc}
 .sb-pill.active{background:#4466cc;color:#fff;font-weight:600}
+.custom-date-row{display:flex;align-items:center;gap:4px;margin-bottom:6px}
+.custom-date-input{flex:1;min-width:0;padding:6px 4px;border:1.5px solid #dde0ea;border-radius:6px;font-size:11px;font-family:inherit;color:#1a2030;outline:none;background:#fff}
+.custom-date-input:focus{border-color:#4466cc}
+.custom-date-sep{color:#9aa0b4;font-size:11px}
+.custom-date-apply{width:100%;padding:7px;background:#fff;border:1.5px solid #4466cc;border-radius:6px;color:#4466cc;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .12s}
+.custom-date-apply:hover{background:#eef2ff}
+.custom-date-apply.active{background:#4466cc;color:#fff}
 .roas-goal-row{display:flex;align-items:center;gap:6px;padding:10px 14px;background:#f4f7ff}
 .roas-goal-lbl{font-size:10px;font-weight:700;color:#6070a0;letter-spacing:.6px;text-transform:uppercase;flex:1}
 .roas-goal-input{width:56px;background:#fff;border:1.5px solid #dde0ea;border-radius:5px;color:#1a2030;font-size:14px;font-weight:700;font-family:inherit;padding:4px 6px;text-align:center;outline:none}
@@ -162,6 +169,12 @@ tbody tr:hover td{background:#edf2ff!important}
   <div class="sb-section">
     <div class="sb-label">기간</div>
     <div class="sb-pills" id="period-pills"></div>
+    <div class="custom-date-row" style="margin-top:8px">
+      <input type="date" id="custom-start" class="custom-date-input">
+      <span class="custom-date-sep">~</span>
+      <input type="date" id="custom-end" class="custom-date-input">
+    </div>
+    <button class="custom-date-apply" id="custom-date-apply-btn" onclick="applyCustomRange()">직접 선택 적용</button>
   </div>
   <div class="roas-goal-row">
     <div class="roas-goal-lbl">목표 ROAS</div>
@@ -182,7 +195,7 @@ tbody tr:hover td{background:#edf2ff!important}
       <div class="hd-date" id="hd-range"></div>
     </div>
     <div class="hd-right">
-      <div class="hd-gen">생성: 2026. 7. 13. 오전 8:48:02</div>
+      <div class="hd-gen">생성: 2026. 7. 13. 오전 8:52:48</div>
     </div>
   </div>
 
@@ -369,6 +382,7 @@ function getRange(period) {
   if (dates.length === 0) return ['0000-00-00','9999-99-99'];
   const maxDate = dates[dates.length-1];
   const d = parseISO(maxDate);
+  if (period === 'custom' && CUSTOM_RANGE) return [CUSTOM_RANGE.start, CUSTOM_RANGE.end];
   if (period === 'yesterday') return [maxDate, maxDate];
   if (period === 'thisWeek') {
     const daysSinceMonday = (d.getDay() + 6) % 7; // 월요일 시작
@@ -422,8 +436,31 @@ function dateColorSpan(s) {
 function renderPeriodPills() {
   const el = document.getElementById('period-pills');
   el.innerHTML = PERIODS.map(p => `<button class="sb-pill ${p.key===CUR_PERIOD?'active':''}" onclick="setPeriod('${p.key}')">${p.label}</button>`).join('');
+  const applyBtn = document.getElementById('custom-date-apply-btn');
+  if (applyBtn) applyBtn.classList.toggle('active', CUR_PERIOD === 'custom');
 }
 function setPeriod(key) { CUR_PERIOD = key; renderAll(); }
+
+let CUSTOM_RANGE = null;
+function applyCustomRange() {
+  const s = document.getElementById('custom-start').value;
+  const e = document.getElementById('custom-end').value;
+  if (!s || !e) return;
+  CUSTOM_RANGE = { start: s, end: e < s ? s : e };
+  CUR_PERIOD = 'custom';
+  renderAll();
+}
+function initCustomDateInputs() {
+  const dates = DATA.dates;
+  if (!dates.length) return;
+  const minD = dates[0], maxD = dates[dates.length - 1];
+  const startEl = document.getElementById('custom-start');
+  const endEl = document.getElementById('custom-end');
+  startEl.min = endEl.min = minD;
+  startEl.max = endEl.max = maxD;
+  startEl.value = maxD;
+  endEl.value = maxD;
+}
 
 function renderProductFilter() {
   const el = document.getElementById('product-filter');
@@ -713,6 +750,7 @@ function renderAll() {
   renderCampaignDaily();
   renderDailyCampaignTable();
 }
+initCustomDateInputs();
 renderAll();
 </script>
 </body>
