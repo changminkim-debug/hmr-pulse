@@ -195,7 +195,7 @@ tbody tr:hover td{background:#edf2ff!important}
       <div class="hd-date" id="hd-range"></div>
     </div>
     <div class="hd-right">
-      <div class="hd-gen">생성: 2026. 7. 15. 오전 8:53:37</div>
+      <div class="hd-gen">생성: 2026. 7. 15. 오전 9:14:55</div>
     </div>
   </div>
 
@@ -242,13 +242,12 @@ tbody tr:hover td{background:#edf2ff!important}
     </div>
 
     <div class="panel">
-      <div class="sec-title">일자별 캠페인 성과 <span class="hint" style="font-weight:400;color:#b0b8cc;font-size:11px">스프레드시트처럼 날짜×캠페인 전부 나열</span></div>
+      <div class="sec-title">일자별 성과 <span class="hint" style="font-weight:400;color:#b0b8cc;font-size:11px">품목 필터에 따라 전체 또는 선택 품목 기준 날짜별 합계</span></div>
       <div class="tbl-scroll" style="max-height:700px">
         <table>
           <thead>
             <tr>
               <th class="left">날짜</th>
-              <th class="left">캠페인</th>
               <th>비용</th><th>전환수</th><th>전환가치</th><th>매체ROAS</th><th>Cafe24순매출</th><th>Cafe24ROAS</th>
             </tr>
           </thead>
@@ -664,10 +663,9 @@ function renderCampaignDaily() {
   document.getElementById('camp-daily-tbody').innerHTML = rows.join('') || '<tr><td colspan="7" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
 }
 
-function dailyCampRowHTML(date, name, m, badge) {
+function dailyTotalRowHTML(date, m) {
   return `<tr>
     <td class="left">${dateColorSpan(date)}</td>
-    <td class="left" style="font-weight:600;color:#1a2030">${esc(name)}${badge}</td>
     <td>${fmtW(m.cost)}</td>
     <td>${fmtK(m.conv)}</td>
     <td>${fmtW(m.convValue)}</td>
@@ -677,27 +675,23 @@ function dailyCampRowHTML(date, name, m, badge) {
   </tr>`;
 }
 
+// 품목 필터가 "전체"면 전체 합계, 특정 품목이면 그 품목의 모든 캠페인을 합친 날짜별 한 줄.
+// 캠페인별 세부 내역은 "캠페인별 일자별 성과"에서 캠페인 클릭 → 모달로 이미 볼 수 있어서 여기선 안 나눔.
 function renderDailyCampaignTable() {
   const [start, end] = getRange(CUR_PERIOD);
-  const campaigns = [];
-  for (const p of DATA.byProduct) {
-    if (!productMatch(p.product)) continue;
-    for (const c of p.campaigns) campaigns.push({ ...c, product: p.product });
-  }
-  campaigns.sort((a, b) => b.totals.cost - a.totals.cost);
-
   const dates = DATA.dates.filter(d => d >= start && d <= end);
   const rows = [];
   for (const d of dates) {
-    for (const c of campaigns) {
-      const t = c.byDate[d];
-      if (!t) continue;
-      const m = metrics(t);
-      if (m.cost === 0 && m.orderAmount === 0 && m.impr === 0) continue;
-      rows.push(dailyCampRowHTML(d, campDisplayName(c.product, c.type, c.name), m, typeBadge(c.type, c.subtype)));
+    const t = emptyTotals();
+    for (const p of DATA.byProduct) {
+      if (!productMatch(p.product)) continue;
+      if (p.byDate[d]) addTotals(t, p.byDate[d]);
     }
+    const m = metrics(t);
+    if (m.cost === 0 && m.orderAmount === 0 && m.impr === 0) continue;
+    rows.push(dailyTotalRowHTML(d, m));
   }
-  document.getElementById('daily-camp-tbody').innerHTML = rows.join('') || '<tr><td colspan="8" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
+  document.getElementById('daily-camp-tbody').innerHTML = rows.join('') || '<tr><td colspan="7" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
 }
 
 function findCampaign(campaignId) {
