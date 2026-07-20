@@ -311,6 +311,11 @@ input.mm-total-bgt:focus{border-color:#4466cc}
     <span class="data-badge">✓ Cafe24 연동</span>
   </div>
 
+  <!-- Cafe24 수집 누락 경고 (결측 있을 때만 표시) -->
+  <div id="gap-warn" style="display:none;margin:0 0 14px;padding:11px 15px;border-radius:9px;
+       background:rgba(229,57,53,.12);border:1px solid rgba(229,57,53,.45);
+       color:#ff8a80;font-size:13px;line-height:1.55"></div>
+
   <!-- KPI 카드 -->
   <div class="kpi-grid" id="kpi-grid">
     <div class="loader" style="grid-column:1/-1"><div class="spin"></div>로딩중...</div>
@@ -574,8 +579,25 @@ function chMetrics(day,ch){
 }
 
 // ═══ RENDER ═══════════════════════════════════════════════════════
+// C24 수집 누락일 경고 — 수집 스크립트가 조용히 실패해도 화면에서 바로 보이도록
+// (2026-07-20: 7/15~16이 빠진 채 방치돼 매체별 비교 합계가 Cafe24 관리자 화면과 안 맞았음)
+function renderGapWarn(){
+  const el=document.getElementById('gap-warn');if(!el)return;
+  const ks=Object.keys(C24).sort();
+  if(!ks.length){el.style.display='none';return;}
+  const gaps=[];
+  for(let d=new Date(ks[0]);d.toISOString().slice(0,10)<=END;d.setUTCDate(d.getUTCDate()+1)){
+    const k=d.toISOString().slice(0,10);
+    if(!C24[k])gaps.push(k);
+  }
+  if(!gaps.length){el.style.display='none';return;}
+  el.style.display='';
+  el.innerHTML=`⚠️ Cafe24 수집 누락 <strong>${gaps.length}일</strong> — 합계가 실제보다 적게 나옵니다: ${gaps.join(', ')}`;
+}
+
 function render(){
   const days=filteredDays(),agg=aggDays(days);
+  renderGapWarn();
   renderKPI(agg);
   renderMainTable(agg,days);
   renderCompare();
