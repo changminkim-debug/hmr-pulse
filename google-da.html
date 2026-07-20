@@ -54,7 +54,7 @@ body{font-family:'Segoe UI','Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR'
 
 .page-body{padding:20px 26px;display:flex;flex-direction:column;gap:16px;max-width:1400px;width:100%;margin:0 auto;flex:1}
 
-.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.cards{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
 .card{background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 2px 8px rgba(0,0,0,.06),0 0 0 1px rgba(0,0,0,.04);transition:box-shadow .18s,transform .18s}
 .card:hover{box-shadow:0 6px 20px rgba(0,0,0,.1),0 0 0 1px rgba(68,102,204,.12);transform:translateY(-2px)}
 .cl{font-size:11px;color:#8c96ae;letter-spacing:.2px;margin-bottom:6px;text-transform:uppercase;font-weight:600;white-space:nowrap}
@@ -120,6 +120,9 @@ tbody tr:hover td{background:#edf2ff!important}
 .modal-close:hover{background:#e8ecf6}
 .modal-body{padding:18px 22px 22px;overflow-y:auto}
 
+@media(max-width:1500px){
+  .cards{grid-template-columns:repeat(4,1fr)}
+}
 @media(max-width:1200px){
   .cards{grid-template-columns:repeat(3,1fr)}
 }
@@ -185,7 +188,7 @@ tbody tr:hover td{background:#edf2ff!important}
     <div class="sb-label">품목</div>
     <div class="filter-list" id="product-filter"></div>
   </div>
-  <div class="sb-bottom">Cafe24 ROAS = 순매출(주문금액×86%) ÷ 비용<br>매체 ROAS = 매체 전환가치 ÷ 비용</div>
+  <div class="sb-bottom">RAW ROAS = 주문금액(수수료 차감 전) ÷ 비용<br>순ROAS = 순매출(주문금액×86%) ÷ 비용<br>매체 ROAS = 매체 전환가치 ÷ 비용</div>
 </div>
 
 <div class="main-wrap">
@@ -195,7 +198,7 @@ tbody tr:hover td{background:#edf2ff!important}
       <div class="hd-date" id="hd-range"></div>
     </div>
     <div class="hd-right">
-      <div class="hd-gen">생성: 2026. 7. 20. 오전 10:34:28</div>
+      <div class="hd-gen">생성: 2026. 7. 20. 오후 4:36:38</div>
     </div>
   </div>
 
@@ -218,7 +221,7 @@ tbody tr:hover td{background:#edf2ff!important}
               <th class="left">품목 / 캠페인 / 소재</th>
               <th>비용</th><th>전환수</th>
               <th>전환가치</th><th>매체ROAS</th>
-              <th>Cafe24매출</th><th>Cafe24순매출</th><th>Cafe24ROAS</th>
+              <th>Cafe24RAW매출</th><th>RAW ROAS</th><th>Cafe24순매출</th><th>순ROAS</th>
             </tr>
           </thead>
           <tbody id="perf-tbody"></tbody>
@@ -233,7 +236,7 @@ tbody tr:hover td{background:#edf2ff!important}
           <thead>
             <tr>
               <th class="left">캠페인</th>
-              <th>비용</th><th>전환수</th><th>전환가치</th><th>매체ROAS</th><th>Cafe24순매출</th><th>Cafe24ROAS</th>
+              <th>비용</th><th>전환수</th><th>전환가치</th><th>매체ROAS</th><th>Cafe24RAW매출</th><th>RAW ROAS</th><th>Cafe24순매출</th><th>순ROAS</th>
             </tr>
           </thead>
           <tbody id="camp-daily-tbody"></tbody>
@@ -248,7 +251,7 @@ tbody tr:hover td{background:#edf2ff!important}
           <thead>
             <tr>
               <th class="left">날짜</th>
-              <th>비용</th><th>전환수</th><th>전환가치</th><th>매체ROAS</th><th>Cafe24순매출</th><th>Cafe24ROAS</th>
+              <th>비용</th><th>전환수</th><th>전환가치</th><th>매체ROAS</th><th>Cafe24RAW매출</th><th>RAW ROAS</th><th>Cafe24순매출</th><th>순ROAS</th>
             </tr>
           </thead>
           <tbody id="daily-camp-tbody"></tbody>
@@ -273,7 +276,7 @@ tbody tr:hover td{background:#edf2ff!important}
           <thead>
             <tr>
               <th class="left">날짜</th>
-              <th>비용</th><th>전환수</th><th>전환가치</th><th>매체ROAS</th><th>Cafe24순매출</th><th>Cafe24ROAS</th>
+              <th>비용</th><th>전환수</th><th>전환가치</th><th>매체ROAS</th><th>Cafe24RAW매출</th><th>RAW ROAS</th><th>Cafe24순매출</th><th>순ROAS</th>
             </tr>
           </thead>
           <tbody id="modal-tbody"></tbody>
@@ -358,6 +361,8 @@ function metrics(t) {
     ...t,
     netRevenue,
     roasGoogle: t.cost>0 ? t.convValue/t.cost*100 : 0,
+    // RAW ROAS는 수수료 차감 전 주문금액(orderAmount) 기준 — 순매출 기준 roasCafe와 나란히 보기 위함
+    roasCafeRaw: t.cost>0 ? t.orderAmount/t.cost*100 : 0,
     roasCafe: t.cost>0 ? netRevenue/t.cost*100 : 0,
     ctr: t.impr>0 ? t.clicks/t.impr*100 : 0,
     cvr: t.clicks>0 ? t.conv/t.clicks*100 : 0,
@@ -489,8 +494,10 @@ function renderKPI() {
     { l: '비용', v: fmtKpiW(m.cost) },
     { l: '매체 전환가치', v: fmtKpiW(m.convValue) },
     { l: '매체 ROAS', roas: m.roasGoogle },
+    { l: 'Cafe24 RAW매출', v: fmtKpiW(m.orderAmount) },
+    { l: 'RAW ROAS', roas: m.roasCafeRaw },
     { l: 'Cafe24 순매출', v: fmtKpiW(m.netRevenue) },
-    { l: 'Cafe24 ROAS', roas: m.roasCafe },
+    { l: 'Cafe24 순ROAS', roas: m.roasCafe },
   ];
   document.getElementById('kpi-cards').innerHTML = cards.map(c => {
     if (c.roas !== undefined) {
@@ -600,7 +607,7 @@ function renderPerfTable() {
       }
     }
   }
-  document.getElementById('perf-tbody').innerHTML = rows.join('') || '<tr><td colspan="8" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
+  document.getElementById('perf-tbody').innerHTML = rows.join('') || '<tr><td colspan="9" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
 }
 
 function rowHTML(cls, key, open, label, m, badge) {
@@ -613,6 +620,7 @@ function rowHTML(cls, key, open, label, m, badge) {
     <td>${fmtW(m.convValue)}</td>
     <td><span class="${roasCls(m.roasGoogle)}">${fmtPct(m.roasGoogle)}</span></td>
     <td>${fmtW(m.orderAmount)}</td>
+    <td><span class="${roasCls(m.roasCafeRaw)}">${fmtPct(m.roasCafeRaw)}</span></td>
     <td>${fmtW(m.netRevenue)}</td>
     <td><span class="${roasCls(m.roasCafe)}">${fmtPct(m.roasCafe)}</span></td>
   </tr>`;
@@ -629,6 +637,8 @@ function campRowHTML(campaignId, name, m, badge) {
     <td>${fmtK(m.conv)}</td>
     <td>${fmtW(m.convValue)}</td>
     <td><span class="${roasCls(m.roasGoogle)}">${fmtPct(m.roasGoogle)}</span></td>
+    <td>${fmtW(m.orderAmount)}</td>
+    <td><span class="${roasCls(m.roasCafeRaw)}">${fmtPct(m.roasCafeRaw)}</span></td>
     <td>${fmtW(m.netRevenue)}</td>
     <td><span class="${roasCls(m.roasCafe)}">${fmtPct(m.roasCafe)}</span></td>
   </tr>`;
@@ -640,6 +650,8 @@ function dayRowHTML(date, m) {
     <td>${fmtK(m.conv)}</td>
     <td>${fmtW(m.convValue)}</td>
     <td><span class="${roasCls(m.roasGoogle)}">${fmtPct(m.roasGoogle)}</span></td>
+    <td>${fmtW(m.orderAmount)}</td>
+    <td><span class="${roasCls(m.roasCafeRaw)}">${fmtPct(m.roasCafeRaw)}</span></td>
     <td>${fmtW(m.netRevenue)}</td>
     <td><span class="${roasCls(m.roasCafe)}">${fmtPct(m.roasCafe)}</span></td>
   </tr>`;
@@ -660,7 +672,7 @@ function renderCampaignDaily() {
     if (m.cost === 0 && m.orderAmount === 0 && m.impr === 0) continue;
     rows.push(campRowHTML(c.campaignId, campDisplayName(c.product, c.type, c.name), m, typeBadge(c.type, c.subtype)));
   }
-  document.getElementById('camp-daily-tbody').innerHTML = rows.join('') || '<tr><td colspan="7" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
+  document.getElementById('camp-daily-tbody').innerHTML = rows.join('') || '<tr><td colspan="9" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
 }
 
 function dailyTotalRowHTML(date, m) {
@@ -670,6 +682,8 @@ function dailyTotalRowHTML(date, m) {
     <td>${fmtK(m.conv)}</td>
     <td>${fmtW(m.convValue)}</td>
     <td><span class="${roasCls(m.roasGoogle)}">${fmtPct(m.roasGoogle)}</span></td>
+    <td>${fmtW(m.orderAmount)}</td>
+    <td><span class="${roasCls(m.roasCafeRaw)}">${fmtPct(m.roasCafeRaw)}</span></td>
     <td>${fmtW(m.netRevenue)}</td>
     <td><span class="${roasCls(m.roasCafe)}">${fmtPct(m.roasCafe)}</span></td>
   </tr>`;
@@ -691,7 +705,7 @@ function renderDailyCampaignTable() {
     if (m.cost === 0 && m.orderAmount === 0 && m.impr === 0) continue;
     rows.push(dailyTotalRowHTML(d, m));
   }
-  document.getElementById('daily-camp-tbody').innerHTML = rows.join('') || '<tr><td colspan="7" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
+  document.getElementById('daily-camp-tbody').innerHTML = rows.join('') || '<tr><td colspan="9" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
 }
 
 function findCampaign(campaignId) {
@@ -723,7 +737,7 @@ function openCampaignModal(campaignId) {
     if (m.cost === 0 && m.orderAmount === 0 && m.impr === 0) continue;
     rows.push(dayRowHTML(d, m));
   }
-  document.getElementById('modal-tbody').innerHTML = rows.join('') || '<tr><td colspan="7" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
+  document.getElementById('modal-tbody').innerHTML = rows.join('') || '<tr><td colspan="9" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
 
   const ctx = document.getElementById('modal-chart').getContext('2d');
   if (modalChart) modalChart.destroy();
