@@ -220,6 +220,18 @@ input.mm-total-bgt:focus{border-color:#4466cc}
 .mm-pct-pill{display:inline-block;padding:3px 11px;border-radius:99px;font-size:13px;font-weight:800;background:#ece7ff;color:#5b3fc4}
 .mm-toggle-val{cursor:pointer;border-bottom:1px dotted rgba(255,255,255,.5)}
 .mm-toggle-val:hover{opacity:.75}
+/* 신규 매체 추가 행 */
+.mm-tbl tr.mm-custom td{background:#fdf7ff}
+.mm-tbl tr.mm-add-row td{background:#fafbff;padding:7px 11px}
+.mm-add-btn{padding:5px 14px;background:#fff;border:1.5px dashed #b8c0dc;border-radius:8px;color:#5a6380;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.mm-add-btn:hover{border-color:#4466cc;color:#4466cc;background:#f4f6ff}
+input.mm-name{width:104px;padding:5px 7px;border:1.5px solid #d8dce8;border-radius:7px;font-size:12px;font-family:inherit;outline:none;font-weight:600;color:#3a2f55}
+input.mm-name:focus{border-color:#8a4fd8}
+input.mm-gap-in{width:52px;padding:5px 6px;border:1.5px solid #d8dce8;border-radius:7px;font-size:12px;text-align:right;font-family:inherit;outline:none}
+input.mm-gap-in:focus{border-color:#4466cc}
+.mm-gap-hint{font-size:10px;color:#aaa;display:block;margin-top:2px}
+.mm-del-btn{margin-left:5px;background:none;border:none;color:#c0c4d4;font-size:15px;cursor:pointer;padding:0 3px;line-height:1;font-family:inherit}
+.mm-del-btn:hover{color:#c62828}
 /* 월 탭 (7월/8월) */
 .mm-month-tabs{display:inline-flex;gap:4px;background:rgba(255,255,255,.1);padding:3px;border-radius:10px}
 .mm-month-tab{padding:5px 15px;border:none;border-radius:8px;background:none;color:rgba(255,255,255,.6);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:.12s}
@@ -989,6 +1001,7 @@ function mmResetInputs(){
   const bc=document.getElementById('mm-b-content');if(bc)bc.value='';
   const nc=document.getElementById('mm-note-content');if(nc)nc.value='';
   const tb=document.getElementById('mm-total-budget');if(tb)tb.value='';
+  mmClearCustom();   // 신규 매체는 월별로 독립
 }
 function mmSwitchMonth(month){
   if(month===mmMonth)return;
@@ -1044,6 +1057,14 @@ function mmCollectData(){
   if(nc)data['note_content']=nc.value;
   const tb=document.getElementById('mm-total-budget');
   if(tb)data['total_budget']=tb.value;
+  // 신규 매체 행
+  data.custom=mmCustom.map(id=>({
+    name:document.getElementById(`mm-cn-${id}`)?.value||'',
+    bgt:document.getElementById(`mm-cb-${id}`)?.value||'',
+    roas:document.getElementById(`mm-cr-${id}`)?.value||'',
+    gap:document.getElementById(`mm-cg-${id}`)?.value||'',
+    note:document.getElementById(`mm-cnote-${id}`)?.value||'',
+  }));
   return data;
 }
 function mmSave(){
@@ -1083,6 +1104,9 @@ function mmLoadData(data){
   if(nc&&data['note_content']!==undefined)nc.value=data['note_content'];
   const tb=document.getElementById('mm-total-budget');
   if(tb&&data['total_budget']!==undefined)tb.value=data['total_budget'];
+  // 신규 매체 행 복원 (예전 저장본에는 custom이 없으므로 빈 배열 처리)
+  mmClearCustom();
+  (data.custom||[]).forEach(c=>mmAddCustom(c));
   mmRecalc();
 }
 function mmLoad(){
@@ -1207,6 +1231,13 @@ function buildMMTable(){
       </tr>`;
     }
   });
+  // 신규 매체 추가 버튼 (여기 위로 커스텀 행이 삽입됨)
+  html+=`<tr class="mm-add-row" id="mm-row-add">
+    <td colspan="13" style="text-align:left">
+      <button class="mm-add-btn" onclick="mmAddCustom()">＋ 매체 추가</button>
+      <span style="font-size:11px;color:#aaa;margin-left:9px">신규 매체는 채널명·예산·RAW ROAS·갭비율을 직접 입력 (TOTAL 자동 합산)</span>
+    </td>
+  </tr>`;
   // 콘텐츠 비용 (예산만)
   html+=`<tr class="mm-content-fee">
     <td>콘텐츠 비용</td>
@@ -1262,6 +1293,75 @@ function buildMMTable(){
   mmRecalc();
 }
 
+// ── 신규 매체 행 (사용자가 채널명·예산·ROAS·갭까지 직접 입력) ──────
+// 기존 채널과 달리 갭비율 기준값이 없으므로 갭도 입력값을 그대로 사용한다.
+let mmCustom=[];   // 현재 월에 추가된 커스텀 행 id 목록
+let mmCustomSeq=0;
+function mmCustomRowHtml(id){
+  return`<tr class="mm-custom" id="mm-crow-${id}">
+    <td><input class="mm-name" id="mm-cn-${id}" type="text" placeholder="매체명" oninput="mmRecalc()"></td>
+    <td><input class="mm-bgt" id="mm-cb-${id}" type="text" inputmode="numeric" placeholder="0" oninput="mmBgtFmt(this)"></td>
+    <td class="mmh-pct"><span id="mm-cbp-${id}">—</span></td>
+    <td><input class="mm-roas" id="mm-cr-${id}" type="number" min="0" step="1" placeholder="0" oninput="mmRecalc()"></td>
+    <td class="mmh-raw"><span class="mm-val-raw" id="mm-craw-${id}">—</span></td>
+    <td class="mmh-real"><span class="mm-val-real" id="mm-crel-${id}">—</span></td>
+    <td class="mmh-real-roas"><span class="mm-val-realr" id="mm-crelr-${id}">—</span></td>
+    <td class="mmh-gap"><input class="mm-gap-in" id="mm-cg-${id}" type="number" step="1" placeholder="100" oninput="mmRecalc()">%<small class="mm-gap-hint" id="mm-cgh-${id}">RAW 대비</small></td>
+    <td class="mmh-c24"><span class="mm-val-c24" id="mm-cc24-${id}">—</span></td>
+    <td class="mmh-c24-roas"><span class="mm-val-c24r" id="mm-cc24r-${id}">—</span></td>
+    <td class="mmh-c24-real"><span class="mm-val-c24rr" id="mm-cc24rr-${id}">—</span></td>
+    <td class="mmh-c24-real-roas"><span class="mm-val-c24rrr" id="mm-cc24rrr-${id}">—</span></td>
+    <td style="border-left:2px solid #d8dce8">
+      <input class="mm-note" id="mm-cnote-${id}" type="text" placeholder="메모" style="width:88px">
+      <button class="mm-del-btn" onclick="mmRemoveCustom('${id}')" title="이 행 삭제">✕</button>
+    </td>
+  </tr>`;
+}
+function mmAddCustom(preset){
+  const id='c'+(++mmCustomSeq);
+  const anchor=document.getElementById('mm-row-add');
+  if(!anchor)return null;
+  anchor.insertAdjacentHTML('beforebegin',mmCustomRowHtml(id));
+  mmCustom.push(id);
+  if(preset){
+    const set=(sel,v)=>{const el=document.getElementById(sel);if(el&&v!==undefined&&v!==null)el.value=v;};
+    set(`mm-cn-${id}`,preset.name);
+    set(`mm-cb-${id}`,preset.bgt);
+    set(`mm-cr-${id}`,preset.roas);
+    set(`mm-cg-${id}`,preset.gap);
+    set(`mm-cnote-${id}`,preset.note);
+  }else{
+    const nameEl=document.getElementById(`mm-cn-${id}`);
+    if(nameEl)nameEl.focus();
+    mmSetSavedState(false);
+  }
+  mmRecalc();
+  return id;
+}
+function mmRemoveCustom(id){
+  const row=document.getElementById(`mm-crow-${id}`);
+  if(row)row.remove();
+  mmCustom=mmCustom.filter(x=>x!==id);
+  mmSetSavedState(false);
+  mmRecalc();
+}
+function mmClearCustom(){
+  mmCustom.slice().forEach(id=>{
+    const row=document.getElementById(`mm-crow-${id}`);
+    if(row)row.remove();
+  });
+  mmCustom=[];
+}
+function mmCustomVal(id){
+  const num=el=>parseFloat((document.getElementById(el)?.value||'').replace(/,/g,''))||0;
+  return{
+    name:(document.getElementById(`mm-cn-${id}`)?.value||'').trim(),
+    bgt:num(`mm-cb-${id}`),
+    roas:num(`mm-cr-${id}`),
+    gapPct:document.getElementById(`mm-cg-${id}`)?.value===''?100:num(`mm-cg-${id}`),
+  };
+}
+
 // 월 기준값에 따라 고정 텍스트(갭비율·오가닉 비율·안내문·배지)를 다시 그림
 function mmRenderMonthLabels(){
   const cfg=mmCfg();
@@ -1294,6 +1394,9 @@ function mmRecalc(){
   });
   const cfBgt=parseInt((document.getElementById('mm-b-content')?.value||'').replace(/,/g,''))||0;
   perfBgt+=cfBgt;
+  // 신규 매체 예산도 비중 계산의 분모에 포함
+  const custVals={};
+  mmCustom.forEach(id=>{custVals[id]=mmCustomVal(id);perfBgt+=custVals[id].bgt;});
 
   // 2차: 매출/ROAS 계산 + 채널별 예산 비중(%) 렌더
   let perfRaw=0,perfReal=0,perfC24=0,naverRaw=0;
@@ -1325,6 +1428,29 @@ function mmRecalc(){
   });
   const cfPct=perfBgt>0?Math.round(cfBgt/perfBgt*100):0;
   mmSi('mm-b-pct-content',mmFmtPctPill(cfPct));
+  // 신규 매체 행 계산 (갭도 입력값 그대로 사용)
+  mmCustom.forEach(id=>{
+    const v=custVals[id];
+    const raw=v.bgt*v.roas/100;
+    const real=raw*0.86;
+    const c24=raw*v.gapPct/100;
+    const c24Real=c24*0.86;
+    mmSi(`mm-cbp-${id}`,mmFmtPctPill(perfBgt>0?Math.round(v.bgt/perfBgt*100):0));
+    mmSi(`mm-craw-${id}`,mmFmt(raw));
+    mmSi(`mm-crel-${id}`,mmFmt(real));
+    mmSi(`mm-crelr-${id}`,mmFmtRPill(v.bgt>0?real/v.bgt*100:0));
+    mmSi(`mm-cc24-${id}`,mmFmt(c24));
+    mmSi(`mm-cc24r-${id}`,mmFmtRPill(v.bgt>0?c24/v.bgt*100:0));
+    mmSi(`mm-cc24rr-${id}`,mmFmt(c24Real));
+    mmSi(`mm-cc24rrr-${id}`,mmFmtRPill(v.bgt>0?c24Real/v.bgt*100:0));
+    const hint=document.getElementById(`mm-cgh-${id}`);
+    if(hint){
+      const d=Math.round(v.gapPct-100);
+      hint.textContent=`RAW 대비 ${d>=0?'+':''}${d}%`;
+      hint.style.color=d>=0?'#2e7d32':'#c62828';
+    }
+    perfRaw+=raw; perfReal+=real; perfC24+=c24;
+  });
   // 네이버 C24 합계
   const naverC24=naverRaw*cfg.naverGap;
   const naverC24r=naverBgt>0?naverC24/naverBgt*100:0;
