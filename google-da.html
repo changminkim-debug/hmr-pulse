@@ -48,6 +48,9 @@ body{font-family:'Segoe UI','Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR'
 .hd-right{display:flex;align-items:center;gap:16px}
 .hd-date{font-size:13px;color:#5a6a8a;margin-top:3px;font-weight:600}
 .hd-gen{font-size:12px;color:#b4bece}
+.xls-btn{background:#1a7f4b;color:#fff;border:none;border-radius:7px;padding:9px 16px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s;white-space:nowrap}
+.xls-btn:hover{background:#146b3f}
+.xls-btn:active{transform:translateY(1px)}
 
 .warn-banner{margin:12px 28px 0;padding:10px 16px;background:#fff7e6;border:1px solid #ffe0a3;border-radius:10px;color:#8a5a00;font-size:12.5px;display:none}
 .warn-banner.show{display:block}
@@ -198,7 +201,8 @@ tbody tr:hover td{background:#edf2ff!important}
       <div class="hd-date" id="hd-range"></div>
     </div>
     <div class="hd-right">
-      <div class="hd-gen">생성: 2026. 7. 22. 오전 8:54:43</div>
+      <button class="xls-btn" onclick="exportExcel()">⬇ 엑셀 다운로드</button>
+      <div class="hd-gen">생성: 2026. 7. 22. 오전 10:15:20</div>
     </div>
   </div>
 
@@ -746,6 +750,147 @@ function openCampaignModal(campaignId) {
 function closeCampaignModal() {
   document.getElementById('modal-overlay').classList.remove('show');
   if (modalChart) { modalChart.destroy(); modalChart = null; }
+}
+
+/* ===== 엑셀(.xlsx) 내보내기 — 외부 라이브러리 없이 자체 생성 =====
+   광고ID/캠페인ID는 텍스트 셀(inlineStr)로 넣어 과학적 표기 손상 방지.
+   전체 데이터(기간·품목 필터 무시, 전 계층) 출력. */
+function xlEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;'); }
+function xlColName(n){ var s=''; n++; while(n>0){ var m=(n-1)%26; s=String.fromCharCode(65+m)+s; n=Math.floor((n-1)/26); } return s; }
+function XS(v){ return {t:'s',v:(v==null?'':String(v))}; }
+function XN(v){ return {t:'n',v:(v==null||!isFinite(v))?0:v}; }
+function xlRound(x,d){ if(!isFinite(x)) return 0; var p=Math.pow(10,d||0); return Math.round(x*p)/p; }
+
+// CRC32 (표준)
+var _crcTable=(function(){ var t=[]; for(var n=0;n<256;n++){ var c=n; for(var k=0;k<8;k++){ c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1); } t[n]=c>>>0; } return t; })();
+function xlCrc32(u8){ var c=0xFFFFFFFF; for(var i=0;i<u8.length;i++){ c=(c>>>8)^_crcTable[(c^u8[i])&0xFF]; } return (c^0xFFFFFFFF)>>>0; }
+
+function xlSheetXml(rows){
+  var xml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+    '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>';
+  for(var r=0;r<rows.length;r++){
+    var cells=rows[r]; xml+='<row r="'+(r+1)+'">';
+    for(var c=0;c<cells.length;c++){
+      var cell=cells[c], ref=xlColName(c)+(r+1);
+      if(cell.t==='n'){ xml+='<c r="'+ref+'"><v>'+cell.v+'</v></c>'; }
+      else { xml+='<c r="'+ref+'" t="inlineStr"><is><t xml:space="preserve">'+xlEsc(cell.v)+'</t></is></c>'; }
+    }
+    xml+='</row>';
+  }
+  return xml+'</sheetData></worksheet>';
+}
+
+function xlBuild(sheets){
+  var enc=new TextEncoder();
+  var files=[];
+  var ctOverrides='', wbSheets='', wbRels='';
+  for(var i=0;i<sheets.length;i++){
+    var idx=i+1, p='xl/worksheets/sheet'+idx+'.xml';
+    files.push({name:p, data:enc.encode(xlSheetXml(sheets[i].rows))});
+    ctOverrides+='<Override PartName="/'+p+'" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>';
+    wbSheets+='<sheet name="'+xlEsc(sheets[i].name)+'" sheetId="'+idx+'" r:id="rId'+idx+'"/>';
+    wbRels+='<Relationship Id="rId'+idx+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet'+idx+'.xml"/>';
+  }
+  var contentTypes='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+    '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'+
+    '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'+
+    '<Default Extension="xml" ContentType="application/xml"/>'+
+    '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>'+
+    ctOverrides+'</Types>';
+  var rootRels='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+    '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+
+    '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>';
+  var workbook='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+    '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'+
+    '<sheets>'+wbSheets+'</sheets></workbook>';
+  var workbookRels='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+    '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+wbRels+'</Relationships>';
+  var all=[
+    {name:'[Content_Types].xml', data:enc.encode(contentTypes)},
+    {name:'_rels/.rels', data:enc.encode(rootRels)},
+    {name:'xl/workbook.xml', data:enc.encode(workbook)},
+    {name:'xl/_rels/workbook.xml.rels', data:enc.encode(workbookRels)}
+  ].concat(files);
+
+  // ZIP (stored, 무압축)
+  var u16=function(n){return [n&255,(n>>8)&255];};
+  var u32=function(n){return [n&255,(n>>8)&255,(n>>16)&255,(n>>24)&255];};
+  var chunks=[], offset=0, central=[];
+  function push(arr){ var u=(arr instanceof Uint8Array)?arr:Uint8Array.from(arr); chunks.push(u); offset+=u.length; }
+  for(var f=0;f<all.length;f++){
+    var nameB=enc.encode(all[f].name), data=all[f].data, crc=xlCrc32(data), lo=offset;
+    var lh=[].concat(u32(0x04034b50),u16(20),u16(0x800),u16(0),u16(0),u16(0),u32(crc),u32(data.length),u32(data.length),u16(nameB.length),u16(0));
+    push(lh); push(nameB); push(data);
+    central.push({nameB:nameB, crc:crc, size:data.length, offset:lo});
+  }
+  var cdStart=offset;
+  for(var g=0;g<central.length;g++){
+    var c=central[g];
+    var cd=[].concat(u32(0x02014b50),u16(20),u16(20),u16(0x800),u16(0),u16(0),u16(0),u32(c.crc),u32(c.size),u32(c.size),u16(c.nameB.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(c.offset));
+    push(cd); push(c.nameB);
+  }
+  var cdSize=offset-cdStart;
+  var eocd=[].concat(u32(0x06054b50),u16(0),u16(0),u16(central.length),u16(central.length),u32(cdSize),u32(cdStart),u16(0));
+  push(eocd);
+  return new Blob(chunks,{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+
+var XL_METRIC_HEAD=['비용','노출수','클릭수','전환수','전환가치','매체ROAS(%)','Cafe24RAW매출','RAW ROAS(%)','Cafe24순매출','순ROAS(%)','주문수','유입수','CTR(%)','CVR(%)'];
+function xlMetricCells(m){
+  return [XN(xlRound(m.cost)),XN(xlRound(m.impr)),XN(xlRound(m.clicks)),XN(xlRound(m.conv,2)),XN(xlRound(m.convValue)),
+    XN(xlRound(m.roasGoogle,1)),XN(xlRound(m.orderAmount)),XN(xlRound(m.roasCafeRaw,1)),XN(xlRound(m.netRevenue)),XN(xlRound(m.roasCafe,1)),
+    XN(xlRound(m.orderCount)),XN(xlRound(m.inflow)),XN(xlRound(m.ctr,2)),XN(xlRound(m.cvr,2))];
+}
+
+function exportExcel(){
+  try{
+    // 1) 일자별
+    var s1=[[XS('날짜')].concat(XL_METRIC_HEAD.map(XS))];
+    for(var i=0;i<DATA.dates.length;i++){ var d=DATA.dates[i]; s1.push([XS(d)].concat(xlMetricCells(metrics(DATA.daily[d])))); }
+
+    // 2) 품목별
+    var s2=[[XS('품목')].concat(XL_METRIC_HEAD.map(XS))];
+    // 3) 캠페인별
+    var s3=[[XS('품목'),XS('캠페인'),XS('캠페인유형'),XS('캠페인ID')].concat(XL_METRIC_HEAD.map(XS))];
+    // 4) 소재별
+    var s4=[[XS('품목'),XS('캠페인'),XS('캠페인유형'),XS('광고그룹'),XS('소재명'),XS('광고ID'),XS('상태')].concat(XL_METRIC_HEAD.map(XS))];
+    // 5) 소재별_일자별 (전 데이터)
+    var s5=[[XS('날짜'),XS('품목'),XS('캠페인'),XS('캠페인유형'),XS('광고그룹'),XS('소재명'),XS('광고ID'),XS('캠페인ID'),XS('상태')].concat(XL_METRIC_HEAD.map(XS))];
+
+    for(var p=0;p<DATA.byProduct.length;p++){
+      var prod=DATA.byProduct[p];
+      s2.push([XS(prod.product)].concat(xlMetricCells(metrics(prod.totals))));
+      for(var ci=0;ci<prod.campaigns.length;ci++){
+        var camp=prod.campaigns[ci];
+        var typeLabel=camp.type+(camp.subtype?('/'+camp.subtype):'');
+        s3.push([XS(prod.product),XS(camp.name),XS(typeLabel),XS(camp.campaignId)].concat(xlMetricCells(metrics(camp.totals))));
+        for(var ai=0;ai<camp.ads.length;ai++){
+          var ad=camp.ads[ai];
+          s4.push([XS(prod.product),XS(camp.name),XS(typeLabel),XS(ad.adGroup),XS(ad.adName),XS(ad.adId),XS(ad.status)].concat(xlMetricCells(metrics(ad.totals))));
+          var dts=Object.keys(ad.byDate).sort();
+          for(var di=0;di<dts.length;di++){
+            var dd=dts[di];
+            s5.push([XS(dd),XS(prod.product),XS(camp.name),XS(typeLabel),XS(ad.adGroup),XS(ad.adName),XS(ad.adId),XS(camp.campaignId),XS(ad.status)].concat(xlMetricCells(metrics(ad.byDate[dd]))));
+          }
+        }
+      }
+    }
+
+    var sheets=[
+      {name:'일자별', rows:s1},
+      {name:'품목별', rows:s2},
+      {name:'캠페인별', rows:s3},
+      {name:'소재별', rows:s4},
+      {name:'소재별_일자별', rows:s5}
+    ];
+    var blob=xlBuild(sheets);
+    var range=(DATA.dates.length?(DATA.dates[0]+'_'+DATA.dates[DATA.dates.length-1]):'');
+    var fname='구글DA_'+range+'.xlsx';
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob); a.download=fname;
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },1000);
+  }catch(e){ alert('엑셀 생성 오류: '+e.message); }
 }
 
 function renderAll() {
