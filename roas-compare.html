@@ -976,7 +976,20 @@ function mmGapOf(ch){return ch.group==='naver'?mmCfg().naverGap:(mmCfg().gap[ch.
 //            아래 data에 반영 후 재배포. (publishedAt은 표시용 날짜)
 const MM_PUBLISHED={
   '07':null,
-  '08':null,
+  '08':{publishedAt:'2026-07-23',data:{
+    b_brand:'20,563,323',    r_brand:'9000',     note_brand:'',
+    b_power:'30,000,000',    r_power:'850',      note_power:'',
+    b_shop:'6,000,000',      r_shop:'500',       note_shop:'',
+    b_meta:'907,836,677',    r_meta:'275',       note_meta:'',
+    b_google_sa:'22,000,000',r_google_sa:'1400', note_google_sa:'',
+    b_google_da:'75,000,000',r_google_da:'600',  note_google_da:'',
+    b_payco:'10,000,000',    r_payco:'600',      note_payco:'',
+    b_toss:'10,000,000',     r_toss:'550',       note_toss:'',
+    b_aedi:'27,900,000',     r_aedi:'500',       note_aedi:'',
+    b_content:'15,700,000',  note_content:'',
+    total_budget:'1,130,000,000',
+    custom:[{name:'크리테오',bgt:'5,000,000',roas:'',gap:'',note:''}],
+  }},
 };
 function mmPub(month){const p=MM_PUBLISHED[month||mmMonth];return p&&p.data?p:null;}
 
