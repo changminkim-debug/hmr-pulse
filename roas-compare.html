@@ -220,6 +220,7 @@ input.mm-total-bgt:focus{border-color:#4466cc}
 .mm-pct-pill{display:inline-block;padding:3px 11px;border-radius:99px;font-size:13px;font-weight:800;background:#ece7ff;color:#5b3fc4}
 .mm-toggle-val{cursor:pointer;border-bottom:1px dotted rgba(255,255,255,.5)}
 .mm-toggle-val:hover{opacity:.75}
+.mm-src-label{font-size:12px;font-weight:700;padding:0 2px;white-space:nowrap}
 /* 신규 매체 추가 행 */
 .mm-tbl tr.mm-custom td{background:#fdf7ff}
 .mm-tbl tr.mm-add-row td{background:#fafbff;padding:7px 11px}
@@ -261,9 +262,12 @@ input.mm-gap-in:focus{border-color:#4466cc}
         <button class="mm-month-tab" id="mm-tab-08" onclick="mmSwitchMonth('08')">8월</button>
       </div>
       <span class="mm-modal-badge" id="mm-month-badge">7월 시뮬레이션</span>
+      <span class="mm-src-label" id="mm-src-label">기본값 (미작성)</span>
       <button class="mm-save-btn" id="mm-btn-save" onclick="mmSave()">💾 저장</button>
       <span class="mm-saved-label" id="mm-saved-label" style="display:none">✅ 저장됨</span>
       <button class="mm-edit-btn" id="mm-btn-edit" onclick="mmEdit()" style="display:none">✏️ 수정</button>
+      <button class="mm-edit-btn" id="mm-btn-pubreq" onclick="mmPublishReq()" style="font-size:12px;background:#4466cc;border-color:#4466cc">📤 게시 요청</button>
+      <button class="mm-edit-btn" id="mm-btn-pub" onclick="mmLoadPublished()" style="font-size:12px;display:none">📢 게시본 보기</button>
       <button class="mm-edit-btn" id="mm-btn-link" onclick="mmCopyLink()" style="font-size:12px">🔗 링크 복사</button>
       <button class="mm-modal-close" onclick="closeMMCalc()">✕</button>
     </div>
@@ -965,9 +969,23 @@ const MM_MONTHS={
 function mmCfg(){return MM_MONTHS[mmMonth];}
 function mmDefRoas(key){return mmCfg().roas[key]||0;}
 function mmGapOf(ch){return ch.group==='naver'?mmCfg().naverGap:(mmCfg().gap[ch.key]||0);}
+
+// ── 게시본 (모두에게 보이는 확정안) ─────────────────────────────
+// 💾 저장은 각자 브라우저에만 남는다. 팀 전체가 같은 값을 보려면 여기에 값이 박혀야 함.
+// 갱신 절차: 계산기에서 값 완성 → [📤 게시 요청] 버튼으로 코드 복사 → 통끼에게 전달 →
+//            아래 data에 반영 후 재배포. (publishedAt은 표시용 날짜)
+const MM_PUBLISHED={
+  '07':null,
+  '08':null,
+};
+function mmPub(month){const p=MM_PUBLISHED[month||mmMonth];return p&&p.data?p:null;}
+
 let mmMonth='07';
+let mmSource='';        // 현재 화면에 뜬 값의 출처: published | local | url | default
+let mmLoading=false;    // 프로그램이 값을 채우는 중 (사용자 편집과 구분)
 const mmDraft={};       // 저장 안 한 편집 내용을 월별로 잠시 보관 (탭 전환용)
 const mmSavedFlag={};   // 월별 저장 상태
+const mmSrcByMonth={};  // 월별 값 출처
 
 function mmDataFromUrl(month){
   try{
@@ -976,20 +994,67 @@ function mmDataFromUrl(month){
   }catch(e){}
   return null;
 }
-// 해당 월의 값을 화면에 세팅 (draft > URL > localStorage > 기본값)
+// 해당 월의 값을 화면에 세팅 (draft > URL > 내 로컬저장 > 게시본 > 기본값)
+// 다른 사람은 로컬 저장이 없으므로 곧바로 "게시본"을 보게 된다.
 function mmApplyMonth(month){
   mmResetInputs();
   mmRenderMonthLabels();
-  if(mmDraft[month]){mmLoadData(mmDraft[month]);mmSetSavedState(!!mmSavedFlag[month]);return;}
+  if(mmDraft[month]){mmSource=mmSrcByMonth[month]||'local';mmLoadData(mmDraft[month]);mmSetSavedState(!!mmSavedFlag[month]);mmRenderSource();return;}
   const urlData=mmDataFromUrl(month);
-  if(urlData){mmLoadData(urlData);mmSetSavedState(true);return;}
+  if(urlData){mmSource='url';mmLoadData(urlData);mmSetSavedState(true);mmRenderSource();return;}
   const saved=localStorage.getItem(MM_MONTHS[month].storeKey);
-  if(saved){mmLoadData(JSON.parse(saved));mmSetSavedState(true);return;}
+  if(saved){mmSource='local';mmLoadData(JSON.parse(saved));mmSetSavedState(true);mmRenderSource();return;}
+  const pub=mmPub(month);
+  if(pub){mmSource='published';mmLoadData(pub.data);mmSetSavedState(true);mmRenderSource();return;}
+  mmSource='default';
   mmRecalc();
   mmSetSavedState(false);
+  mmRenderSource();
+}
+// 게시본 강제 로드 (내 로컬 수정본을 버리고 팀 확정안 보기)
+function mmLoadPublished(){
+  const pub=mmPub(mmMonth);
+  if(!pub){alert('아직 게시된 값이 없습니다.');return;}
+  mmResetInputs();
+  mmSource='published';
+  mmLoadData(pub.data);
+  mmSetSavedState(true);
+  mmRenderSource();
+}
+// 현재 값의 출처를 헤더에 표시
+function mmRenderSource(){
+  const el=document.getElementById('mm-src-label');
+  if(!el)return;
+  const pub=mmPub(mmMonth);
+  const map={
+    published:['📢 게시본'+(pub&&pub.publishedAt?` (${pub.publishedAt} 반영)`:''),'#a8e6a8'],
+    local:['💾 내 로컬 저장본 (나만 보임)','#ffd98a'],
+    url:['🔗 공유 링크 값','#a8d4ff'],
+    default:['기본값 (미작성)','rgba(255,255,255,.45)'],
+  };
+  const [txt,color]=map[mmSource]||map.default;
+  el.textContent=txt;
+  el.style.color=color;
+  mmSrcByMonth[mmMonth]=mmSource;
+  // 게시본이 있는데 다른 값을 보고 있으면 되돌리기 버튼 노출
+  const btn=document.getElementById('mm-btn-pub');
+  if(btn)btn.style.display=(pub&&mmSource!=='published')?'':'none';
+}
+// 게시 요청용 코드 복사 — 통끼에게 붙여넣으면 전체 공개본으로 반영
+function mmPublishReq(){
+  const payload={month:mmMonth,data:mmCollectData()};
+  const txt='MM_PUBLISH '+JSON.stringify(payload);
+  navigator.clipboard.writeText(txt).then(()=>{
+    const b=document.getElementById('mm-btn-pubreq');
+    if(b){const o=b.textContent;b.textContent='✅ 복사됨';setTimeout(()=>b.textContent=o,2000);}
+    alert('게시 요청 코드를 복사했습니다.\n통끼에게 그대로 붙여넣으면 전체 공개본에 반영됩니다.');
+  }).catch(()=>{
+    prompt('아래 내용을 복사해서 통끼에게 전달하세요',txt);
+  });
 }
 // 입력값을 초기 상태로 (예산·메모 비우고 RAW ROAS는 기본값 복원)
 function mmResetInputs(){
+  mmLoading=true;
   CALC_CH.forEach(ch=>{
     const b=document.getElementById(`mm-b-${ch.key}`);
     const r=document.getElementById(`mm-r-${ch.key}`);
@@ -1002,6 +1067,7 @@ function mmResetInputs(){
   const nc=document.getElementById('mm-note-content');if(nc)nc.value='';
   const tb=document.getElementById('mm-total-budget');if(tb)tb.value='';
   mmClearCustom();   // 신규 매체는 월별로 독립
+  mmLoading=false;
 }
 function mmSwitchMonth(month){
   if(month===mmMonth)return;
@@ -1077,6 +1143,8 @@ function mmSave(){
   url.searchParams.set('mmM',mmMonth);
   history.replaceState(null,'',url.toString());
   mmSetSavedState(true);
+  mmSource='local';
+  mmRenderSource();
 }
 function mmCopyLink(){
   const data=mmCollectData();
@@ -1090,6 +1158,7 @@ function mmCopyLink(){
   });
 }
 function mmLoadData(data){
+  mmLoading=true;
   CALC_CH.forEach(ch=>{
     const b=document.getElementById(`mm-b-${ch.key}`);
     const r=document.getElementById(`mm-r-${ch.key}`);
@@ -1108,6 +1177,7 @@ function mmLoadData(data){
   mmClearCustom();
   (data.custom||[]).forEach(c=>mmAddCustom(c));
   mmRecalc();
+  mmLoading=false;
 }
 function mmLoad(){
   const urlData=mmDataFromUrl();
@@ -1517,6 +1587,8 @@ function mmRecalc(){
   mmSi('mm-tot-c24r',mmFmtRPill(totC24r));
   mmSi('mm-tot-c24rr',mmFmt(totC24real));
   mmSi('mm-tot-c24rrr',mmFmtRPill(totC24realr));
+  // 사용자가 값을 건드리면 저장 버튼을 다시 노출 (게시본/저장본 열람 상태 해제)
+  if(!mmLoading&&mmSavedFlag[mmMonth])mmSetSavedState(false);
 }
 </script>
 <script>
