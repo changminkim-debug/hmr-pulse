@@ -975,7 +975,21 @@ function mmGapOf(ch){return ch.group==='naver'?mmCfg().naverGap:(mmCfg().gap[ch.
 // 갱신 절차: 계산기에서 값 완성 → [📤 게시 요청] 버튼으로 코드 복사 → 통끼에게 전달 →
 //            아래 data에 반영 후 재배포. (publishedAt은 표시용 날짜)
 const MM_PUBLISHED={
-  '07':null,
+  // 7월: 원래 로컬 저장(localStorage)에만 있다가 유실 → 2026-07-22 마지막 저장본을 복원해 게시본으로 고정
+  '07':{publishedAt:'2026-07-22',data:{
+    b_brand:'20,563,354',    r_brand:'8500',     note_brand:'고정 금액',
+    b_power:'25,000,000',    r_power:'750',      note_power:'',
+    b_shop:'10,000,000',     r_shop:'700',       note_shop:'전월 대비 예산 감액',
+    b_meta:'1,082,936,646',  r_meta:'280',       note_meta:'',
+    b_google_sa:'20,000,000',r_google_sa:'950',  note_google_sa:'',
+    b_google_da:'18,600,000',r_google_da:'600',  note_google_da:'',
+    b_payco:'10,000,000',    r_payco:'500',      note_payco:'',
+    b_toss:'10,000,000',     r_toss:'500',       note_toss:'',
+    b_aedi:'27,900,000',     r_aedi:'500',       note_aedi:'평일 90 / 주말 60',
+    b_content:'34,300,000',  note_content:'유머니즘, 줄리엔강, 혜린, 2팀추가, 홍사운드 ',
+    total_budget:'1,253,000,000',
+    custom:[],
+  }},
   '08':{publishedAt:'2026-07-23',data:{
     b_brand:'20,563,323',    r_brand:'9000',     note_brand:'',
     b_power:'30,000,000',    r_power:'850',      note_power:'',
