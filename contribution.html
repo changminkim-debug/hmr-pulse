@@ -1,0 +1,461 @@
+<title>한끼통살 · 자사몰 공헌이익</title>
+<style>
+/* 라이트 전용 — 정합성 비교 대시보드(roas-compare)와 동일 톤 */
+:root{
+  --ground:#f0f2f7; --card:#ffffff; --ink:#1e2333; --ink2:#4a5478; --muted:#8a91a8;
+  --line:#dde0ea; --line2:#eef0f6; --accent:#4466cc; --accent-soft:#eef2ff;
+  --good:#2e7d32; --good-bg:#e8f5e9; --bad:#c62828; --bad-bg:#fdecea;
+  --warn:#e65100; --warn-bg:#fff3e0;
+  --sel:#4466cc; --sel-bg:#e9eeff;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;
+  background:var(--ground);color:var(--ink);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.num{font-variant-numeric:tabular-nums}
+/* topbar (roas-compare와 동일 톤) */
+.topbar{background:#1e2333;padding:0 26px;height:62px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:60}
+.topbar-logo{font-size:20px;font-weight:800;color:#fff}
+.topbar-sub{font-size:14px;color:rgba(255,255,255,.5)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.tb-back{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border:1.5px solid rgba(255,255,255,.25);border-radius:9px;background:transparent;color:#fff;font-size:13.5px;font-weight:700;cursor:pointer;text-decoration:none;font-family:inherit;transition:.12s}
+.tb-back:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.5)}
+.tb-updated{font-size:12px;color:rgba(255,255,255,.5)}
+.wrap{max-width:1560px;margin:0 auto;padding:24px 20px 60px}
+
+/* layout */
+.grid{display:grid;grid-template-columns:216px 1fr;gap:18px;align-items:start}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+/* rail */
+.rail{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px;position:sticky;top:14px}
+@media(max-width:900px){.rail{position:static}}
+.rail-h{font-size:12px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:11px;display:flex;align-items:center;gap:6px}
+.base-tog{display:flex;gap:4px;margin-bottom:12px;background:var(--ground);padding:3px;border-radius:9px}
+.base-tog button{flex:1;padding:6px 4px;border:none;background:transparent;color:var(--muted);font-size:11.5px;font-weight:700;border-radius:6px;cursor:pointer;font-family:inherit}
+.base-tog button.on{background:var(--accent);color:#fff}
+.dlist{display:flex;flex-direction:column;gap:2px;max-height:560px;overflow-y:auto;margin:0 -4px;padding:0 4px}
+.drow{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;cursor:pointer;transition:background .1s}
+.drow:hover{background:var(--accent-soft)}
+.drow.sel{background:var(--sel-bg);box-shadow:inset 2px 0 0 var(--sel)}
+.dbox{width:14px;height:14px;border:1.5px solid var(--line);border-radius:4px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff}
+.drow.sel .dbox{background:var(--sel);border-color:var(--sel)}
+.dd-date{font-size:13px;font-weight:700;color:var(--ink);min-width:42px}
+.dd-dow{font-size:11px;color:var(--muted)}
+.dd-mini{margin-left:auto;display:flex;align-items:center;gap:5px}
+.dot{width:7px;height:7px;border-radius:50%}
+.dot.bad{background:var(--bad)}.dot.warn{background:var(--warn)}.dot.good{background:var(--good)}.dot.flat{background:var(--line)}
+.dd-cp{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.rail-clear{margin-top:10px;width:100%;padding:7px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:12px;font-weight:600;border-radius:8px;cursor:pointer;font-family:inherit}
+.rail-clear:hover{border-color:var(--accent);color:var(--accent)}
+
+/* kpi */
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:18px}
+@media(max-width:1180px){.kpi{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.kpi{grid-template-columns:1fr}}
+.k{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:17px 19px}
+.k.dark{background:var(--ink);border-color:var(--ink)}.k.acc{background:var(--accent);border-color:var(--accent)}
+.k.dark .kl,.k.acc .kl{color:rgba(255,255,255,.6)}.k.dark .kv,.k.acc .kv{color:#fff}.k.dark .ks,.k.acc .ks{color:rgba(255,255,255,.55)}
+.kl{font-size:11.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.kv{font-size:23px;font-weight:800;letter-spacing:-.5px;line-height:1.12;color:var(--ink)}
+.kv small{font-size:14px;font-weight:700;opacity:.7;margin-left:2px}
+.ks{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.45}
+.split{display:flex;gap:12px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.15)}
+.k:not(.dark):not(.acc) .split{border-top-color:var(--line2)}
+.sp{flex:1}.sp-l{font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.k:not(.dark):not(.acc) .sp-l{color:var(--muted)}.sp-v{font-size:13.5px;font-weight:700;color:#fff;margin-top:1px}
+.k:not(.dark):not(.acc) .sp-v{color:var(--ink)}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-bottom:18px}
+.ct{font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:4px}
+.badge{font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:6px;background:var(--accent-soft);color:var(--accent)}
+.cd{font-size:12.5px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+
+/* waterfall */
+.wf{display:flex;align-items:flex-end;gap:5px;height:172px;margin-bottom:6px}
+.wfc{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;min-width:0}
+.wfv{font-size:12px;font-weight:800;text-align:center;margin-bottom:5px;color:var(--ink2);white-space:nowrap}
+.wfb{border-radius:4px 4px 0 0;width:100%}
+.wfl{font-size:11px;text-align:center;margin-top:7px;color:var(--muted);font-weight:700;line-height:1.3}
+.wfl b{display:block;color:var(--ink2);font-size:11.5px}
+.wfarrow{flex:0 0 14px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;padding-bottom:30px}
+
+/* legend */
+.legend{background:var(--ground);border-radius:9px;padding:11px 14px;margin-bottom:14px;font-size:12px;color:var(--ink2);line-height:1.7}
+.legend b{color:var(--ink)}
+.lchip{display:inline-block;font-size:11px;font-weight:800;padding:2px 7px;border-radius:12px;margin:0 2px}
+
+/* table */
+.tw{overflow-x:auto;margin:0 -4px}
+table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:940px}
+th{font-size:10.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);text-align:right;padding:8px 9px;border-bottom:1.5px solid var(--line);white-space:nowrap}
+th.l{text-align:left}
+td{padding:8px 9px;text-align:right;border-bottom:1px solid var(--line2);white-space:nowrap;color:var(--ink2)}
+td.l{text-align:left}
+tbody tr.main{cursor:pointer;transition:background .1s}
+tbody tr.main:hover{background:var(--accent-soft)}
+tbody tr.main.open,tbody tr.main.hl{background:var(--sel-bg)}
+.dt{font-weight:800;color:var(--ink)}.dow{color:var(--muted);font-weight:600;font-size:11px;margin-left:4px}
+.pri{font-weight:800;color:var(--ink)}
+.chip{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:12px;letter-spacing:.2px}
+.chip.bad{background:var(--bad-bg);color:var(--bad)}.chip.good{background:var(--good-bg);color:var(--good)}
+.chip.warn{background:var(--warn-bg);color:var(--warn)}.chip.flat{background:var(--line2);color:var(--muted)}
+.chip.sm{font-size:10px;padding:1px 6px}
+.caret{display:inline-block;width:13px;color:var(--muted);font-size:10px}
+.up{color:var(--good);font-weight:800}.dn{color:var(--bad);font-weight:800}
+
+/* drilldown */
+.dd{background:var(--ground);border:1px solid var(--line);border-radius:10px;padding:17px 19px;margin:3px 0 11px}
+.ddh{font-size:13.5px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lv{margin-bottom:16px}.lv:last-child{margin-bottom:0}
+.lvt{font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.lvt .n{width:17px;height:17px;border-radius:50%;background:var(--accent);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px}
+.eq{font-size:13px;line-height:1.9;color:var(--ink2)}
+.eq .hl{font-weight:800;color:var(--ink)}
+.contrib{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.cbox{flex:1;min-width:170px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:11px 13px}
+.cbox.main{border-color:var(--bad);border-width:1.5px}
+.cbox-l{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.cbox-v{font-size:18px;font-weight:800;margin-top:2px;color:var(--ink)}
+.cbox-s{font-size:11.5px;color:var(--muted);margin-top:2px}
+.mini{width:100%;border-collapse:collapse;font-size:12px;min-width:640px}
+.mini th{font-size:10px;padding:5px 7px}.mini td{padding:5px 7px}
+.reason{background:var(--card);border-left:3px solid var(--accent);border-radius:0 7px 7px 0;padding:9px 13px;font-size:12.5px;color:var(--ink2);line-height:1.6;margin-top:8px}
+.reason b{color:var(--ink)}
+.gapflag{background:var(--warn-bg);border-radius:7px;padding:9px 13px;font-size:12px;color:var(--ink2);line-height:1.6;margin-top:8px}
+.gapflag b{color:var(--warn)}
+.blocked{background:var(--warn-bg);border:1px dashed var(--warn);border-radius:8px;padding:11px 14px;font-size:12px;color:var(--ink2);line-height:1.55}
+.blocked b{color:var(--warn)}
+.foot{font-size:11.5px;color:var(--muted);margin-top:12px;line-height:1.6}
+</style>
+
+<div class="topbar">
+  <span class="topbar-logo">한끼통살</span>
+  <span class="topbar-sub">자사몰 공헌이익</span>
+  <div class="topbar-right">
+    <a class="tb-back" href="roas-compare.html">← 정합성 비교로</a>
+    <span class="tb-updated" id="tb-updated">7/01–7/23 · 전일자 기준</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="grid">
+    <div class="rail">
+      <div class="rail-h">📅 일자 선택</div>
+      <div class="base-tog">
+        <button id="bt-avg" class="on" onclick="setBase('avg')">월평균 기준</button>
+        <button id="bt-dow" onclick="setBase('dow')">동요일 기준</button>
+      </div>
+      <div class="dlist" id="dlist"></div>
+      <button class="rail-clear" onclick="clearSel()">전체 해제 · 누적 보기</button>
+    </div>
+    <div id="main"></div>
+  </div>
+</div>
+
+<script>
+const D = {"rows":[{"d":"2026-07-01","dow":"수","net":236177581,"ad":51111070,"perf":49528556,"crm":1582514,"c24":256227370,"org":60091360,"contfee":1052800,"cost":116975439,"w":49.53,"g":21.64,"i":13.76,"cp":32499110,"ch":[{"n":"네이버","s":2031460,"mr":114486290,"cr":78632450,"mroas":5636,"croas":3871,"ret":68.7,"derived":false},{"n":"메타","s":42751893,"mr":120143502,"cr":100779070,"mroas":281,"croas":236,"ret":83.9,"derived":false},{"n":"구글SA","s":750231,"mr":19420649,"cr":4487350,"mroas":2589,"croas":598,"ret":23.1,"derived":false},{"n":"구글DA","s":602057,"mr":4886034,"cr":3261800,"mroas":812,"croas":542,"ret":66.8,"derived":false},{"n":"페이코","s":773459,"mr":4535106,"cr":424400,"mroas":586,"croas":55,"ret":9.4,"derived":false},{"n":"에디ai","s":901040,"mr":7781640,"cr":7781640,"mroas":864,"croas":864,"ret":100.0,"derived":true},{"n":"토스","s":665616,"mr":2752622,"cr":769300,"mroas":414,"croas":116,"ret":27.9,"derived":false}],"gp":{"perf":{"s":49528555,"r":199480010,"roas":402.8},"crm":{"s":1582515,"r":17796690,"roas":1124.6},"org":52736960,"owned":164500,"tot":270178160}},{"d":"2026-07-02","dow":"목","net":193798392,"ad":45130255,"perf":43894298,"crm":1235957,"c24":211343360,"org":50781450,"contfee":924000,"cost":96001360,"w":49.54,"g":23.29,"i":12.11,"cp":23461359,"ch":[{"n":"네이버","s":1585025,"mr":90028850,"cr":60740810,"mroas":5680,"croas":3832,"ret":67.5,"derived":false},{"n":"메타","s":37977859,"mr":100715190,"cr":86156350,"mroas":265,"croas":227,"ret":85.5,"derived":false},{"n":"구글SA","s":709461,"mr":14687069,"cr":3685100,"mroas":2070,"croas":519,"ret":25.1,"derived":false},{"n":"구글DA","s":568261,"mr":4740210,"cr":3437150,"mroas":834,"croas":605,"ret":72.5,"derived":false},{"n":"페이코","s":686619,"mr":3997134,"cr":173100,"mroas":582,"croas":25,"ret":4.3,"derived":false},{"n":"에디ai","s":903950,"mr":5745000,"cr":5745000,"mroas":636,"croas":636,"ret":100.0,"derived":true},{"n":"토스","s":539123,"mr":2195550,"cr":624400,"mroas":407,"croas":116,"ret":28.4,"derived":false}],"gp":{"perf":{"s":43894299,"r":162903710,"roas":371.1},"crm":{"s":1235956,"r":14814190,"roas":1198.6},"org":43903350,"owned":501000,"tot":222122250}},{"d":"2026-07-03","dow":"금","net":146854905,"ad":35952904,"perf":33974907,"crm":1977997,"c24":155030870,"org":42309210,"contfee":792400,"cost":73964448,"w":50.37,"g":24.48,"i":10.08,"cp":14806519,"ch":[{"n":"네이버","s":1454619,"mr":63832030,"cr":42995080,"mroas":4388,"croas":2956,"ret":67.4,"derived":false},{"n":"메타","s":28129548,"mr":68972298,"cr":56864170,"mroas":245,"croas":202,"ret":82.4,"derived":false},{"n":"구글SA","s":695582,"mr":13695251,"cr":3646500,"mroas":1969,"croas":524,"ret":26.6,"derived":false},{"n":"구글DA","s":519628,"mr":4526752,"cr":2248050,"mroas":871,"croas":433,"ret":49.7,"derived":false},{"n":"페이코","s":1099693,"mr":5268840,"cr":1274060,"mroas":479,"croas":116,"ret":24.2,"derived":false},{"n":"에디ai","s":906010,"mr":5122300,"cr":5122300,"mroas":565,"croas":565,"ret":100.0,"derived":true},{"n":"토스","s":377427,"mr":1557467,"cr":571500,"mroas":413,"croas":151,"ret":36.7,"derived":false}],"gp":{"perf":{"s":33974907,"r":115126160,"roas":338.9},"crm":{"s":1977997,"r":17768540,"roas":898.3},"org":37290810,"owned":367200,"tot":170552710}},{"d":"2026-07-04","dow":"토","net":101755373,"ad":24236982,"perf":23915957,"crm":321025,"c24":110533440,"org":24836410,"contfee":660800,"cost":50570938,"w":49.7,"g":23.82,"i":11.41,"cp":11612917,"ch":[{"n":"네이버","s":1325200,"mr":49008990,"cr":34228790,"mroas":3698,"croas":2583,"ret":69.8,"derived":false},{"n":"메타","s":18537043,"mr":48401836,"cr":40634940,"mroas":261,"croas":219,"ret":84.0,"derived":false},{"n":"구글SA","s":781739,"mr":10728780,"cr":2840900,"mroas":1372,"croas":363,"ret":26.5,"derived":false},{"n":"구글DA","s":504530,"mr":4177628,"cr":2474300,"mroas":828,"croas":490,"ret":59.2,"derived":false},{"n":"페이코","s":1023902,"mr":4728370,"cr":1337600,"mroas":462,"croas":131,"ret":28.3,"derived":false},{"n":"에디ai","s":903810,"mr":3726800,"cr":3726800,"mroas":412,"croas":412,"ret":100.0,"derived":true},{"n":"토스","s":178933,"mr":730950,"cr":453700,"mroas":409,"croas":254,"ret":62.1,"derived":false}],"gp":{"perf":{"s":23915956,"r":87059130,"roas":364.0},"crm":{"s":321026,"r":7913500,"roas":2465.1},"org":21917910,"owned":0,"tot":116890540}},{"d":"2026-07-05","dow":"일","net":180230036,"ad":37212605,"perf":35362543,"crm":1850062,"c24":186585650,"org":44574770,"contfee":873600,"cost":88943847,"w":49.35,"g":20.65,"i":14.93,"cp":26912917,"ch":[{"n":"네이버","s":1625960,"mr":82163870,"cr":53208250,"mroas":5053,"croas":3272,"ret":64.8,"derived":false},{"n":"메타","s":28887471,"mr":87704153,"cr":71936240,"mroas":304,"croas":249,"ret":82.0,"derived":false},{"n":"구글SA","s":897735,"mr":13845400,"cr":4019500,"mroas":1542,"croas":448,"ret":29.0,"derived":false},{"n":"구글DA","s":512020,"mr":3938744,"cr":3633000,"mroas":769,"croas":710,"ret":92.2,"derived":false},{"n":"페이코","s":1117912,"mr":5138495,"cr":1016200,"mroas":460,"croas":91,"ret":19.8,"derived":false},{"n":"에디ai","s":900080,"mr":7422590,"cr":7422590,"mroas":825,"croas":825,"ret":100.0,"derived":true},{"n":"토스","s":547765,"mr":2242600,"cr":775100,"mroas":409,"croas":142,"ret":34.6,"derived":false}],"gp":{"perf":{"s":35362542,"r":145294480,"roas":410.9},"crm":{"s":1850063,"r":22011130,"roas":1189.8},"org":39942170,"owned":368400,"tot":207616180}},{"d":"2026-07-06","dow":"월","net":214214343,"ad":45567165,"perf":44988973,"crm":578192,"c24":232653670,"org":57733870,"contfee":1184400,"cost":105336885,"w":49.17,"g":21.27,"i":14.48,"cp":31028192,"ch":[{"n":"네이버","s":2014069,"mr":102655740,"cr":70622100,"mroas":5097,"croas":3506,"ret":68.8,"derived":false},{"n":"메타","s":38054539,"mr":107013409,"cr":88562880,"mroas":281,"croas":233,"ret":82.8,"derived":false},{"n":"구글SA","s":848527,"mr":18168051,"cr":5397520,"mroas":2141,"croas":636,"ret":29.7,"derived":false},{"n":"구글DA","s":513666,"mr":4271038,"cr":3271050,"mroas":831,"croas":637,"ret":76.6,"derived":false},{"n":"페이코","s":727372,"mr":3750800,"cr":625450,"mroas":516,"croas":86,"ret":16.7,"derived":false},{"n":"에디ai","s":904570,"mr":5287950,"cr":5287950,"mroas":585,"croas":585,"ret":100.0,"derived":true},{"n":"토스","s":741830,"mr":3124100,"cr":1152850,"mroas":421,"croas":155,"ret":36.9,"derived":false}],"gp":{"perf":{"s":44988973,"r":177786700,"roas":395.2},"crm":{"s":578192,"r":14831480,"roas":2565.1},"org":50328170,"owned":1585650,"tot":244532000}},{"d":"2026-07-07","dow":"화","net":194682055,"ad":46962858,"perf":46387736,"crm":575122,"c24":213735800,"org":48502610,"contfee":1134000,"cost":96161239,"w":49.39,"g":24.12,"i":11.41,"cp":22219372,"ch":[{"n":"네이버","s":2177760,"mr":91383640,"cr":61826470,"mroas":4196,"croas":2839,"ret":67.7,"derived":false},{"n":"메타","s":39097321,"mr":101806484,"cr":85876620,"mroas":260,"croas":220,"ret":84.4,"derived":false},{"n":"구글SA","s":787540,"mr":18148521,"cr":6831700,"mroas":2304,"croas":867,"ret":37.6,"derived":false},{"n":"구글DA","s":1211699,"mr":4940388,"cr":3012650,"mroas":408,"croas":249,"ret":61.0,"derived":false},{"n":"페이코","s":372076,"mr":2158250,"cr":586500,"mroas":580,"croas":158,"ret":27.2,"derived":false},{"n":"에디ai","s":903810,"mr":6241050,"cr":6241050,"mroas":691,"croas":691,"ret":100.0,"derived":true},{"n":"토스","s":703530,"mr":2911100,"cr":858200,"mroas":414,"croas":122,"ret":29.5,"derived":false}],"gp":{"perf":{"s":46387735,"r":168581590,"roas":363.4},"crm":{"s":575123,"r":17078860,"roas":2969.6},"org":40468910,"owned":295900,"tot":226425260}},{"d":"2026-07-08","dow":"수","net":167061532,"ad":46958248,"perf":45766121,"crm":1192127,"c24":189796290,"org":44411120,"contfee":1030400,"cost":82876472,"w":49.61,"g":28.11,"i":7.21,"cp":12050640,"ch":[{"n":"네이버","s":1805728,"mr":71174540,"cr":47018960,"mroas":3942,"croas":2604,"ret":66.1,"derived":false},{"n":"메타","s":39390509,"mr":95609179,"cr":84124450,"mroas":243,"croas":214,"ret":88.0,"derived":false},{"n":"구글SA","s":803103,"mr":12420210,"cr":4008400,"mroas":1547,"croas":499,"ret":32.3,"derived":false},{"n":"구글DA","s":1036196,"mr":5351898,"cr":3349550,"mroas":516,"croas":323,"ret":62.6,"derived":false},{"n":"페이코","s":425908,"mr":2433053,"cr":0,"mroas":571,"croas":0,"ret":0.0,"derived":false},{"n":"에디ai","s":904580,"mr":6256910,"cr":6256910,"mroas":692,"croas":692,"ret":100.0,"derived":true},{"n":"토스","s":369697,"mr":1895966,"cr":626900,"mroas":513,"croas":170,"ret":33.1,"derived":false}],"gp":{"perf":{"s":45766122,"r":146547670,"roas":320.2},"crm":{"s":1192126,"r":11726550,"roas":983.7},"org":34158170,"owned":900500,"tot":193332890}},{"d":"2026-07-09","dow":"목","net":162270533,"ad":42143488,"perf":41166254,"crm":977234,"c24":177954230,"org":40231320,"contfee":929600,"cost":81452037,"w":50.2,"g":25.97,"i":8.76,"cp":14220840,"ch":[{"n":"네이버","s":1623291,"mr":68369710,"cr":45912000,"mroas":4212,"croas":2828,"ret":67.2,"derived":false},{"n":"메타","s":35202759,"mr":91731863,"cr":77170540,"mroas":261,"croas":219,"ret":84.1,"derived":false},{"n":"구글SA","s":758455,"mr":13417176,"cr":4518100,"mroas":1769,"croas":596,"ret":33.7,"derived":false},{"n":"구글DA","s":1003105,"mr":3693366,"cr":4126350,"mroas":368,"croas":411,"ret":111.7,"derived":false},{"n":"페이코","s":501254,"mr":2915533,"cr":319300,"mroas":582,"croas":64,"ret":11.0,"derived":false},{"n":"에디ai","s":901530,"mr":5444620,"cr":5444620,"mroas":604,"croas":604,"ret":100.0,"derived":true},{"n":"토스","s":246260,"mr":1294300,"cr":232000,"mroas":526,"croas":94,"ret":17.9,"derived":false}],"gp":{"perf":{"s":41166253,"r":137805410,"roas":334.8},"crm":{"s":977234,"r":13134540,"roas":1344.1},"org":35967320,"owned":327900,"tot":187235170}},{"d":"2026-07-10","dow":"금","net":133436863,"ad":33695132,"perf":32566772,"crm":1128360,"c24":146402340,"org":46850240,"contfee":1045779,"cost":73837694,"w":55.34,"g":25.25,"i":4.34,"cp":5795103,"ch":[{"n":"네이버","s":1400498,"mr":52279300,"cr":31497800,"mroas":3733,"croas":2249,"ret":60.2,"derived":false},{"n":"메타","s":24052998,"mr":60833205,"cr":52557940,"mroas":253,"croas":219,"ret":86.4,"derived":false},{"n":"구글SA","s":721612,"mr":12091323,"cr":4759300,"mroas":1676,"croas":660,"ret":39.4,"derived":false},{"n":"구글DA","s":1102429,"mr":5163752,"cr":3612650,"mroas":468,"croas":328,"ret":70.0,"derived":false},{"n":"페이코","s":1821800,"mr":9386276,"cr":2172800,"mroas":515,"croas":119,"ret":23.1,"derived":false},{"n":"에디ai","s":900980,"mr":4074210,"cr":4074210,"mroas":452,"croas":452,"ret":100.0,"derived":true},{"n":"토스","s":1520676,"mr":7640650,"cr":877400,"mroas":502,"croas":58,"ret":11.5,"derived":false}],"gp":{"perf":{"s":32566771,"r":99704800,"roas":306.2},"crm":{"s":1128360,"r":10750700,"roas":952.8},"org":43924840,"owned":242300,"tot":154622640}},{"d":"2026-07-11","dow":"토","net":104964369,"ad":28482798,"perf":28085201,"crm":397597,"c24":113677120,"org":30145370,"contfee":912275,"cost":54453215,"w":51.88,"g":27.14,"i":5.92,"cp":6210225,"ch":[{"n":"네이버","s":1283234,"mr":38557200,"cr":21202400,"mroas":3005,"croas":1652,"ret":55.0,"derived":false},{"n":"메타","s":21894660,"mr":57219527,"cr":50358450,"mroas":261,"croas":230,"ret":88.0,"derived":false},{"n":"구글SA","s":576832,"mr":11695771,"cr":3975250,"mroas":2028,"croas":689,"ret":34.0,"derived":false},{"n":"구글DA","s":1159163,"mr":5091256,"cr":3955550,"mroas":439,"croas":341,"ret":77.7,"derived":false},{"n":"페이코","s":723841,"mr":3879500,"cr":854400,"mroas":536,"croas":118,"ret":22.0,"derived":false},{"n":"에디ai","s":901270,"mr":2603700,"cr":2603700,"mroas":289,"croas":289,"ret":100.0,"derived":true},{"n":"토스","s":633926,"mr":3183345,"cr":582000,"mroas":502,"croas":92,"ret":18.3,"derived":false}],"gp":{"perf":{"s":28085201,"r":83657950,"roas":297.9},"crm":{"s":397597,"r":5913650,"roas":1487.3},"org":29042070,"owned":226200,"tot":118839870}},{"d":"2026-07-12","dow":"일","net":124365564,"ad":30866493,"perf":30537749,"crm":328744,"c24":139183140,"org":37595360,"contfee":1153323,"cost":63143820,"w":50.77,"g":24.82,"i":9.34,"cp":11613360,"ch":[{"n":"네이버","s":1323632,"mr":52447990,"cr":30035300,"mroas":3962,"croas":2269,"ret":57.3,"derived":false},{"n":"메타","s":24073602,"mr":64359994,"cr":56488380,"mroas":267,"croas":235,"ret":87.8,"derived":false},{"n":"구글SA","s":1069405,"mr":15087383,"cr":4679500,"mroas":1411,"croas":438,"ret":31.0,"derived":false},{"n":"구글DA","s":1155997,"mr":6261199,"cr":4513700,"mroas":542,"croas":390,"ret":72.1,"derived":false},{"n":"페이코","s":501022,"mr":2741110,"cr":648600,"mroas":547,"croas":129,"ret":23.7,"derived":false},{"n":"에디ai","s":901380,"mr":4598500,"cr":4598500,"mroas":510,"croas":510,"ret":100.0,"derived":true},{"n":"토스","s":359388,"mr":1897057,"cr":623800,"mroas":528,"croas":174,"ret":32.9,"derived":false}],"gp":{"perf":{"s":30537750,"r":101819380,"roas":333.4},"crm":{"s":328743,"r":6817240,"roas":2073.7},"org":34981110,"owned":338800,"tot":143956530}},{"d":"2026-07-13","dow":"월","net":186566742,"ad":41634738,"perf":39052402,"crm":2582336,"c24":210690690,"org":77260470,"contfee":1334768,"cost":94661757,"w":50.74,"g":22.32,"i":11.87,"cp":22154640,"ch":[{"n":"네이버","s":1758677,"mr":85494080,"cr":47572390,"mroas":4861,"croas":2705,"ret":55.6,"derived":false},{"n":"메타","s":32020142,"mr":84089077,"cr":67448530,"mroas":263,"croas":211,"ret":80.2,"derived":false},{"n":"구글SA","s":879166,"mr":15563490,"cr":7388000,"mroas":1770,"croas":840,"ret":47.5,"derived":false},{"n":"구글DA","s":1087125,"mr":6133571,"cr":3486600,"mroas":564,"croas":321,"ret":56.8,"derived":false},{"n":"페이코","s":608737,"mr":3417550,"cr":335200,"mroas":561,"croas":55,"ret":9.8,"derived":false},{"n":"에디ai","s":910970,"mr":6470300,"cr":6470300,"mroas":710,"croas":710,"ret":100.0,"derived":true},{"n":"토스","s":452817,"mr":2407600,"cr":729200,"mroas":532,"croas":161,"ret":30.3,"derived":false}],"gp":{"perf":{"s":39052402,"r":133544720,"roas":342.0},"crm":{"s":2582335,"r":19307310,"roas":747.7},"org":61247470,"owned":404300,"tot":214503800}},{"d":"2026-07-14","dow":"화","net":168077150,"ad":42119549,"perf":41572694,"crm":546855,"c24":189510630,"org":59417720,"contfee":1302605,"cost":84260349,"w":50.13,"g":25.06,"i":9.74,"cp":16368026,"ch":[{"n":"네이버","s":1824794,"mr":77549110,"cr":44946550,"mroas":4250,"croas":2463,"ret":58.0,"derived":false},{"n":"메타","s":34592749,"mr":91605202,"cr":69848890,"mroas":265,"croas":202,"ret":76.2,"derived":false},{"n":"구글SA","s":755040,"mr":12139601,"cr":4833570,"mroas":1608,"croas":640,"ret":39.8,"derived":false},{"n":"구글DA","s":1079298,"mr":6927124,"cr":4777000,"mroas":642,"croas":443,"ret":69.0,"derived":false},{"n":"페이코","s":619279,"mr":3581008,"cr":301400,"mroas":578,"croas":49,"ret":8.4,"derived":false},{"n":"에디ai","s":900400,"mr":4784500,"cr":4784500,"mroas":531,"croas":531,"ret":100.0,"derived":true},{"n":"토스","s":498529,"mr":2624066,"cr":601000,"mroas":526,"croas":121,"ret":22.9,"derived":false}],"gp":{"perf":{"s":41572694,"r":130295610,"roas":313.4},"crm":{"s":546854,"r":10490090,"roas":1918.3},"org":53568120,"owned":30400,"tot":194384220}},{"d":"2026-07-15","dow":"수","net":148019018,"ad":36937084,"perf":35717840,"crm":1219244,"c24":165614440,"org":51033410,"contfee":1209332,"cost":73859875,"w":49.9,"g":24.95,"i":10.08,"cp":14915593,"ch":[{"n":"네이버","s":1716600,"mr":70455600,"cr":41237300,"mroas":4104,"croas":2402,"ret":58.5,"derived":false},{"n":"메타","s":29474640,"mr":78185538,"cr":59476930,"mroas":265,"croas":202,"ret":76.1,"derived":false},{"n":"구글SA","s":755653,"mr":12469348,"cr":5207300,"mroas":1650,"croas":689,"ret":41.8,"derived":false},{"n":"구글DA","s":1015571,"mr":4319263,"cr":3996800,"mroas":425,"croas":394,"ret":92.5,"derived":false},{"n":"페이코","s":457564,"mr":2612930,"cr":547500,"mroas":571,"croas":120,"ret":21.0,"derived":false},{"n":"에디ai","s":905180,"mr":3752000,"cr":3752000,"mroas":415,"croas":415,"ret":100.0,"derived":true},{"n":"토스","s":183300,"mr":961700,"cr":363200,"mroas":525,"croas":198,"ret":37.8,"derived":false}],"gp":{"perf":{"s":35717841,"r":114581030,"roas":320.8},"crm":{"s":1219243,"r":9357850,"roas":767.5},"org":46570210,"owned":537100,"tot":171046190}},{"d":"2026-07-16","dow":"목","net":107908976,"ad":28842254,"perf":27744077,"crm":1098177,"c24":119038410,"org":37874150,"contfee":1067815,"cost":54338208,"w":50.36,"g":26.73,"i":7.85,"cp":8466631,"ch":[{"n":"네이버","s":1330421,"mr":47756200,"cr":27831910,"mroas":3590,"croas":2092,"ret":58.3,"derived":false},{"n":"메타","s":22018636,"mr":51949685,"cr":40515200,"mroas":236,"croas":184,"ret":78.0,"derived":false},{"n":"구글SA","s":748762,"mr":11851664,"cr":5224900,"mroas":1583,"croas":698,"ret":44.1,"derived":false},{"n":"구글DA","s":1029742,"mr":3552723,"cr":2569700,"mroas":345,"croas":250,"ret":72.3,"derived":false},{"n":"페이코","s":362961,"mr":2088866,"cr":508000,"mroas":576,"croas":140,"ret":24.3,"derived":false},{"n":"에디ai","s":900080,"mr":4008750,"cr":4008750,"mroas":445,"croas":445,"ret":100.0,"derived":true},{"n":"토스","s":285660,"mr":1589700,"cr":505800,"mroas":557,"croas":177,"ret":31.8,"derived":false}],"gp":{"perf":{"s":27744076,"r":81164260,"roas":292.5},"crm":{"s":1098178,"r":9151800,"roas":833.4},"org":34309250,"owned":626000,"tot":125251310}},{"d":"2026-07-17","dow":"금","net":89753649,"ad":25488090,"perf":25176993,"crm":311097,"c24":98852370,"org":28035280,"contfee":906999,"cost":44464850,"w":49.54,"g":28.4,"i":6.99,"cp":6274834,"ch":[{"n":"네이버","s":1265663,"mr":38418100,"cr":19950850,"mroas":3035,"croas":1576,"ret":51.9,"derived":false},{"n":"메타","s":19929046,"mr":47423719,"cr":40803440,"mroas":238,"croas":205,"ret":86.0,"derived":false},{"n":"구글SA","s":743494,"mr":9838626,"cr":3263400,"mroas":1323,"croas":439,"ret":33.2,"derived":false},{"n":"구글DA","s":1024447,"mr":7734679,"cr":3628200,"mroas":755,"croas":354,"ret":46.9,"derived":false},{"n":"페이코","s":254233,"mr":1477490,"cr":393900,"mroas":581,"croas":155,"ret":26.7,"derived":false},{"n":"에디ai","s":901280,"mr":2608600,"cr":2608600,"mroas":289,"croas":289,"ret":100.0,"derived":true},{"n":"토스","s":151831,"mr":798900,"cr":168700,"mroas":526,"croas":111,"ret":21.1,"derived":false}],"gp":{"perf":{"s":25176993,"r":70883590,"roas":281.5},"crm":{"s":311096,"r":4776700,"roas":1535.4},"org":25548780,"owned":288200,"tot":101497270}},{"d":"2026-07-18","dow":"토","net":91587124,"ad":24840642,"perf":24469155,"crm":371487,"c24":103560940,"org":29349530,"contfee":791212,"cost":46128898,"w":50.37,"g":27.12,"i":7.44,"cp":6815405,"ch":[{"n":"네이버","s":1437363,"mr":42037000,"cr":22690060,"mroas":2925,"croas":1579,"ret":54.0,"derived":false},{"n":"메타","s":19094445,"mr":50274951,"cr":41643850,"mroas":263,"croas":218,"ret":82.8,"derived":false},{"n":"구글SA","s":707937,"mr":8920987,"cr":3969300,"mroas":1260,"croas":561,"ret":44.5,"derived":false},{"n":"구글DA","s":1025349,"mr":7986219,"cr":3532100,"mroas":779,"croas":344,"ret":44.2,"derived":false},{"n":"페이코","s":233341,"mr":1345750,"cr":162400,"mroas":577,"croas":70,"ret":12.1,"derived":false},{"n":"에디ai","s":900850,"mr":1896400,"cr":1896400,"mroas":211,"croas":211,"ret":100.0,"derived":true},{"n":"토스","s":278658,"mr":1483584,"cr":317300,"mroas":532,"croas":114,"ret":21.4,"derived":false}],"gp":{"perf":{"s":24469155,"r":74254110,"roas":303.5},"crm":{"s":371486,"r":4828340,"roas":1299.7},"org":26694430,"owned":522200,"tot":106299080}},{"d":"2026-07-19","dow":"일","net":146914437,"ad":32637866,"perf":30593779,"crm":2044087,"c24":157894360,"org":52424330,"contfee":1000272,"cost":72201668,"w":49.15,"g":22.22,"i":13.57,"cp":19934897,"ch":[{"n":"네이버","s":1593429,"mr":60880800,"cr":34714470,"mroas":3821,"croas":2179,"ret":57.0,"derived":false},{"n":"메타","s":24291074,"mr":63931409,"cr":55125750,"mroas":263,"croas":227,"ret":86.2,"derived":false},{"n":"구글SA","s":856829,"mr":13763002,"cr":5328400,"mroas":1606,"croas":622,"ret":38.7,"derived":false},{"n":"구글DA","s":1028271,"mr":6465445,"cr":4342600,"mroas":629,"croas":422,"ret":67.2,"derived":false},{"n":"페이코","s":465440,"mr":2709200,"cr":513000,"mroas":582,"croas":110,"ret":18.9,"derived":false},{"n":"에디ai","s":903830,"mr":4713210,"cr":4713210,"mroas":521,"croas":521,"ret":100.0,"derived":true},{"n":"토스","s":454634,"mr":2391600,"cr":732600,"mroas":526,"croas":161,"ret":30.6,"derived":false}],"gp":{"perf":{"s":30593779,"r":105739730,"roas":345.6},"crm":{"s":2044087,"r":14840390,"roas":726.0},"org":47775930,"owned":281900,"tot":168637950}},{"d":"2026-07-20","dow":"월","net":192872189,"ad":42759301,"perf":40124254,"crm":2635047,"c24":206968150,"org":66330680,"contfee":1299389,"cost":94799696,"w":49.15,"g":22.17,"i":13.61,"cp":26247354,"ch":[{"n":"네이버","s":2285025,"mr":86719090,"cr":51241160,"mroas":3795,"croas":2242,"ret":59.1,"derived":false},{"n":"메타","s":32340782,"mr":93460935,"cr":71231820,"mroas":289,"croas":220,"ret":76.2,"derived":false},{"n":"구글SA","s":814346,"mr":18138628,"cr":7427090,"mroas":2227,"croas":912,"ret":40.9,"derived":false},{"n":"구글DA","s":1169132,"mr":6037059,"cr":4872900,"mroas":516,"croas":417,"ret":80.7,"derived":false},{"n":"페이코","s":720043,"mr":4146790,"cr":624300,"mroas":576,"croas":87,"ret":15.1,"derived":false},{"n":"에디ai","s":902800,"mr":4860700,"cr":4860700,"mroas":538,"croas":538,"ret":100.0,"derived":true},{"n":"토스","s":592737,"mr":3134400,"cr":379500,"mroas":529,"croas":64,"ret":12.1,"derived":false}],"gp":{"perf":{"s":40124255,"r":141216170,"roas":351.9},"crm":{"s":2635046,"r":17644220,"roas":669.6},"org":62316680,"owned":306690,"tot":221483760}},{"d":"2026-07-21","dow":"화","net":189303496,"ad":47367665,"perf":46788751,"crm":578914,"c24":211570290,"org":57192580,"contfee":1251144,"cost":95853151,"w":50.63,"g":25.02,"i":9.27,"cp":17554644,"ch":[{"n":"네이버","s":2371578,"mr":87796691,"cr":52826210,"mroas":3702,"croas":2227,"ret":60.2,"derived":false},{"n":"메타","s":39356667,"mr":111168329,"cr":85671690,"mroas":282,"croas":218,"ret":77.1,"derived":false},{"n":"구글SA","s":807244,"mr":16356658,"cr":6326070,"mroas":2026,"croas":784,"ret":38.7,"derived":false},{"n":"구글DA","s":1119499,"mr":4930844,"cr":3780250,"mroas":440,"croas":338,"ret":76.7,"derived":false},{"n":"페이코","s":364610,"mr":2115074,"cr":46600,"mroas":580,"croas":13,"ret":2.2,"derived":false},{"n":"에디ai","s":902200,"mr":5192090,"cr":5192090,"mroas":575,"croas":575,"ret":100.0,"derived":true},{"n":"토스","s":615809,"mr":3199790,"cr":534800,"mroas":520,"croas":87,"ret":16.7,"derived":false}],"gp":{"perf":{"s":46788752,"r":154507300,"roas":330.2},"crm":{"s":578913,"r":11339770,"roas":1958.8},"org":54357380,"owned":379300,"tot":220583750}},{"d":"2026-07-22","dow":"수","net":176858624,"ad":44281942,"perf":42394227,"crm":1887715,"c24":189275065,"org":54593330,"contfee":1109627,"cost":88212877,"w":49.88,"g":25.04,"i":10.01,"cp":17711210,"ch":[{"n":"네이버","s":2434336,"mr":78783129,"cr":42930190,"mroas":3236,"croas":1764,"ret":54.5,"derived":false},{"n":"메타","s":34996655,"mr":91635623,"cr":75051770,"mroas":262,"croas":214,"ret":81.9,"derived":false},{"n":"구글SA","s":742527,"mr":13822649,"cr":6357615,"mroas":1862,"croas":856,"ret":46.0,"derived":false},{"n":"구글DA","s":1173776,"mr":3142323,"cr":3438250,"mroas":268,"croas":293,"ret":109.4,"derived":false},{"n":"페이코","s":533894,"mr":3095090,"cr":655700,"mroas":580,"croas":123,"ret":21.2,"derived":false},{"n":"에디ai","s":905520,"mr":5829210,"cr":5829210,"mroas":644,"croas":644,"ret":100.0,"derived":true},{"n":"토스","s":497892,"mr":2641930,"cr":419000,"mroas":531,"croas":84,"ret":15.9,"derived":false}],"gp":{"perf":{"s":42394227,"r":134834335,"roas":318.0},"crm":{"s":1887716,"r":15703340,"roas":831.9},"org":52111430,"owned":470890,"tot":203119995}},{"d":"2026-07-23","dow":"목","net":146659485,"ad":36925608,"perf":36925608,"crm":0,"c24":158820930,"org":45611950,"contfee":993840,"cost":73367875,"w":50.03,"g":25.18,"i":9.73,"cp":14264418,"ch":[{"n":"네이버","s":1973609,"mr":63364030,"cr":35486220,"mroas":3211,"croas":1798,"ret":56.0,"derived":false},{"n":"메타","s":30633050,"mr":80376544,"cr":63844910,"mroas":262,"croas":208,"ret":79.4,"derived":false},{"n":"구글SA","s":623876,"mr":8082765,"cr":5057500,"mroas":1296,"croas":811,"ret":62.6,"derived":false},{"n":"구글DA","s":1162325,"mr":3092662,"cr":4344300,"mroas":266,"croas":374,"ret":140.5,"derived":false},{"n":"페이코","s":290357,"mr":1556097,"cr":502800,"mroas":536,"croas":173,"ret":32.3,"derived":false},{"n":"에디ai","s":901440,"mr":3889850,"cr":3889850,"mroas":432,"croas":432,"ret":100.0,"derived":true},{"n":"토스","s":347111,"mr":1795440,"cr":83400,"mroas":517,"croas":24,"ret":4.6,"derived":false}],"gp":{"perf":{"s":36925608,"r":113478530,"roas":307.3},"crm":{"s":1425606,"r":11140630,"roas":781.5},"org":43846050,"owned":589500,"tot":169054710}}],"avg":{"i":10.17,"w":50.21,"g":24.56,"net":156710106,"cp":16658183,"ad":37919771},"dowavg":{"월":{"i":13.32,"net":197884425,"cp":26476729,"g":22,"w":50,"ad":43320401,"n":3},"일":{"i":12.61,"net":150503346,"cp":19487058,"g":23,"w":50,"ad":33572321,"n":3},"토":{"i":8.26,"net":99435622,"cp":8212849,"g":26,"w":51,"ad":25853474,"n":3},"화":{"i":10.14,"net":184020900,"cp":18714014,"g":25,"w":50,"ad":45483357,"n":3},"목":{"i":9.61,"net":152659346,"cp":15103312,"g":25,"w":50,"ad":38260401,"n":4},"금":{"i":7.14,"net":123348472,"cp":8958819,"g":26,"w":52,"ad":31712042,"n":3},"수":{"i":10.27,"net":182029189,"cp":19294138,"g":25,"w":50,"ad":44822086,"n":4}},"baseRet":{"네이버":61.9,"메타":82.3,"구글SA":36.0,"구글DA":71.3,"페이코":17.7,"에디ai":null,"토스":23.8},"gpTotal":{"ps":846734846,"pr":2880266375,"cs":26845492,"cr":289137510,"org":973007520,"own":9754830,"tot":4152166235}};
+const ROWS=D.rows, AVG=D.avg, DOWA=D.dowavg, BR=D.baseRet;
+let baseMode='avg', sel=[];
+const won=n=>Math.round(n).toLocaleString('ko-KR');
+const eok=n=>(n/1e8).toFixed(2)+'억';
+const pct=n=>n.toFixed(2)+'%';
+const sgn=n=>(n>=0?'+':'')+n.toFixed(2);
+const md=d=>d.slice(5).replace('-','/');
+function baseOf(r){return baseMode==='dow'?DOWA[r.dow]:AVG;}
+
+/* ── 진단 ── */
+function diagMargin(r){
+  const b=baseOf(r), dw=r.w-b.w, dg=r.g-b.g, di=r.i-b.i;
+  const cause=Math.abs(dw)>Math.abs(dg)?'원가율':'광고효율';
+  let cls='flat',txt='평균권';
+  if(di<=-2.5){cls='bad';txt='⚠ '+cause;}
+  else if(di<=-1.2){cls='warn';txt='△ '+cause;}
+  else if(di>=2.5){cls='good';txt='◎ '+cause+' 양호';}
+  else if(di>=1.2){cls='good';txt='○ 양호';}
+  return {cls,txt,dw,dg,di,cause};
+}
+function diagVol(r){
+  const b=baseOf(r), dc=(r.cp/b.cp-1)*100;
+  let cls='flat',txt='—';
+  if(dc<=-18){cls='bad';txt='공헌이익 급감';}
+  else if(dc<=-8){cls='warn';txt='공헌이익 저조';}
+  else if(dc>=18){cls='good';txt='공헌이익 급증';}
+  else if(dc>=8){cls='good';txt='공헌이익 호조';}
+  return {cls,txt,dc};
+}
+function diagGap(r){
+  let worst=null;
+  r.ch.forEach(c=>{
+    if(c.derived||!c.ret||!BR[c.n]||c.s<600000) return;
+    const dev=c.ret-BR[c.n];
+    if(dev<-12 && (!worst||dev<worst.dev)) worst={n:c.n,ret:c.ret,base:BR[c.n],dev,mroas:c.mroas,croas:c.croas};
+  });
+  return worst;
+}
+
+/* ── 좌측 리스트 ── */
+function renderRail(){
+  const el=document.getElementById('dlist'); el.innerHTML='';
+  ROWS.forEach((r,i)=>{
+    const m=diagMargin(r), on=sel.includes(i);
+    el.insertAdjacentHTML('beforeend',
+      `<div class="drow ${on?'sel':''}" onclick="toggleSel(${i})">
+        <div class="dbox">${on?'✓':''}</div>
+        <span class="dd-date num">${md(r.d)}</span><span class="dd-dow">${r.dow}</span>
+        <span class="dd-mini"><span class="dot ${m.cls}"></span><span class="dd-cp num">${(r.cp/1e6).toFixed(1)}M</span></span>
+      </div>`);
+  });
+}
+function toggleSel(i){const k=sel.indexOf(i); if(k>=0)sel.splice(k,1); else sel.push(i); sel.sort((a,b)=>a-b); renderRail(); renderMain();}
+function clearSel(){sel=[]; renderRail(); renderMain();}
+function setBase(m){baseMode=m; document.getElementById('bt-avg').classList.toggle('on',m==='avg'); document.getElementById('bt-dow').classList.toggle('on',m==='dow'); renderRail(); renderMain();}
+
+/* ── 메인 ── */
+function renderMain(){
+  const el=document.getElementById('main');
+  if(sel.length>=2){el.innerHTML=cmpView(); return;}
+  el.innerHTML=cumView();
+  bindTable();
+  if(sel.length===1){const i=sel[0]; openRow(i);
+    document.getElementById('r'+i)?.scrollIntoView({behavior:'smooth',block:'center'});}
+}
+
+/* 누적 + 표 */
+function cumView(){
+  const T=ROWS.reduce((a,r)=>({net:a.net+r.net,ad:a.ad+r.ad,c24:a.c24+r.c24,cp:a.cp+r.cp}),{net:0,ad:0,c24:0,cp:0});
+  const G=D.gpTotal;
+  const croas=T.c24/T.ad*100, nroas=T.net/T.ad*100, im=T.cp/T.net*100;
+  const COST=1805866598,FEE=135162465,SHIP=408010431;
+  return `
+  <div class="kpi">
+    <div class="k dark"><div class="kl">자사몰 광고비</div><div class="kv num">${won(G.ps+G.cs)}</div>
+      <div class="split"><div class="sp"><div class="sp-l">퍼포먼스</div><div class="sp-v num">${won(G.ps)}</div></div>
+      <div class="sp"><div class="sp-l">CRM</div><div class="sp-v num">${won(G.cs)}</div></div></div></div>
+    <div class="k"><div class="kl">결제기준 ROAS</div><div class="kv num">${croas.toFixed(1)}<small>%</small></div>
+      <div class="ks num">${won(T.c24)}원<br><span style="opacity:.8">Cafe24 실측 (유료+오가닉)</span></div></div>
+    <div class="k"><div class="kl">순매출 기준 ROAS</div><div class="kv num" style="color:var(--warn)">${nroas.toFixed(1)}<small>%</small></div>
+      <div class="ks num">${won(T.net)}원<br><span style="opacity:.8">환불·VAT 차감 &nbsp;<b class="dn">${(nroas-croas).toFixed(1)}%p</b></span></div></div>
+    <div class="k acc"><div class="kl">공헌이익</div><div class="kv num">${won(T.cp)}</div>
+      <div class="split"><div class="sp"><div class="sp-l">이익률</div><div class="sp-v num">${im.toFixed(2)}%</div></div>
+      <div class="sp"><div class="sp-l">일평균</div><div class="sp-v num">${won(T.cp/ROWS.length)}</div></div></div></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">채널 그룹별 성과 <span class="badge">UTM 기준 · 어디서 냈고 어디로 샜나</span></div>
+    <div class="cd">퍼포먼스·CRM은 <b>쓴 만큼(광고비) 얼마 냈는지(ROAS)</b>, 오가닉·온드는 <b>광고 없이 나온 매출</b>. CRM ROAS가 퍼포먼스의 ${(G.cr/G.cs)/(G.pr/G.ps)|0}배 이상 — 문자 예산 효율이 압도적입니다.</div>
+    <div class="tw"><table class="mini"><thead><tr>
+      <th class="l">채널 그룹</th><th>광고비</th><th>매출(UTM)</th><th>ROAS</th><th>매출 비중</th></tr></thead>
+      <tbody>
+      <tr><td class="l" style="font-weight:800;color:var(--ink)">퍼포먼스</td><td class="num">${won(G.ps)}</td><td class="num">${won(G.pr)}</td>
+        <td class="num" style="font-weight:800;color:var(--warn)">${(G.pr/G.ps*100).toFixed(1)}%</td><td class="num">${(G.pr/G.tot*100).toFixed(1)}%</td></tr>
+      <tr><td class="l" style="font-weight:800;color:var(--ink)">CRM (문자)</td><td class="num">${won(G.cs)}</td><td class="num">${won(G.cr)}</td>
+        <td class="num" style="font-weight:800;color:var(--good)">${(G.cr/G.cs*100).toFixed(1)}%</td><td class="num">${(G.cr/G.tot*100).toFixed(1)}%</td></tr>
+      <tr><td class="l" style="font-weight:700;color:var(--ink2)">오가닉</td><td class="num" style="color:var(--muted)">—</td><td class="num">${won(G.org)}</td>
+        <td class="num" style="color:var(--muted)">무광고</td><td class="num">${(G.org/G.tot*100).toFixed(1)}%</td></tr>
+      <tr><td class="l" style="font-weight:700;color:var(--ink2)">온드미디어</td><td class="num" style="color:var(--muted)">—</td><td class="num">${won(G.owned)}</td>
+        <td class="num" style="color:var(--muted)">무광고</td><td class="num">${(G.owned/G.tot*100).toFixed(1)}%</td></tr>
+      <tr style="border-top:1.5px solid var(--line)"><td class="l" style="font-weight:800;color:var(--ink)">전체</td><td class="num" style="font-weight:800">${won(G.ps+G.cs)}</td>
+        <td class="num" style="font-weight:800">${won(G.tot)}</td><td class="num" style="font-weight:800">${(G.tot/(G.ps+G.cs)*100).toFixed(1)}%</td><td class="num">100%</td></tr>
+      </tbody></table></div>
+    <div class="foot">매출: A.채널별성과 (gid 897405789) · 광고비: D.채널별지출 (gid 1229681731) · 7/01–7/23 누적<br>
+      ※ 채널 지출 합 ${won(G.ps+G.cs)} vs 공헌이익 P&L 광고비 872,154,737 — 시트 간 0.16% 차이(정상)</div>
+  </div>
+
+  <div class="card">
+    <div class="ct">차떼고 포떼고 <span class="badge">순매출 → 공헌이익</span></div>
+    <div class="cd">결제 ROAS ${croas.toFixed(1)}%가 실제 남는 돈이 되기까지. 수수료·운반비는 순매출 고정비율이라 항상 같고, <b>움직이는 건 원가율과 광고비비중 둘뿐</b>입니다.</div>
+    ${waterfall(T.net,COST,FEE,SHIP,T.ad,T.cp)}
+    <div class="foot">순매출 기준 · 7/01–7/23 누적 · 공구 제외 자사몰만</div>
+  </div>
+
+  <div class="card">
+    <div class="ct">일자별 진단 <span class="badge">행 클릭 = 원인 분해 · 좌측에서 여러 날 선택 = 비교</span></div>
+    <div class="legend">
+      <b>진단 3종</b> (기준: ${baseMode==='avg'?'월평균':'동요일 평균'}) —
+      <span class="lchip warn">△ 광고효율</span>이익률(%)이 기준 대비 하락, 원인은 광고효율 ·
+      <span class="lchip bad">⚠ 원가율</span>하락 원인이 원가율(상품믹스) ·
+      <span class="lchip good">◎ 양호</span>기준보다 좋음 &nbsp;|&nbsp;
+      <b>매체갭</b> = 매체가 보고한 ROAS 대비 Cafe24 실측이 평소보다 더 빠진 채널
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th class="l">날짜</th><th>순매출</th><th>광고비</th><th>결제ROAS</th><th>순ROAS</th>
+        <th>원가율</th><th>광고비중</th><th>이익률</th><th>공헌이익</th><th class="l">이익률 진단</th><th class="l">매체갭</th></tr></thead>
+      <tbody id="tb"></tbody>
+    </table></div>
+  </div>`;
+}
+
+function waterfall(NET,COST,FEE,SHIP,AD,CP){
+  const steps=[
+    {l:'순매출',s:'',v:NET,h:NET,c:'#c3c9da',top:0},
+    {l:'원가',s:(COST/NET*100).toFixed(1)+'%',v:-COST,h:COST,c:'#8a91a8',top:NET-COST},
+    {l:'운영수수료',s:'3.75% 고정',v:-FEE,h:FEE,c:'#a8b0c6',top:NET-COST-FEE},
+    {l:'운반비',s:'11.32% 고정',v:-SHIP,h:SHIP,c:'#a8b0c6',top:NET-COST-FEE-SHIP},
+    {l:'광고비',s:(AD/NET*100).toFixed(1)+'%',v:-AD,h:AD,c:'var(--accent)',top:NET-COST-FEE-SHIP-AD},
+    {l:'공헌이익',s:(CP/NET*100).toFixed(2)+'%',v:CP,h:CP,c:'var(--good)',top:0}];
+  let html='<div class="wf">';
+  steps.forEach((s,i)=>{
+    if(i>0)html+='<div class="wfarrow">→</div>';
+    const hpx=Math.max(5,s.h/NET*120), base=(s.l==='순매출'||s.l==='공헌이익')?0:s.top/NET*120;
+    html+=`<div class="wfc"><div class="wfv num">${s.v<0?'−':''}${eok(Math.abs(s.v))}</div>
+      <div class="wfb" style="height:${hpx}px;background:${s.c};margin-bottom:${base}px"></div>
+      <div class="wfl"><b>${s.l}</b>${s.s}</div></div>`;
+  });
+  return html+'</div>';
+}
+
+function bindTable(){
+  const tb=document.getElementById('tb'); if(!tb)return; tb.innerHTML='';
+  ROWS.forEach((r,i)=>{
+    const m=diagMargin(r), g=diagGap(r);
+    const croas=r.c24/r.ad*100, nroas=r.net/r.ad*100;
+    const gapchip=g?`<span class="chip warn sm">${g.n} ▼${Math.abs(g.dev).toFixed(0)}p</span>`:'<span style="color:var(--muted)">·</span>';
+    tb.insertAdjacentHTML('beforeend',
+      `<tr class="main ${sel.includes(i)?'hl':''}" id="r${i}" onclick="clickRow(${i})">
+        <td class="l"><span class="caret" id="c${i}">▸</span><span class="dt num">${md(r.d)}</span><span class="dow">${r.dow}</span></td>
+        <td class="num">${won(r.net)}</td><td class="num">${won(r.ad)}</td>
+        <td class="num">${croas.toFixed(0)}%</td><td class="num">${nroas.toFixed(0)}%</td>
+        <td class="num">${pct(r.w)}</td><td class="num">${pct(r.g)}</td>
+        <td class="num pri">${pct(r.i)}</td><td class="num">${won(r.cp)}</td>
+        <td class="l"><span class="chip ${m.cls}">${m.txt}</span></td>
+        <td class="l">${gapchip}</td></tr>
+      <tr id="d${i}" style="display:none"><td colspan="11" style="padding:0;background:transparent"></td></tr>`);
+  });
+}
+function clickRow(i){const r=document.getElementById('d'+i); openRow(i, r.style.display!=='none');}
+function openRow(i,close){
+  document.querySelectorAll('[id^="d"]').forEach(x=>{if(/^d\d+$/.test(x.id))x.style.display='none'});
+  document.querySelectorAll('[id^="c"]').forEach(x=>{if(/^c\d+$/.test(x.id))x.textContent='▸'});
+  document.querySelectorAll('tr.main').forEach(x=>x.classList.remove('open'));
+  if(close)return;
+  const row=document.getElementById('d'+i);
+  row.style.display=''; document.getElementById('c'+i).textContent='▾';
+  document.getElementById('r'+i).classList.add('open');
+  row.firstElementChild.innerHTML=drill(ROWS[i]);
+}
+
+/* ── 드릴다운 ── */
+function drill(r){
+  const b=baseOf(r), m=diagMargin(r), share=Math.abs(m.dw)+Math.abs(m.dg);
+  const nroas=r.net/r.ad*100, dnet=(r.net/b.net-1)*100;
+  const chSorted=[...r.ch].sort((a,b)=>b.s-a.s);
+  const chRows=chSorted.map(c=>{
+    const dev=(!c.derived&&c.ret&&BR[c.n])?c.ret-BR[c.n]:null;
+    const rc=c.croas<200?'var(--bad)':c.croas<400?'var(--warn)':'var(--good)';
+    const dc=dev===null?'':(dev<-8?'style="color:var(--bad);font-weight:800"':dev>8?'style="color:var(--good);font-weight:800"':'style="color:var(--muted)"');
+    const retCell=c.derived?'<span style="color:var(--muted)">실측기반</span>':(c.ret===null?'—':c.ret+'%');
+    return `<tr><td class="l" style="font-weight:700;color:var(--ink)">${c.n}${c.derived?' <span style="font-size:9.5px;color:var(--muted);font-weight:600">파생</span>':''}</td>
+      <td class="num">${won(c.s)}</td><td class="num">${won(c.mr)}</td><td class="num">${won(c.cr)}</td>
+      <td class="num" style="color:var(--muted)">${c.mroas}%</td>
+      <td class="num" style="color:${rc};font-weight:800">${c.croas}%</td>
+      <td class="num" ${dc}>${retCell}</td>
+      <td class="num" ${dc}>${dev===null?'—':(dev>=0?'+':'')+dev.toFixed(0)+'p'}</td></tr>`;
+  }).join('');
+  const gaps=r.ch.filter(c=>!c.derived&&c.ret&&BR[c.n]&&c.s>=600000&&(c.ret-BR[c.n])<-10).sort((a,b)=>(a.ret-BR[a.n])-(b.ret-BR[b.n]));
+  const gapBlock=gaps.length?`<div class="gapflag">⚠ <b>매체 과대보고 의심</b> — ${gaps.map(c=>`<b>${c.n}</b>는 매체 ROAS ${c.mroas}% 보고했지만 Cafe24 실측 ${c.croas}%, 귀속률 ${c.ret}%로 평소(${BR[c.n]}%)보다 ${Math.abs(c.ret-BR[c.n]).toFixed(0)}%p 낮음`).join(' · ')}. 라스트터치 기준 실제 기여는 매체 지표보다 낮았을 가능성.</div>`:'<div class="reason">매체–실측 귀속률이 전 채널 평소 수준. 과대보고 신호 없음.</div>';
+
+  return `<div class="dd">
+    <div class="ddh">${md(r.d)} (${r.dow}) 원인 분해 <span class="chip ${m.cls}">${m.txt}</span>
+      <span style="font-weight:600;color:var(--muted);font-size:12px">기준: ${baseMode==='avg'?'월평균':r.dow+'요일 평균 (n='+b.n+')'}</span></div>
+
+    <div class="lv"><div class="lvt"><span class="n">1</span>이익률은 두 변수로만 결정</div>
+      <div class="eq">이익률 <span class="hl num">${pct(r.i)}</span> = 84.93% − 원가율 <span class="hl num">${pct(r.w)}</span> − 광고비비중 <span class="hl num">${pct(r.g)}</span>
+        &nbsp;·&nbsp; 기준 대비 <span class="${m.di<0?'dn':'up'} num">${sgn(m.di)}%p</span></div>
+      <div class="contrib">
+        <div class="cbox ${m.cause==='원가율'?'main':''}"><div class="cbox-l">원가율 기여</div>
+          <div class="cbox-v num" style="color:${m.dw>0?'var(--bad)':'var(--good)'}">${sgn(-m.dw)}%p</div>
+          <div class="cbox-s num">${pct(r.w)} vs 기준 ${pct(b.w)} · 설명력 ${(Math.abs(m.dw)/share*100||0).toFixed(0)}%</div></div>
+        <div class="cbox ${m.cause==='광고효율'?'main':''}"><div class="cbox-l">광고비비중 기여</div>
+          <div class="cbox-v num" style="color:${m.dg>0?'var(--bad)':'var(--good)'}">${sgn(-m.dg)}%p</div>
+          <div class="cbox-s num">${pct(r.g)} vs 기준 ${pct(b.g)} · 설명력 ${(Math.abs(m.dg)/share*100||0).toFixed(0)}%</div></div>
+      </div>
+    </div>
+
+    <div class="lv"><div class="lvt"><span class="n">2</span>광고비비중은 분자·분모 어디서</div>
+      <div class="contrib">
+        <div class="cbox"><div class="cbox-l">순매출 (분모)</div><div class="cbox-v num">${won(r.net)}</div>
+          <div class="cbox-s">기준 대비 <b class="num ${dnet>=0?'up':'dn'}">${sgn(dnet)}%</b></div></div>
+        <div class="cbox"><div class="cbox-l">광고비 (분자)</div><div class="cbox-v num">${won(r.ad)}</div>
+          <div class="cbox-s">퍼포 ${won(r.perf)} · CRM ${won(r.crm)}</div></div>
+        <div class="cbox"><div class="cbox-l">순 ROAS</div><div class="cbox-v num" style="color:${nroas<400?'var(--bad)':'var(--good)'}">${nroas.toFixed(1)}%</div>
+          <div class="cbox-s">= 광고비비중의 역수</div></div>
+      </div>
+      <div class="reason">순ROAS와 광고비비중은 <b>역수 관계</b>. 순ROAS가 크게 빠져 보여도 (예: −13%p) 광고비도 함께 줄이면 광고비비중은 소폭(예: +0.5%p)만 올라 <b>이익률 영향은 작습니다</b>. 이익률은 비율이라 매출 규모가 아니라 효율에 반응합니다.</div>
+    </div>
+
+    <div class="lv"><div class="lvt"><span class="n">3</span>채널 그룹별 — 어디서 냈고 어디로 샜나 (UTM)</div>
+      <div class="contrib">
+        <div class="cbox"><div class="cbox-l">퍼포먼스</div><div class="cbox-v num" style="color:var(--warn)">${r.gp.perf.roas.toFixed(0)}%</div>
+          <div class="cbox-s num">광고 ${won(r.gp.perf.s)} → 매출 ${won(r.gp.perf.r)}</div></div>
+        <div class="cbox"><div class="cbox-l">CRM (문자)</div><div class="cbox-v num" style="color:var(--good)">${r.gp.crm.roas.toFixed(0)}%</div>
+          <div class="cbox-s num">광고 ${won(r.gp.crm.s)} → 매출 ${won(r.gp.crm.r)}</div></div>
+        <div class="cbox"><div class="cbox-l">오가닉 (무광고)</div><div class="cbox-v num">${won(r.gp.org)}</div>
+          <div class="cbox-s">전체매출의 ${(r.gp.org/r.gp.tot*100).toFixed(0)}%</div></div>
+        <div class="cbox"><div class="cbox-l">온드미디어 (무광고)</div><div class="cbox-v num">${won(r.gp.owned)}</div>
+          <div class="cbox-s">전체매출의 ${(r.gp.owned/r.gp.tot*100).toFixed(1)}%</div></div>
+      </div>
+    </div>
+
+    <div class="lv"><div class="lvt"><span class="n">4</span>퍼포먼스 채널별 매체 vs Cafe24 실측 — 어디서 났나</div>
+      <div class="tw"><table class="mini"><thead><tr><th class="l">채널</th><th>광고비</th><th>매체매출</th><th>Cafe24실측</th><th>매체ROAS</th><th>실측ROAS</th><th>귀속률</th><th>평소대비</th></tr></thead>
+      <tbody>${chRows}</tbody></table></div>
+      ${gapBlock}
+    </div>
+
+    <div class="lv"><div class="lvt"><span class="n">5</span>원가율은 왜 이렇게 나왔나</div>
+      <div class="blocked">원가 <b class="num">${won(r.cost)}</b> · 원가율 <b class="num">${pct(r.w)}</b> — 더 들어가려면 <b>일자별 품목별 판매량</b> 필요 (출고 데이터 탭 + 원가 tracking 시트 연결). <b>현재 미연결</b></div>
+    </div>
+  </div>`;
+}
+
+/* ── 비교 뷰 ── */
+function cmpView(){
+  const days=sel.map(i=>ROWS[i]);
+  const rowsDef=[
+    ['순매출',r=>won(r.net),r=>r.net,1,0],
+    ['공헌이익',r=>won(r.cp),r=>r.cp,1,0],
+    ['이익률',r=>pct(r.i),r=>r.i,1,0],
+    ['원가율',r=>pct(r.w),r=>-r.w,1,0],
+    ['광고비비중',r=>pct(r.g),r=>-r.g,1,0],
+    ['순ROAS',r=>(r.net/r.ad*100).toFixed(0)+'%',r=>r.net/r.ad,1,0],
+    ['SEC채널 그룹별 성과 (UTM)','','',0,0],
+    ['퍼포먼스 광고비',r=>won(r.gp.perf.s),r=>r.gp.perf.s,0,1],
+    ['퍼포먼스 매출',r=>won(r.gp.perf.r),r=>r.gp.perf.r,1,1],
+    ['퍼포먼스 ROAS',r=>r.gp.perf.roas.toFixed(0)+'%',r=>r.gp.perf.roas,1,1],
+    ['CRM 광고비',r=>won(r.gp.crm.s),r=>r.gp.crm.s,0,1],
+    ['CRM 매출',r=>won(r.gp.crm.r),r=>r.gp.crm.r,1,1],
+    ['CRM ROAS',r=>r.gp.crm.roas.toFixed(0)+'%',r=>r.gp.crm.roas,1,1],
+    ['오가닉 매출',r=>won(r.gp.org),r=>r.gp.org,1,1],
+    ['온드미디어 매출',r=>won(r.gp.owned),r=>r.gp.owned,1,1],
+  ];
+  const chs=['네이버','메타','구글SA','구글DA','페이코','에디ai','토스'];
+  let head='<th class="l">지표</th>'+days.map(r=>`<th>${md(r.d)}<br><span style="font-weight:600;color:var(--muted)">${r.dow}</span></th>`).join('');
+  let body=rowsDef.map(([lb,f,sortv,hi,ind])=>{
+    if(typeof lb==='string'&&lb.startsWith('SEC')) return `<tr><td class="l" colspan="${days.length+2}" style="font-size:10.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);border:none;padding-top:10px">${lb.slice(3)}</td></tr>`;
+    const vals=days.map(sortv); const mx=Math.max(...vals),mn=Math.min(...vals);
+    return `<tr><td class="l" style="font-weight:${ind?600:700};color:${ind?'var(--ink2)':'var(--ink)'};${ind?'padding-left:16px':''}">${lb}</td>`+
+      days.map((r,k)=>{const v=vals[k]; let c='';
+        if(hi&&days.length>1&&mx!==mn){c=v===mx?'color:var(--good);font-weight:800':v===mn?'color:var(--bad);font-weight:800':'';}
+        return `<td class="num" style="${c}">${f(r)}</td>`;}).join('')+'</tr>';
+  }).join('');
+  // 채널 귀속률 비교
+  let chBody=chs.filter(cn=>BR[cn]!=null).map(cn=>{
+    return `<tr><td class="l" style="font-weight:700;color:var(--ink)">${cn} 귀속률</td>`+
+      days.map(r=>{const c=r.ch.find(x=>x.n===cn); if(!c||c.ret===null||c.derived)return '<td class="num" style="color:var(--muted)">—</td>';
+        const dev=BR[cn]?c.ret-BR[cn]:0; const col=dev<-8?'var(--bad)':dev>8?'var(--good)':'var(--ink2)';
+        return `<td class="num" style="color:${col};font-weight:${Math.abs(dev)>8?800:400}">${c.ret}%</td>`;}).join('')+
+      `<td class="num" style="color:var(--muted);font-size:11px">기준 ${BR[cn]}%</td></tr>`;
+  }).join('');
+  return `<div class="card">
+    <div class="ct">일자 비교 <span class="badge">${days.map(r=>md(r.d)).join(' · ')}</span></div>
+    <div class="cd"><b class="up">초록</b>=선택일 중 최고, <b class="dn">빨강</b>=최저. 원가율·광고비비중은 낮을수록 좋으므로 반전 반영. 채널 귀속률은 평소 기준 대비 ±8%p 이탈 시 색 표시.</div>
+    <div class="tw"><table><thead><tr>${head}<th></th></tr></thead>
+    <tbody>${body}<tr><td colspan="${days.length+2}" style="height:8px;border:none"></td></tr>
+    <tr><td class="l" colspan="${days.length+2}" style="font-size:10.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);border:none;padding-top:4px">매체 vs 실측 귀속률 (라스트터치 신뢰도)</td></tr>
+    ${chBody}</tbody></table></div>
+    <div class="foot">좌측에서 날짜를 더하거나 빼서 비교 대상을 바꿀 수 있습니다. 1개만 선택하면 상세 분해로 전환됩니다.</div>
+  </div>`;
+}
+
+renderRail(); renderMain();
+</script>
