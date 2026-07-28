@@ -143,6 +143,23 @@ tr.top5-hi td{background:#fff8e1!important}
 .top5-badge{background:#f57f17;color:#fff;font-size:10px;font-weight:800;padding:1px 5px;border-radius:4px;margin-left:7px;vertical-align:middle;letter-spacing:.3px}
 .top5-legend{font-size:12px;color:#aaa;margin-bottom:10px}
 
+/* 미디어믹스 계획 대비 페이싱 (매체별 비교 박스 하단) */
+#pace-wrap{margin-top:26px;padding-top:22px;border-top:2px solid #f0f2f7}
+#pacing-table tbody td{font-size:15px;line-height:1.35}
+#pacing-table small{display:block;font-size:11px;font-weight:700;color:#98a0b5;margin-top:3px;letter-spacing:.1px}
+#pacing-table tr.pace-sub td{background:#f8f9fe;color:#555;font-size:13px}
+#pacing-table tr.pace-sub td:first-child{padding-left:30px;font-weight:400}
+#pacing-table tr.pace-org td{background:#f4fbf6;color:#2a7a50}
+#pacing-table tr.pace-cf td{background:#fffbf0;color:#6a5000}
+#pacing-table tr.pace-cust td{background:#fdf7ff}
+.pb{display:inline-block;padding:3px 9px;border-radius:6px;font-size:13px;font-weight:700}
+.pb-ok{background:#e8f5e9;color:#2e7d32}
+.pb-warn{background:#fff8e1;color:#f57f17}
+.pb-bad{background:#fce4ec;color:#c62828}
+.pb-neu{background:#eef2ff;color:#4466cc}
+#pace-month{padding:4px 10px;border:1.5px solid #d8dce8;border-radius:8px;background:#fff;color:#4466cc;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
+.pace-empty{padding:26px;text-align:center;color:#aaa;font-size:14px;background:#fafbfe;border-radius:10px}
+
 /* 미디어믹스 계산기 모달 */
 .mm-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:8000;display:none;align-items:center;justify-content:center;padding:20px}
 .mm-modal-overlay.open{display:flex}
@@ -362,6 +379,20 @@ input.mm-gap-in:focus{border-color:#4466cc}
     </div>
     <div class="tbl-wrap" id="main-table">
       <div class="loader"><div class="spin"></div>집계중...</div>
+    </div>
+
+    <!-- 미디어믹스 계획 대비 페이싱 -->
+    <div id="pace-wrap" style="display:none">
+      <div class="sec-title mb">
+        미디어믹스 대비 페이싱
+        <select id="pace-month"></select>
+        <span class="sec-badge" id="pace-badge">—</span>
+        <span class="sec-note" id="pace-note"></span>
+        <button class="toggle-btn" onclick="toggleSection('pace-body','pace-tog')">접기 ▲</button>
+      </div>
+      <div class="sec-body" id="pace-body" style="margin-top:0">
+        <div class="tbl-wrap" id="pacing-table"></div>
+      </div>
     </div>
   </div>
 
@@ -628,6 +659,7 @@ function render(){
   renderGapWarn();
   renderKPI(agg);
   renderMainTable(agg,days);
+  renderPacing();
   renderCompare();
   document.getElementById('tbl-badge').textContent=activeMonth==='all'?'3~6월 합계':activeMonth==='q2'?'4~6월 합계':activeMonth;
   if(activeView==='daily'){document.getElementById('daily-section').style.display='';renderDailyTable(days);}
@@ -1175,6 +1207,9 @@ function mmSave(){
   mmSetSavedState(true);
   mmSource='local';
   mmRenderSource();
+  // 저장한 월을 페이싱 박스에 바로 띄워준다 (실적이 아직 없는 월이면 보던 월 유지)
+  if(rawDays.some(d=>d.month===MM_YEAR+'-'+mmMonth))paceMonth=mmMonth;
+  if(rawDays.length)renderPacing();
 }
 function mmCopyLink(){
   const data=mmCollectData();
@@ -1619,6 +1654,220 @@ function mmRecalc(){
   mmSi('mm-tot-c24rrr',mmFmtRPill(totC24realr));
   // 사용자가 값을 건드리면 저장 버튼을 다시 노출 (게시본/저장본 열람 상태 해제)
   if(!mmLoading&&mmSavedFlag[mmMonth])mmSetSavedState(false);
+  // 계산기 값이 바뀌면 "매체별 비교" 하단 페이싱도 즉시 다시 그림
+  if(rawDays.length)renderPacing();
+}
+
+// ═══ 미디어믹스 대비 페이싱 ══════════════════════════════════════
+// 계산기에 적어둔 월 계획(예산/RAW ROAS/C24 갭)을 실제 집행 실적과 대조한다.
+// 월 전체 계획을 월중 실적과 그냥 비교하면 늘 미달로 보이므로, 예산·매출은
+// **경과일 기준 일할(pro-rata)** 로 환산해서 비교하고 ROAS는 비율이라 그대로 비교한다.
+const MM_YEAR='2026';
+// 계산기 채널(CALC_CH) → 대시보드 채널(PAID_CH) 매핑. 네이버만 3:1.
+const PACE_MAP={
+  naver:['brand','power','shop'],
+  meta:['meta'],google_sa:['google_sa'],google_da:['google_da'],
+  payco:['payco'],toss:['toss'],aedi:['aedi'],
+};
+const PACE_NAVER_SUB={brand:'naver_brand',power:'naver_pl',shop:'naver_sh'};
+const PACE_SRC={
+  edit:     ['✏️ 계산기 편집중 (저장 전 값)','#f57f17'],
+  local:    ['💾 내 로컬 저장본','#f57f17'],
+  url:      ['🔗 공유 링크 값','#4466cc'],
+  published:['📢 게시본','#2e7d32'],
+};
+let paceMonth=null;   // null = 자동 (기간 필터/데이터 기준), 값 = 사용자가 고른 월
+
+function mmNum(v){return parseFloat(String(v==null?'':v).replace(/,/g,''))||0;}
+// 계획값 출처 우선순위: 계산기에 떠 있는 값 > 임시 draft > URL > 로컬저장 > 게시본
+function mmPlanData(month){
+  if(!MM_MONTHS[month])return null;
+  if(mmBuilt&&month===mmMonth)return{data:mmCollectData(),src:mmSavedFlag[month]?(mmSrcByMonth[month]||mmSource||'local'):'edit'};
+  if(mmDraft[month])return{data:mmDraft[month],src:mmSavedFlag[month]?(mmSrcByMonth[month]||'local'):'edit'};
+  const u=mmDataFromUrl(month);if(u)return{data:u,src:'url'};
+  try{const s=localStorage.getItem(MM_MONTHS[month].storeKey);if(s)return{data:JSON.parse(s),src:'local'};}catch(e){}
+  const p=mmPub(month);if(p)return{data:p.data,src:'published'};
+  return null;
+}
+// 계획 데이터를 대시보드 채널 단위로 환산 (모두 RAW 기준 — 모드 보정은 렌더에서)
+function pacePlan(month){
+  const got=mmPlanData(month);if(!got)return null;
+  const data=got.data,cfg=MM_MONTHS[month];
+  const per={},subs={};
+  Object.keys(PACE_MAP).forEach(dk=>{
+    let bgt=0,raw=0;
+    PACE_MAP[dk].forEach(ck=>{
+      const b=mmNum(data['b_'+ck]);
+      const r=mmNum(data['r_'+ck])||(cfg.roas[ck]||0);
+      bgt+=b;raw+=b*r/100;
+      if(dk==='naver')subs[PACE_NAVER_SUB[ck]]={bgt:b,raw:b*r/100};
+    });
+    const gap=dk==='naver'?cfg.naverGap:(cfg.gap[PACE_MAP[dk][0]]||0);
+    per[dk]={bgt,raw,c24:raw*gap};
+  });
+  const cfBgt=mmNum(data['b_content']);
+  const custom=(data.custom||[]).map(c=>({
+    name:(c.name||'').trim()||'신규 매체',
+    bgt:mmNum(c.bgt),
+    raw:mmNum(c.bgt)*mmNum(c.roas)/100,
+  })).filter(c=>c.bgt||c.raw);
+  const perfBgt=Object.keys(per).reduce((s,k)=>s+per[k].bgt,0)+cfBgt+custom.reduce((s,c)=>s+c.bgt,0);
+  return{per,subs,cfBgt,custom,perfBgt,organic:perfBgt*cfg.organicRatio,src:got.src,cfg};
+}
+// 자동 선택: 기간 필터가 특정 월이면 그 월, 아니면 실적이 있는 마지막 계획월
+function paceAutoMonth(){
+  const ms=Object.keys(MM_MONTHS);
+  if(/^\d{4}-\d{2}$/.test(activeMonth)&&MM_MONTHS[activeMonth.slice(5)])return activeMonth.slice(5);
+  const withData=ms.filter(m=>rawDays.some(d=>d.month===MM_YEAR+'-'+m));
+  return withData.length?withData[withData.length-1]:ms[ms.length-1];
+}
+function paceBadgePill(pct,neutral){
+  if(pct===null||!isFinite(pct))return'<span class="dash">—</span>';
+  const p=Math.round(pct);
+  const cls=neutral?((p>=95&&p<=105)?'pb-ok':(p>105?'pb-warn':'pb-neu')):(p>=100?'pb-ok':(p>=90?'pb-warn':'pb-bad'));
+  return`<span class="pb ${cls}">${p}%</span>`;
+}
+
+function renderPacing(){
+  const wrap=document.getElementById('pace-wrap');if(!wrap)return;
+  const month=(paceMonth&&MM_MONTHS[paceMonth])?paceMonth:paceAutoMonth();
+  // 월 선택 드롭다운
+  const sel=document.getElementById('pace-month');
+  if(sel){
+    const want=Object.keys(MM_MONTHS).map(m=>`<option value="${m}">${MM_MONTHS[m].label}</option>`).join('');
+    if(sel.innerHTML!==want)sel.innerHTML=want;
+    sel.value=month;
+    if(!sel.dataset.bound){sel.dataset.bound='1';sel.addEventListener('change',()=>{paceMonth=sel.value;renderPacing();});}
+  }
+  const plan=pacePlan(month);
+  if(!plan){wrap.style.display='none';return;}
+  wrap.style.display='';
+
+  const ym=MM_YEAR+'-'+month;
+  const days=rawDays.filter(d=>d.month===ym);
+  const totalDays=new Date(Number(MM_YEAR),Number(month),0).getDate();
+  const elapsed=days.length?parseInt(days[days.length-1].date.slice(8,10),10):0;
+  const ratio=elapsed/totalDays;
+
+  const cfg=plan.cfg;
+  const [srcTxt,srcCol]=PACE_SRC[plan.src]||PACE_SRC.published;
+  document.getElementById('pace-badge').textContent=`${cfg.label} · ${elapsed}/${totalDays}일 (${Math.round(ratio*100)}%)`;
+  const noteEl=document.getElementById('pace-note');
+  noteEl.innerHTML=`계획 출처 <span style="color:${srcCol};font-weight:700">${srcTxt}</span> · 예산·매출은 경과일 일할 환산 대비, ROAS는 직접 비교`;
+
+  if(!elapsed){
+    document.getElementById('pacing-table').innerHTML=
+      `<div class="pace-empty">${cfg.label} 실적 데이터가 아직 없습니다 — 집행이 시작되면 자동으로 채워집니다.</div>`;
+    return;
+  }
+
+  const agg=aggDays(days);
+  const k=revMode==='actual'?0.86:1;   // 매체별 비교 테이블과 동일한 기준 유지
+  const pro=v=>v*ratio;
+
+  // ── 셀 빌더 ──
+  const cSpend=(planBgt,actSpd)=>{
+    if(!planBgt)return fmtV(actSpd)+`<small>계획 없음</small>`;
+    return fmtV(actSpd)+`<small>월말추정 ${ratio>0?fmtV(actSpd/ratio):'—'}</small>`;
+  };
+  const cPace=(planBgt,actSpd)=>{
+    if(!planBgt)return'<span class="dash">—</span>';
+    const target=pro(planBgt),diff=actSpd-target;
+    return paceBadgePill(actSpd/target*100,true)+
+      `<small style="color:${diff>=0?'#c62828':'#2e7d32'}">${diff>=0?'초과':'미달'} ${fmtV(Math.abs(diff)).replace('<span class="won">원</span>','')}</small>`;
+  };
+  const cRev=(planRaw,act)=>{
+    const target=pro(planRaw*k);
+    if(!target)return act?fmtV(act):'<span class="dash">—</span>';
+    const p=Math.round(act/target*100);
+    const col=p>=100?'#2e7d32':p>=90?'#f57f17':'#c62828';
+    return fmtV(act)+`<small style="color:${col}">계획대비 ${p}% · ${elapsed}일계획 ${fmtV(target).replace('<span class="won">원</span>','')}</small>`;
+  };
+  const cRoas=(planBgt,planRaw,actSpd,actRev)=>{
+    const pR=planBgt>0?planRaw*k/planBgt*100:0;
+    const aR=roas(actSpd,actRev);
+    if(!pR)return aR?rc(aR):'<span class="dash">—</span>';
+    const d=Math.round(aR-pR);
+    return rc(aR)+`<small style="color:${d>=0?'#2e7d32':'#c62828'}">계획 ${Math.round(pR)}% (${d>=0?'+':''}${d}%p)</small>`;
+  };
+  const row=(cls,label,planBgt,actSpd,planRaw,actM,planC24,actC)=>
+    `<tr class="${cls}"><td>${label}</td>
+      <td>${planBgt?fmtV(planBgt):'<span class="dash">—</span>'}</td>
+      <td>${cSpend(planBgt,actSpd)}</td>
+      <td>${cPace(planBgt,actSpd)}</td>
+      <td class="dv">${cRev(planRaw,actM)}</td>
+      <td>${cRoas(planBgt,planRaw,actSpd,actM)}</td>
+      <td class="dv">${cRev(planC24,actC)}</td>
+      <td>${cRoas(planBgt,planC24,actSpd,actC)}</td>
+    </tr>`;
+  const dashRow=(cls,label,cells)=>`<tr class="${cls}"><td>${label}</td>${cells}</tr>`;
+
+  let rows='';
+  PAID_CH.forEach(ch=>{
+    const p=plan.per[ch]||{bgt:0,raw:0,c24:0},a=agg[ch],m=CH_META[ch];
+    rows+=row('parent-row',`<span class="ci ${m.ci}"></span>${m.label}`,p.bgt,a.spd,p.raw,a.mrev,p.c24,a.crev);
+    if(ch==='naver'){
+      NAVER_SUBS.forEach(({key,label})=>{
+        const sp=plan.subs[key]||{bgt:0,raw:0};
+        let ss=0,sm=0;
+        days.forEach(d=>{ss+=(d.media[key]||{spd:0}).spd;sm+=mRev((d.media[key]||{rev:0}).rev,key);});
+        rows+=`<tr class="pace-sub"><td>└ ${label}</td>
+          <td>${sp.bgt?fmtV(sp.bgt):'<span class="dash">—</span>'}</td>
+          <td>${cSpend(sp.bgt,ss)}</td>
+          <td>${cPace(sp.bgt,ss)}</td>
+          <td class="dv">${cRev(sp.raw,sm)}</td>
+          <td>${cRoas(sp.bgt,sp.raw,ss,sm)}</td>
+          <td class="dv dash">—</td><td class="dash">—</td></tr>`;
+      });
+    }
+  });
+  // 콘텐츠 비용 (예산만 — 매출 귀속 없음)
+  rows+=dashRow('pace-cf','<span class="ci ci-content"></span>콘텐츠 비용',
+    `<td>${plan.cfBgt?fmtV(plan.cfBgt):'<span class="dash">—</span>'}</td>
+     <td>${cSpend(plan.cfBgt,agg.content_fee.spd)}</td>
+     <td>${cPace(plan.cfBgt,agg.content_fee.spd)}</td>
+     <td class="dv dash">—</td><td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td>`);
+  // 신규 매체 (대시보드에 대응 채널이 없어 실적 매핑 불가 → 합계에서도 제외)
+  plan.custom.forEach(c=>{
+    rows+=dashRow('pace-cust',`${c.name} <small style="display:inline;color:#b070c8">신규</small>`,
+      `<td>${fmtV(c.bgt)}</td><td class="dash">실적 매핑 없음</td><td class="dash">—</td>
+       <td class="dv dash">—</td><td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td>`);
+  });
+  // 합계 (유료 7채널 + 콘텐츠 비용, 신규매체·오가닉 제외)
+  const tPB=PAID_CH.reduce((s,c)=>s+(plan.per[c]||{bgt:0}).bgt,0)+plan.cfBgt;
+  const tPR=PAID_CH.reduce((s,c)=>s+(plan.per[c]||{raw:0}).raw,0);
+  const tPC=PAID_CH.reduce((s,c)=>s+(plan.per[c]||{c24:0}).c24,0);
+  const tAS=PAID_CH.reduce((s,c)=>s+agg[c].spd,0)+agg.content_fee.spd;
+  const tAM=PAID_CH.reduce((s,c)=>s+agg[c].mrev,0);
+  const tAC=PAID_CH.reduce((s,c)=>s+agg[c].crev,0);
+  rows+=row('tr-total','합계',tPB,tAS,tPR,tAM,tPC,tAC);
+  // 오가닉 (계획 = 총 광고비 × 오가닉 비율)
+  rows+=dashRow('pace-org',`오가닉 <small style="display:inline;color:#7aa88f">광고비×${Math.round(cfg.organicRatio*100)}% 예측</small>`,
+    `<td class="dash">—</td><td class="dash">—</td><td class="dash">—</td>
+     <td class="dv dash">—</td><td class="dash">—</td>
+     <td class="dv">${cRev(plan.organic,agg.organic.crev)}</td><td class="dash">—</td>`);
+
+  document.getElementById('pacing-table').innerHTML=`<table>
+    <thead>
+      <tr>
+        <th rowspan="2" style="text-align:left;vertical-align:bottom">매체</th>
+        <th colspan="3">예산 · 소진</th>
+        <th colspan="2" class="ga dv">매체 보고</th>
+        <th colspan="2" class="gb dv">Cafe24 실측</th>
+      </tr>
+      <tr>
+        <th>계획(월)</th><th>실제 소진</th><th>소진 페이스</th>
+        <th class="ga dv">매출</th><th class="ga">ROAS</th>
+        <th class="gb dv">매출</th><th class="gb">ROAS</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <div class="top5-legend" style="margin-top:10px">
+    소진 페이스 = 실제 소진 ÷ (월 계획 × ${elapsed}/${totalDays}일) · 100~105%가 정상 페이스 ·
+    매출은 같은 일할 기준 계획 대비 달성률 · ROAS는 월 계획 ROAS와 직접 비교 (${revMode==='actual'?'실매출 ×0.86':'RAW'} 기준)
+    ${plan.custom.length?' · 신규 매체는 대시보드 채널이 없어 합계에서 제외':''}
+  </div>`;
 }
 </script>
 <script>
