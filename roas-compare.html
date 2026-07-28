@@ -157,8 +157,15 @@ tr.top5-hi td{background:#fff8e1!important}
 .pb-warn{background:#fff8e1;color:#f57f17}
 .pb-bad{background:#fce4ec;color:#c62828}
 .pb-neu{background:#eef2ff;color:#4466cc}
-#pace-month{padding:4px 10px;border:1.5px solid #d8dce8;border-radius:8px;background:#fff;color:#4466cc;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
+#pace-month,#pace-daily-ch{padding:4px 10px;border:1.5px solid #d8dce8;border-radius:8px;background:#fff;color:#4466cc;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
 .pace-empty{padding:26px;text-align:center;color:#aaa;font-size:14px;background:#fafbfe;border-radius:10px}
+.pace-legend{font-size:12px;color:#aaa;margin-top:10px;line-height:1.6}
+#pace-daily-wrap{margin-top:24px;padding-top:18px;border-top:1px dashed #e4e8f2}
+#pace-daily-table{max-height:540px;overflow-y:auto;overflow-x:auto}
+#pace-daily-table thead th{position:sticky;top:0;z-index:2;box-shadow:0 1px 0 #e4e8f2}
+#pace-daily-table tbody td{font-size:14px;padding:10px 13px}
+#pace-daily-table small{display:block;font-size:11px;font-weight:700;color:#98a0b5;margin-top:2px}
+#pace-daily-table tr.pd-today td{background:#eef2ff!important;box-shadow:inset 3px 0 0 #4466cc}
 
 /* 미디어믹스 계산기 모달 */
 .mm-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:8000;display:none;align-items:center;justify-content:center;padding:20px}
@@ -392,6 +399,19 @@ input.mm-gap-in:focus{border-color:#4466cc}
       </div>
       <div class="sec-body" id="pace-body" style="margin-top:0">
         <div class="tbl-wrap" id="pacing-table"></div>
+
+        <!-- 일자별 페이싱 (월 계획을 일수로 나눈 일계획 대비) -->
+        <div id="pace-daily-wrap">
+          <div class="sec-title">
+            일자별 페이싱
+            <select id="pace-daily-ch"></select>
+            <span class="sec-note" id="pace-daily-note"></span>
+            <button class="toggle-btn" onclick="toggleSection('pace-daily-body','pace-daily-tog')">펼치기 ▼</button>
+          </div>
+          <div class="sec-body collapsed" id="pace-daily-body">
+            <div class="tbl-wrap" id="pace-daily-table"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1721,12 +1741,7 @@ function paceAutoMonth(){
   const withData=ms.filter(m=>rawDays.some(d=>d.month===MM_YEAR+'-'+m));
   return withData.length?withData[withData.length-1]:ms[ms.length-1];
 }
-function paceBadgePill(pct,neutral){
-  if(pct===null||!isFinite(pct))return'<span class="dash">—</span>';
-  const p=Math.round(pct);
-  const cls=neutral?((p>=95&&p<=105)?'pb-ok':(p>105?'pb-warn':'pb-neu')):(p>=100?'pb-ok':(p>=90?'pb-warn':'pb-bad'));
-  return`<span class="pb ${cls}">${p}%</span>`;
-}
+let paceDailyCtx=null;   // 일자별 페이싱이 마지막으로 그린 컨텍스트 (채널 변경 시 재사용)
 
 function renderPacing(){
   const wrap=document.getElementById('pace-wrap');if(!wrap)return;
@@ -1753,35 +1768,40 @@ function renderPacing(){
   const [srcTxt,srcCol]=PACE_SRC[plan.src]||PACE_SRC.published;
   document.getElementById('pace-badge').textContent=`${cfg.label} · ${elapsed}/${totalDays}일 (${Math.round(ratio*100)}%)`;
   const noteEl=document.getElementById('pace-note');
-  noteEl.innerHTML=`계획 출처 <span style="color:${srcCol};font-weight:700">${srcTxt}</span> · 예산·매출은 경과일 일할 환산 대비, ROAS는 직접 비교`;
+  noteEl.innerHTML=`계획 출처 <span style="color:${srcCol};font-weight:700">${srcTxt}</span> · 월 계획 대비 진행률 기준`;
 
   if(!elapsed){
     document.getElementById('pacing-table').innerHTML=
       `<div class="pace-empty">${cfg.label} 실적 데이터가 아직 없습니다 — 집행이 시작되면 자동으로 채워집니다.</div>`;
+    paceDailyCtx=null;
+    document.getElementById('pace-daily-wrap').style.display='none';
     return;
   }
 
   const agg=aggDays(days);
   const k=revMode==='actual'?0.86:1;   // 매체별 비교 테이블과 동일한 기준 유지
-  const pro=v=>v*ratio;
+  const elapsedPct=Math.round(ratio*100);
 
   // ── 셀 빌더 ──
   const cSpend=(planBgt,actSpd)=>{
     if(!planBgt)return fmtV(actSpd)+`<small>계획 없음</small>`;
     return fmtV(actSpd)+`<small>월말추정 ${ratio>0?fmtV(actSpd/ratio):'—'}</small>`;
   };
-  const cPace=(planBgt,actSpd)=>{
+  // 소진률 = 월 계획 예산 대비 지금까지 얼마나 썼는지. 경과율(elapsedPct)과 나란히 본다.
+  const cUse=(planBgt,actSpd)=>{
     if(!planBgt)return'<span class="dash">—</span>';
-    const target=pro(planBgt),diff=actSpd-target;
-    return paceBadgePill(actSpd/target*100,true)+
-      `<small style="color:${diff>=0?'#c62828':'#2e7d32'}">${diff>=0?'초과':'미달'} ${fmtV(Math.abs(diff)).replace('<span class="won">원</span>','')}</small>`;
+    const p=actSpd/planBgt*100,d=Math.round(p-elapsedPct);
+    const cls=Math.abs(d)<=5?'pb-ok':(d>5?'pb-warn':'pb-neu');
+    return`<span class="pb ${cls}">${Math.round(p)}%</span>`+
+      `<small style="color:${d>5?'#f57f17':d<-5?'#4466cc':'#98a0b5'}">경과 ${elapsedPct}% 대비 ${d>=0?'+':''}${d}%p</small>`;
   };
+  // 매출: 월 계획 대비 도달률 + 경과일 일할 기준 달성률을 함께
   const cRev=(planRaw,act)=>{
-    const target=pro(planRaw*k);
-    if(!target)return act?fmtV(act):'<span class="dash">—</span>';
-    const p=Math.round(act/target*100);
-    const col=p>=100?'#2e7d32':p>=90?'#f57f17':'#c62828';
-    return fmtV(act)+`<small style="color:${col}">계획대비 ${p}% · ${elapsed}일계획 ${fmtV(target).replace('<span class="won">원</span>','')}</small>`;
+    const planM=planRaw*k;
+    if(!planM)return act?fmtV(act):'<span class="dash">—</span>';
+    const reach=Math.round(act/planM*100),pace=Math.round(act/(planM*ratio)*100);
+    const col=pace>=100?'#2e7d32':pace>=90?'#f57f17':'#c62828';
+    return fmtV(act)+`<small>월계획 <b style="color:#4a5168">${reach}%</b> · 일할 <b style="color:${col}">${pace}%</b></small>`;
   };
   const cRoas=(planBgt,planRaw,actSpd,actRev)=>{
     const pR=planBgt>0?planRaw*k/planBgt*100:0;
@@ -1794,7 +1814,7 @@ function renderPacing(){
     `<tr class="${cls}"><td>${label}</td>
       <td>${planBgt?fmtV(planBgt):'<span class="dash">—</span>'}</td>
       <td>${cSpend(planBgt,actSpd)}</td>
-      <td>${cPace(planBgt,actSpd)}</td>
+      <td>${cUse(planBgt,actSpd)}</td>
       <td class="dv">${cRev(planRaw,actM)}</td>
       <td>${cRoas(planBgt,planRaw,actSpd,actM)}</td>
       <td class="dv">${cRev(planC24,actC)}</td>
@@ -1814,7 +1834,7 @@ function renderPacing(){
         rows+=`<tr class="pace-sub"><td>└ ${label}</td>
           <td>${sp.bgt?fmtV(sp.bgt):'<span class="dash">—</span>'}</td>
           <td>${cSpend(sp.bgt,ss)}</td>
-          <td>${cPace(sp.bgt,ss)}</td>
+          <td>${cUse(sp.bgt,ss)}</td>
           <td class="dv">${cRev(sp.raw,sm)}</td>
           <td>${cRoas(sp.bgt,sp.raw,ss,sm)}</td>
           <td class="dv dash">—</td><td class="dash">—</td></tr>`;
@@ -1825,7 +1845,7 @@ function renderPacing(){
   rows+=dashRow('pace-cf','<span class="ci ci-content"></span>콘텐츠 비용',
     `<td>${plan.cfBgt?fmtV(plan.cfBgt):'<span class="dash">—</span>'}</td>
      <td>${cSpend(plan.cfBgt,agg.content_fee.spd)}</td>
-     <td>${cPace(plan.cfBgt,agg.content_fee.spd)}</td>
+     <td>${cUse(plan.cfBgt,agg.content_fee.spd)}</td>
      <td class="dv dash">—</td><td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td>`);
   // 신규 매체 (대시보드에 대응 채널이 없어 실적 매핑 불가 → 합계에서도 제외)
   plan.custom.forEach(c=>{
@@ -1856,17 +1876,118 @@ function renderPacing(){
         <th colspan="2" class="gb dv">Cafe24 실측</th>
       </tr>
       <tr>
-        <th>계획(월)</th><th>실제 소진</th><th>소진 페이스</th>
+        <th>계획(월)</th><th>실제 소진</th><th>소진률</th>
         <th class="ga dv">매출</th><th class="ga">ROAS</th>
         <th class="gb dv">매출</th><th class="gb">ROAS</th>
       </tr>
     </thead>
     <tbody>${rows}</tbody>
   </table>
-  <div class="top5-legend" style="margin-top:10px">
-    소진 페이스 = 실제 소진 ÷ (월 계획 × ${elapsed}/${totalDays}일) · 100~105%가 정상 페이스 ·
-    매출은 같은 일할 기준 계획 대비 달성률 · ROAS는 월 계획 ROAS와 직접 비교 (${revMode==='actual'?'실매출 ×0.86':'RAW'} 기준)
-    ${plan.custom.length?' · 신규 매체는 대시보드 채널이 없어 합계에서 제외':''}
+  <div class="pace-legend">
+    <b>소진률</b> = 실제 소진 ÷ 월 계획 예산 · 오늘 기준 경과율은 <b>${elapsedPct}%</b>(${elapsed}/${totalDays}일)이므로
+    소진률이 그보다 높으면 <span style="color:#f57f17;font-weight:700">빠름</span>, 낮으면 <span style="color:#4466cc;font-weight:700">느림</span><br>
+    <b>매출</b> = 월계획(월 전체 계획 대비 도달률) · 일할(경과일 환산 계획 대비 달성률) ·
+    <b>ROAS</b>는 비율이라 월 계획 ROAS와 직접 비교 (${revMode==='actual'?'실매출 ×0.86':'RAW'} 기준)
+    ${plan.custom.length?'<br>신규 매체는 대시보드에 대응 채널이 없어 합계에서 제외':''}
+  </div>`;
+
+  renderPaceDaily({days,totalDays,plan,k,cfg,agg});
+}
+
+// ── 일자별 페이싱 ─────────────────────────────────────────────────
+// 월 계획을 일수로 나눈 "일 계획" 대비 그날 소진/매출, 그리고 누적 진행률(계획선 대비).
+function renderPaceDaily(ctx){
+  const wrap=document.getElementById('pace-daily-wrap');if(!wrap)return;
+  // 인자 없이 호출되면(채널 드롭다운 변경) 마지막 컨텍스트를 재사용 — 오래된 ctx가 고정되지 않도록
+  if(ctx)paceDailyCtx=ctx;else ctx=paceDailyCtx;
+  if(!ctx||!ctx.days.length){wrap.style.display='none';return;}
+  wrap.style.display='';
+  const sel=document.getElementById('pace-daily-ch');
+  if(sel){
+    const want='<option value="all">전체 합계</option>'+PAID_CH.map(c=>`<option value="${c}">${CH_META[c].label}</option>`).join('');
+    if(sel.innerHTML!==want)sel.innerHTML=want;
+    if(!sel.dataset.bound){sel.dataset.bound='1';sel.addEventListener('change',()=>renderPaceDaily());}
+  }
+  const ch=(sel&&sel.value)||'all';
+  const{days,totalDays,plan,k}=ctx;
+
+  // 계획 (전체는 유료 7채널 + 콘텐츠 비용 / 매출은 유료만)
+  const planBgt=ch==='all'
+    ? PAID_CH.reduce((s,c)=>s+(plan.per[c]||{bgt:0}).bgt,0)+plan.cfBgt
+    : (plan.per[ch]||{bgt:0}).bgt;
+  const planM=(ch==='all'?PAID_CH.reduce((s,c)=>s+(plan.per[c]||{raw:0}).raw,0):(plan.per[ch]||{raw:0}).raw)*k;
+  const planC=(ch==='all'?PAID_CH.reduce((s,c)=>s+(plan.per[c]||{c24:0}).c24,0):(plan.per[ch]||{c24:0}).c24)*k;
+  const dB=planBgt/totalDays,dM=planM/totalDays,dC=planC/totalDays;   // 하루치 계획
+
+  document.getElementById('pace-daily-note').innerHTML=
+    `하루 계획 — 예산 <b>${fmtV(dB)}</b> · 매체매출 <b>${fmtV(dM)}</b> · C24매출 <b>${fmtV(dC)}</b> (월 계획 ÷ ${totalDays}일)`;
+
+  const WD=['일','월','화','수','목','금','토'];
+  // 그날 값 / 하루 계획
+  const cDay=(act,planDay)=>{
+    if(!planDay)return fmtV(act);
+    const p=Math.round(act/planDay*100);
+    const col=p>=100?'#2e7d32':p>=90?'#f57f17':'#c62828';
+    return fmtV(act)+`<small style="color:${col}">일계획 ${p}%</small>`;
+  };
+  // 누적 값 / 월 계획 (계획선 = 그날까지 지났어야 할 비율)
+  const cCum=(cum,planTot,dayNo)=>{
+    if(!planTot)return fmtV(cum);
+    const p=Math.round(cum/planTot*100),line=Math.round(dayNo/totalDays*100),d=p-line;
+    const col=Math.abs(d)<=5?'#4a5168':(d>5?'#f57f17':'#4466cc');
+    return fmtV(cum)+`<small style="color:${col}">월계획 ${p}% / 계획선 ${line}%</small>`;
+  };
+
+  let cS=0,cM=0,cC=0,rows='';
+  days.forEach((d,i)=>{
+    const spd=ch==='all'
+      ? PAID_CH.reduce((s,c)=>s+(d.media[c]||{spd:0}).spd,0)+(d.media.content_fee||{spd:0}).spd
+      : (d.media[ch]||{spd:0}).spd;
+    const mv=ch==='all'?PAID_CH.reduce((s,c)=>s+mRev((d.media[c]||{rev:0}).rev,c),0):mRev((d.media[ch]||{rev:0}).rev,ch);
+    const cv=ch==='all'?PAID_CH.reduce((s,c)=>s+cRev(d.c24[c]||0,c),0):cRev(d.c24[ch]||0,ch);
+    cS+=spd;cM+=mv;cC+=cv;
+    const dayNo=parseInt(d.date.slice(8,10),10);
+    const wd=WD[new Date(d.date+'T00:00:00Z').getUTCDay()];
+    rows+=`<tr class="${i===days.length-1?'pd-today':''}">
+      <td>${d.date.slice(5)} <small style="display:inline;color:#b0b6c8">(${wd})</small></td>
+      <td>${cDay(spd,dB)}</td>
+      <td>${cCum(cS,planBgt,dayNo)}</td>
+      <td class="dv">${cDay(mv,dM)}</td>
+      <td>${cCum(cM,planM,dayNo)}</td>
+      <td>${rc(roas(spd,mv))}<small>누적 ${Math.round(roas(cS,cM))}%</small></td>
+      <td class="dv">${cDay(cv,dC)}</td>
+      <td>${cCum(cC,planC,dayNo)}</td>
+      <td>${rc(roas(spd,cv))}<small>누적 ${Math.round(roas(cS,cC))}%</small></td>
+    </tr>`;
+  });
+  rows+=`<tr class="tr-total">
+    <td>합계 (${days.length}일)</td>
+    <td>${fmtV(cS)}</td><td>${cCum(cS,planBgt,parseInt(days[days.length-1].date.slice(8,10),10))}</td>
+    <td class="dv">${fmtV(cM)}</td><td>${cCum(cM,planM,parseInt(days[days.length-1].date.slice(8,10),10))}</td>
+    <td>${rc(roas(cS,cM))}</td>
+    <td class="dv">${fmtV(cC)}</td><td>${cCum(cC,planC,parseInt(days[days.length-1].date.slice(8,10),10))}</td>
+    <td>${rc(roas(cS,cC))}</td>
+  </tr>`;
+
+  document.getElementById('pace-daily-table').innerHTML=`<table>
+    <thead>
+      <tr>
+        <th rowspan="2" style="text-align:left;vertical-align:bottom">일자</th>
+        <th colspan="2">광고비</th>
+        <th colspan="3" class="ga dv">매체 보고</th>
+        <th colspan="3" class="gb dv">Cafe24 실측</th>
+      </tr>
+      <tr>
+        <th>당일</th><th>누적</th>
+        <th class="ga dv">당일 매출</th><th class="ga">누적 매출</th><th class="ga">ROAS</th>
+        <th class="gb dv">당일 매출</th><th class="gb">누적 매출</th><th class="gb">ROAS</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <div class="pace-legend">
+    <b>일계획 %</b> = 그날 실적 ÷ (월 계획 ÷ ${totalDays}일) · <b>계획선 %</b> = 그날까지 지났어야 할 비율(일자 ÷ ${totalDays}) ·
+    누적이 계획선보다 높으면 <span style="color:#f57f17;font-weight:700">앞서감</span>, 낮으면 <span style="color:#4466cc;font-weight:700">뒤처짐</span>
   </div>`;
 }
 </script>
