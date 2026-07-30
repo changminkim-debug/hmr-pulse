@@ -147,19 +147,19 @@ tr.top5-hi td{background:#fff8e1!important}
 #pace-wrap{margin-top:26px;padding-top:22px;border-top:2px solid #f0f2f7}
 #pacing-table tbody td{font-size:15px;line-height:1.35}
 #pacing-table small{display:block;font-size:11px;font-weight:700;color:#98a0b5;margin-top:3px;letter-spacing:.1px}
-/* 페이싱이 주인공 — 달성률 %는 크게, 원본 금액은 보조선으로 */
-.pb-lg{font-size:19px;font-weight:800;padding:5px 12px;border-radius:8px;letter-spacing:-.4px;line-height:1.15}
-.pace-plan{display:block;font-size:11px;font-weight:600;color:#a6adbf;margin-top:5px;letter-spacing:.1px;white-space:nowrap}
+/* 페이싱 셀 — 색 블록 대신 숫자 + 얇은 진행막대. 색은 기준선에서 벗어날 때만 신호로 */
+.pc-n{font-size:20px;font-weight:800;letter-spacing:-.6px;line-height:1.1}
+.pc-d{font-size:12px;font-weight:700;margin-left:6px;letter-spacing:-.2px}
+.pc-bar{position:relative;height:4px;border-radius:3px;background:#e9ecf4;margin:7px 0 5px}
+.pc-bar>i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;display:block}
+.pc-bar>b{position:absolute;top:-3px;bottom:-3px;width:2px;background:#8d96ae;border-radius:1px}
+.pace-plan{display:block;font-size:11px;font-weight:600;color:#a6adbf;margin-top:4px;letter-spacing:.1px;white-space:nowrap}
+.pc-flat{font-size:13px;font-weight:700;color:#8a91a8}
 #pacing-table tr.pace-sub td{background:#f8f9fe;color:#555;font-size:13px}
 #pacing-table tr.pace-sub td:first-child{padding-left:30px;font-weight:400}
 #pacing-table tr.pace-org td{background:#f4fbf6;color:#2a7a50}
 #pacing-table tr.pace-cf td{background:#fffbf0;color:#6a5000}
 #pacing-table tr.pace-cust td{background:#fdf7ff}
-.pb{display:inline-block;padding:3px 9px;border-radius:6px;font-size:13px;font-weight:700}
-.pb-ok{background:#e8f5e9;color:#2e7d32}
-.pb-warn{background:#fff8e1;color:#f57f17}
-.pb-bad{background:#fce4ec;color:#c62828}
-.pb-neu{background:#eef2ff;color:#4466cc}
 #pace-month,#pace-daily-ch{padding:4px 10px;border:1.5px solid #d8dce8;border-radius:8px;background:#fff;color:#4466cc;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
 .pace-empty{padding:26px;text-align:center;color:#aaa;font-size:14px;background:#fafbfe;border-radius:10px}
 .pace-legend{font-size:12px;color:#aaa;margin-top:10px;line-height:1.6}
@@ -1792,18 +1792,30 @@ function renderPacing(){
   // (원본 금액 자체는 위 매체별 비교 테이블에서 보면 된다)
   const fmtM=v=>fmtV(v).replace('<span class="won">원</span>','');
   const fmtP=v=>Math.round(v)+'%';
+  // 진행막대: 눈금(회색 틱)이 기준선. 막대 끝이 눈금보다 오른쪽이면 앞서간 것.
+  const BAR_MAX=150;
+  const bar=(p,base,col)=>
+    `<div class="pc-bar"><i style="width:${(Math.min(Math.max(p,0),BAR_MAX)/BAR_MAX*100).toFixed(1)}%;background:${col}"></i>`+
+    `<b style="left:${(Math.min(base,BAR_MAX)/BAR_MAX*100).toFixed(1)}%"></b></div>`;
   // kind='spend' → 기준선보다 빠르면 주의(주황)/느리면 파랑, kind='gain' → 높을수록 좋음
-  const cell=(act,plan,base,kind,fmt)=>{
-    if(!plan)return act?`<span class="pace-plan" style="margin:0">${fmt(act)}</span>`:'<span class="dash">—</span>';
+  const cell=(act,plan,base,kind,fmt,deltaTxt)=>{
+    if(!plan)return act?`<span class="pc-flat">${fmt(act)}</span>`:'<span class="dash">—</span>';
     const p=Math.round(act/plan*100),d=p-base;
-    const cls=kind==='spend'
-      ?(Math.abs(d)<=5?'pb-ok':d>5?'pb-warn':'pb-neu')
-      :(d>=0?'pb-ok':d>=-10?'pb-warn':'pb-bad');
-    return`<span class="pb pb-lg ${cls}">${p}%</span><span class="pace-plan">계획 ${fmt(plan)} → ${fmt(act)}</span>`;
+    const col=kind==='spend'
+      ?(Math.abs(d)<=5?'#2e7d32':d>5?'#ef6c00':'#3f6fd8')
+      :(d>=0?'#2e7d32':d>=-10?'#ef6c00':'#c62828');
+    return`<div><span class="pc-n" style="color:${col}">${p}%</span>`+
+      `<span class="pc-d" style="color:${col}">${deltaTxt!==undefined?deltaTxt:(d>=0?'+':'')+d+'%p'}</span></div>`+
+      bar(p,base,col)+
+      `<span class="pace-plan">계획 ${fmt(plan)} → ${fmt(act)}</span>`;
   };
-  // ROAS는 비율이라 기준선이 100% (경과일과 무관)
-  const cellRoas=(planBgt,planRev,actSpd,actRev)=>
-    cell(roas(actSpd,actRev),planBgt>0?planRev*k/planBgt*100:0,100,'gain',fmtP);
+  // ROAS는 비율이라 기준선이 100% (경과일과 무관). 편차는 ROAS 자체의 %p 차이로 표기하되,
+  // 브랜드검색처럼 ROAS가 수천%인 채널은 편차가 네 자리라 셀을 깨뜨려서 생략 (아래 계획→실적 줄로 충분)
+  const cellRoas=(planBgt,planRev,actSpd,actRev)=>{
+    const pR=planBgt>0?planRev*k/planBgt*100:0,aR=roas(actSpd,actRev);
+    const dr=Math.round(aR-pR);
+    return cell(aR,pR,100,'gain',fmtP,!pR?undefined:Math.abs(dr)>=1000?'':(dr>=0?'+':'')+dr+'%p');
+  };
   const row=(cls,label,planBgt,actSpd,planRaw,actM,planC24,actC)=>
     `<tr class="${cls}"><td>${label}</td>
       <td>${cell(actSpd,planBgt,elapsedPct,'spend',fmtM)}</td>
@@ -1838,7 +1850,7 @@ function renderPacing(){
   // 신규 매체 (대시보드에 대응 채널이 없어 실적 매핑 불가 → 합계에서도 제외)
   plan.custom.forEach(c=>{
     rows+=dashRow('pace-cust',`${c.name} <small style="display:inline;color:#b070c8">신규</small>`,
-      `<td><span class="pace-plan" style="margin:0">계획 ${fmtM(c.bgt)} · 실적 매핑 없음</span></td>
+      `<td><span class="pc-flat">계획 ${fmtM(c.bgt)}</span><span class="pace-plan">실적 매핑 없음</span></td>
        <td class="dv dash">—</td><td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td>`);
   });
   // 합계 (유료 7채널 + 콘텐츠 비용, 신규매체·오가닉 제외)
@@ -1870,10 +1882,12 @@ function renderPacing(){
     <tbody>${rows}</tbody>
   </table>
   <div class="pace-legend">
-    큰 숫자는 <b>계획 대비 달성률</b>, 아래 줄은 <b>계획 금액 → 현재 실적</b>.<br>
-    예산·매출의 기준선은 <b>경과율 ${elapsedPct}%</b>(${elapsed}/${totalDays}일) — 광고비는 이보다 높으면
-    <span style="color:#f57f17;font-weight:700">빨리 쓰는 중</span>, 낮으면 <span style="color:#4466cc;font-weight:700">느림</span>이고,
-    매출은 높을수록 좋습니다. <b>ROAS</b>는 비율이라 기준선이 100% (${revMode==='actual'?'실매출 ×0.86':'RAW'} 기준)
+    막대의 <b style="color:#8d96ae">회색 눈금</b>이 기준선입니다 — 막대가 눈금을 넘으면 앞서간 것.
+    예산·매출 기준선은 <b>경과율 ${elapsedPct}%</b>(${elapsed}/${totalDays}일), ROAS는 비율이라 <b>100%</b>.<br>
+    광고비는 기준선보다 빠르면 <span style="color:#ef6c00;font-weight:700">주황</span>, 느리면
+    <span style="color:#3f6fd8;font-weight:700">파랑</span>, 매출·ROAS는 밑돌면
+    <span style="color:#ef6c00;font-weight:700">주황</span>·<span style="color:#c62828;font-weight:700">빨강</span>
+    (${revMode==='actual'?'실매출 ×0.86':'RAW'} 기준)
     ${plan.custom.length?'<br>신규 매체는 대시보드에 대응 채널이 없어 합계에서 제외':''}
   </div>`;
 
@@ -1910,26 +1924,27 @@ function renderPaceDaily(ctx){
 
   const WD=['일','월','화','수','목','금','토'];
   const fmtM=v=>fmtV(v).replace('<span class="won">원</span>','');
-  // 당일 달성률(큰 숫자) + 계획→실적(작은 줄) + 누적 진행률/계획선
+  // 일자별은 29행이라 막대 없이 숫자만 — 당일 달성률(큰 숫자) + 계획→실적 + 누적/계획선
   const cDay=(act,planDay,cum,planTot,dayNo,kind)=>{
-    if(!planDay)return`<span class="pace-plan" style="margin:0">${fmtM(act)}</span>`;
+    if(!planDay)return`<span class="pc-flat">${fmtM(act)}</span>`;
     const p=Math.round(act/planDay*100);
-    const cls=kind==='spend'
-      ?(Math.abs(p-100)<=10?'pb-ok':p>110?'pb-warn':'pb-neu')
-      :(p>=100?'pb-ok':p>=90?'pb-warn':'pb-bad');
+    const col=kind==='spend'
+      ?(Math.abs(p-100)<=10?'#2e7d32':p>110?'#ef6c00':'#3f6fd8')
+      :(p>=100?'#2e7d32':p>=90?'#ef6c00':'#c62828');
     const cp=Math.round(cum/planTot*100),line=Math.round(dayNo/totalDays*100),d=cp-line;
-    const col=Math.abs(d)<=3?'#98a0b5':(d>3?'#f57f17':'#4466cc');
-    return`<span class="pb pb-lg ${cls}">${p}%</span>`+
+    const ccol=Math.abs(d)<=3?'#98a0b5':(d>3?'#ef6c00':'#3f6fd8');
+    return`<span class="pc-n" style="font-size:17px;color:${col}">${p}%</span>`+
       `<span class="pace-plan">계획 ${fmtM(planDay)} → ${fmtM(act)}</span>`+
-      `<span class="pace-plan" style="color:${col};margin-top:1px">누적 ${cp}% <span style="color:#c2c7d6">/ 계획선 ${line}%</span></span>`;
+      `<span class="pace-plan" style="color:${ccol};margin-top:1px">누적 ${cp}% <span style="color:#c2c7d6">/ 계획선 ${line}%</span></span>`;
   };
   // ROAS: 계획 대비 달성률(큰 숫자) + 계획→실적
   const cRoasCell=(actSpd,actRev,planSpd,planRev)=>{
     const pR=planSpd>0?planRev/planSpd*100:0,aR=roas(actSpd,actRev);
-    if(!pR)return aR?`<span class="pace-plan" style="margin:0">${Math.round(aR)}%</span>`:'<span class="dash">—</span>';
+    if(!pR)return aR?`<span class="pc-flat">${Math.round(aR)}%</span>`:'<span class="dash">—</span>';
     const p=Math.round(aR/pR*100);
-    const cls=p>=100?'pb-ok':p>=90?'pb-warn':'pb-bad';
-    return`<span class="pb pb-lg ${cls}">${p}%</span><span class="pace-plan">계획 ${Math.round(pR)}% → ${Math.round(aR)}%</span>`;
+    const col=p>=100?'#2e7d32':p>=90?'#ef6c00':'#c62828';
+    return`<span class="pc-n" style="font-size:17px;color:${col}">${p}%</span>`+
+      `<span class="pace-plan">계획 ${Math.round(pR)}% → ${Math.round(aR)}%</span>`;
   };
 
   let cS=0,cM=0,cC=0,rows='';
@@ -1952,18 +1967,23 @@ function renderPaceDaily(ctx){
     </tr>`;
   });
   const lastNo=parseInt(days[days.length-1].date.slice(8,10),10);
-  const cTot=(cum,planTot)=>{
-    if(!planTot)return`<span class="pace-plan" style="margin:0">${fmtM(cum)}</span>`;
-    const p=Math.round(cum/planTot*100),line=Math.round(lastNo/totalDays*100);
-    return`<span class="pb pb-lg ${p>=line?'pb-ok':p>=line-10?'pb-warn':'pb-bad'}">${p}%</span>`+
+  // 색 기준은 월간 페이싱 표와 동일하게 — 광고비는 기준선 근처가 정상(초록), 매출은 높을수록 좋음
+  const cTot=(cum,planTot,kind)=>{
+    if(!planTot)return`<span class="pc-flat">${fmtM(cum)}</span>`;
+    const p=Math.round(cum/planTot*100),line=Math.round(lastNo/totalDays*100),d=p-line;
+    const col=kind==='spend'
+      ?(Math.abs(d)<=5?'#2e7d32':d>5?'#ef6c00':'#3f6fd8')
+      :(d>=0?'#2e7d32':d>=-10?'#ef6c00':'#c62828');
+    return`<span class="pc-n" style="font-size:17px;color:${col}">${p}%</span>`+
+      `<span class="pc-d" style="color:${col}">${d>=0?'+':''}${d}%p</span>`+
       `<span class="pace-plan">계획 ${fmtM(planTot)} → ${fmtM(cum)}</span>`;
   };
   rows+=`<tr class="tr-total">
     <td>${days.length}일 누적</td>
-    <td>${cTot(cS,planBgt)}</td>
-    <td class="dv">${cTot(cM,planM)}</td>
+    <td>${cTot(cS,planBgt,'spend')}</td>
+    <td class="dv">${cTot(cM,planM,'gain')}</td>
     <td>${cRoasCell(cS,cM,planBgt,planM)}</td>
-    <td class="dv">${cTot(cC,planC)}</td>
+    <td class="dv">${cTot(cC,planC,'gain')}</td>
     <td>${cRoasCell(cS,cC,planBgt,planC)}</td>
   </tr>`;
 
