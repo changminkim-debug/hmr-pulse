@@ -155,6 +155,8 @@ tr.top5-hi td{background:#fff8e1!important}
 .pc-flat{font-size:13px;font-weight:700;color:#8a91a8}
 /* 3줄짜리 행이라 기본 구분선(#f0f3f9)으로는 가로 스캔이 미끄러진다 */
 #pacing-table tbody tr{border-bottom:1px solid #e4e9f3}
+/* 합계가 2행 연속이라 두 번째(전체 합계)는 배경을 한 단계 진하게 구분 */
+#pacing-table tbody tr.tr-grand td{background:#e4e9f6!important;border-top:1px solid #c9d3ea}
 #pacing-table tbody tr.pace-sub{border-bottom:1px dashed #eef1f7}
 #pacing-table tbody td{padding:12px 14px}
 #pacing-table tr.pace-sub td{background:#f8f9fe;color:#555;font-size:13px}
@@ -1025,8 +1027,9 @@ function mmGapOf(ch){return ch.group==='naver'?mmCfg().naverGap:(mmCfg().gap[ch.
 // 갱신 절차: 계산기에서 값 완성 → [📤 게시 요청] 버튼으로 코드 복사 → 통끼에게 전달 →
 //            아래 data에 반영 후 재배포. (publishedAt은 표시용 날짜)
 const MM_PUBLISHED={
-  // 7월: 원래 로컬 저장(localStorage)에만 있다가 유실 → 2026-07-22 마지막 저장본을 복원해 게시본으로 고정
-  '07':{publishedAt:'2026-07-22',data:{
+  // 7월: 원래 로컬 저장(localStorage)에만 있다가 유실 → 2026-07-22 마지막 저장본을 복원해 게시본으로 고정.
+  // 2026-07-31 사용자가 확정본으로 재확인 (31개 필드 전부 기존 게시본과 동일 — 내용 변경 없음, 날짜만 갱신)
+  '07':{publishedAt:'2026-07-31',data:{
     b_brand:'20,563,354',    r_brand:'8500',     note_brand:'고정 금액',
     b_power:'25,000,000',    r_power:'750',      note_power:'',
     b_shop:'10,000,000',     r_shop:'700',       note_shop:'전월 대비 예산 감액',
@@ -1908,9 +1911,18 @@ function renderPacing(){
        `<div>${pill(orgCol,`광고비의 ${(orgRealRatio/100).toFixed(2)}배 · 기준 ${cfg.organicRatio.toFixed(2)}배`)}</div>`
        :'<span class="dash">—</span>'}</td>
      <td class="dash">—</td><td class="dv dash">—</td>`);
-  // 오가닉이 합계 위에 오므로, 합계가 오가닉을 포함하지 않는다는 걸 라벨에 명시
-  rows+=row('tr-total','합계 <small style="display:inline;font-weight:600;color:#8a91a8">유료+콘텐츠</small>',
+  // 퍼포먼스 합계 (유료 + 콘텐츠, 오가닉·신규매체 제외)
+  rows+=row('tr-total','퍼포먼스 합계 <small style="display:inline;font-weight:600;color:#8a91a8">유료+콘텐츠</small>',
     tPB,tAS,tPR,tAM,tPC,tAC);
+  // 전체 합계 (퍼포먼스 + 오가닉). 광고비는 퍼포먼스와 같고 오가닉은 매체 보고가 없으므로
+  // 실질적으로 달라지는 건 C24 매출과 그 ROAS — 총 광고비 대비 전체 매출이 얼마인가.
+  // 매체 보고/실매출 갭은 오가닉에 대응값이 없어 비워 둔다.
+  rows+=dashRow('tr-total tr-grand','전체 합계 <small style="display:inline;font-weight:600;color:#8a91a8">퍼포먼스+오가닉</small>',
+    `<td><span class="pc-flat">${fmtM(tAS)}</span><span class="pace-plan">퍼포먼스와 동일</span></td>
+     <td class="dv dash">—</td><td class="dash">—</td>
+     <td class="dv">${cellAmt(tAC+orgAct,(tPC+plan.organic)*k,'gain')}</td>
+     <td>${cellRoas(tPB,tPC+plan.organic,tAS,tAC+orgAct)}</td>
+     <td class="dv dash">—</td>`);
 
   document.getElementById('pacing-table').innerHTML=`<table>
     <thead>
