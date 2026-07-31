@@ -1796,6 +1796,16 @@ function renderPacing(){
       `<span class="pace-plan">계획 ${fmtM(plan)} → 현재 ${fmtM(act)}</span>`+
       `<div>${projLine}</div>`;
   };
+  // 콘텐츠 비용은 확정된 금액을 일자별로 배분해 집행하는 것뿐이라 달성률(%)이 의미 없다.
+  // 목표 대비 잘하고 못하고가 없으므로 금액만 — 큰 숫자도, pill의 %도 뺀다.
+  const cellFixed=(act,plan)=>{
+    if(!plan&&!act)return'<span class="dash">—</span>';
+    const proj=ratio>0?act/ratio:0;
+    return`<span class="pace-plan" style="margin-top:0;font-size:13px;color:#5f6779">계획 ${fmtM(plan)} → 현재 ${fmtM(act)}</span>`+
+      `<div><span class="pc-pill" style="background:#f0f2f7;color:#7d8496">`+
+      (thinSample?`예상 마감 — 표본 부족 (${elapsed}일)`:`예상 마감 ${fmtM(proj)}`)+
+      `</span></div>`;
+  };
   // ROAS는 비율이라 경과일과 무관 — 현재 누적 ROAS가 곧 예상 마감값이므로 한 줄로 끝낸다
   // (월말예상 = 예상매출÷예상광고비 = (매출/경과×총)÷(광고비/경과×총) = 현재 누적 ROAS)
   const cellRoas=(planBgt,planRev,actSpd,actRev)=>{
@@ -1861,8 +1871,8 @@ function renderPacing(){
        <td class="dv dash">—</td><td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td><td class="dv dash">—</td>`);
   });
   // 콘텐츠 비용 (예산만 — 매출 귀속 없음)
-  rows+=dashRow('pace-cf','<span class="ci ci-content"></span>콘텐츠 비용',
-    `<td>${cellAmt(agg.content_fee.spd,plan.cfBgt,'spend')}</td>
+  rows+=dashRow('pace-cf','<span class="ci ci-content"></span>콘텐츠 비용 <small style="display:inline;font-weight:600;color:#a08a4a">확정</small>',
+    `<td>${cellFixed(agg.content_fee.spd,plan.cfBgt)}</td>
      <td class="dv dash">—</td><td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td><td class="dv dash">—</td>`);
   // ── 오가닉 2행 ────────────────────────────────────────────────
   // 예산을 계획대로 안 쓰는 달이 많아 "계획 예산 기준" 하나만으로는 판단이 왜곡된다.
