@@ -147,11 +147,16 @@ tr.top5-hi td{background:#fff8e1!important}
 #pace-wrap{margin-top:26px;padding-top:22px;border-top:2px solid #f0f2f7}
 #pacing-table tbody td{font-size:15px;line-height:1.35}
 #pacing-table small{display:block;font-size:11px;font-weight:700;color:#98a0b5;margin-top:3px;letter-spacing:.1px}
-/* 페이싱 셀 — 현재 달성률이 주인공, 계획·월말예상은 보조줄. 색은 신호로만 */
+/* 페이싱 셀 — 앵커 2개(현재 달성률 = 큰 숫자, 예상 마감 = pill)에 근거줄 하나를 사이에 둔다.
+   3줄이 같은 무게로 뭉쳐 보이던 문제라 가운데 줄만 뒤로 물림 */
 .pc-n{font-size:21px;font-weight:800;letter-spacing:-.6px;line-height:1.15}
-.pace-plan{display:block;font-size:11.5px;font-weight:600;color:#8f97ab;margin-top:5px;letter-spacing:.1px;white-space:nowrap}
-.pc-proj{margin-top:2px;color:#a9b0c2}
+.pace-plan{display:block;font-size:11.5px;font-weight:600;color:#9aa2b5;margin-top:5px;letter-spacing:.1px;white-space:nowrap}
+.pc-pill{display:inline-block;margin-top:6px;padding:3px 9px;border-radius:7px;font-size:11.5px;font-weight:700;letter-spacing:.1px;white-space:nowrap}
 .pc-flat{font-size:13px;font-weight:700;color:#8a91a8}
+/* 3줄짜리 행이라 기본 구분선(#f0f3f9)으로는 가로 스캔이 미끄러진다 */
+#pacing-table tbody tr{border-bottom:1px solid #e4e9f3}
+#pacing-table tbody tr.pace-sub{border-bottom:1px dashed #eef1f7}
+#pacing-table tbody td{padding:12px 14px}
 #pacing-table tr.pace-sub td{background:#f8f9fe;color:#555;font-size:13px}
 #pacing-table tr.pace-sub td:first-child{padding-left:30px;font-weight:400}
 #pacing-table tr.pace-org td{background:#f4fbf6;color:#2a7a50}
@@ -1774,6 +1779,9 @@ function renderPacing(){
   const sig=(v,base,kind)=>kind==='spend'
     ?(Math.abs(v-base)<=5?'#2e7d32':v-base>5?'#ef6c00':'#3f6fd8')
     :(v-base>=0?'#2e7d32':v-base>=-10?'#ef6c00':'#c62828');
+  // pill 배경은 상태색의 연한 tint
+  const TINT={'#2e7d32':'#e9f5ea','#ef6c00':'#fff2e3','#c62828':'#fdeaec','#3f6fd8':'#ebf1fd'};
+  const pill=(col,html)=>`<span class="pc-pill" style="background:${TINT[col]||'#f0f2f7'};color:${col}">${html}</span>`;
   // 금액 셀 — 큰 숫자는 "지금 계획 대비 얼마나 달성했나"(기준선 = 경과율),
   //           아래 보조줄에 계획→현재, 그 아래 예상 마감(기준선 100%)
   const cellAmt=(act,plan,kind)=>{
@@ -1782,11 +1790,11 @@ function renderPacing(){
     const col=sig(p,elapsedPct,kind);
     const proj=ratio>0?act/ratio:0,pp=Math.round(proj/plan*100);
     const projLine=thinSample
-      ?`<span style="color:#c8cdda">예상 마감 — 표본 부족 (${elapsed}일)</span>`
-      :`예상 마감 ${fmtM(proj)} <b style="color:${sig(pp,100,kind)}">${pp}%</b>`;
+      ?`<span class="pc-pill" style="background:#f0f2f7;color:#a9b0c2">예상 마감 — 표본 부족 (${elapsed}일)</span>`
+      :pill(sig(pp,100,kind),`예상 마감 ${fmtM(proj)} · ${pp}%`);
     return`<div><span class="pc-n" style="color:${col}">${p}%</span></div>`+
       `<span class="pace-plan">계획 ${fmtM(plan)} → 현재 ${fmtM(act)}</span>`+
-      `<span class="pace-plan pc-proj">${projLine}</span>`;
+      `<div>${projLine}</div>`;
   };
   // ROAS는 비율이라 경과일과 무관 — 현재 누적 ROAS가 곧 예상 마감값이므로 한 줄로 끝낸다
   // (월말예상 = 예상매출÷예상광고비 = (매출/경과×총)÷(광고비/경과×총) = 현재 누적 ROAS)
@@ -1875,7 +1883,7 @@ function renderPacing(){
        `<span class="pace-plan">기대 ${fmtM(orgExp)} → 현재 ${fmtM(orgAct)}</span>`+
        // 위의 달성률(%)과 같은 단위로 보이면 "왜 숫자가 다르지?" 하고 헷갈리므로 배수로 표기.
        // 달성률 = 실제배수 ÷ 기준배수 (예: 1.19 ÷ 1.07 = 112%)
-       `<span class="pace-plan pc-proj">오가닉 = 광고비의 <b style="color:${orgCol}">${(orgRealRatio/100).toFixed(2)}배</b> · 기준 ${cfg.organicRatio.toFixed(2)}배</span>`
+       `<div>${pill(orgCol,`광고비의 ${(orgRealRatio/100).toFixed(2)}배 · 기준 ${cfg.organicRatio.toFixed(2)}배`)}</div>`
        :'<span class="dash">—</span>'}</td>
      <td class="dash">—</td><td class="dv dash">—</td>`);
   // 오가닉이 합계 위에 오므로, 합계가 오가닉을 포함하지 않는다는 걸 라벨에 명시
