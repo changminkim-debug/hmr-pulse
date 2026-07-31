@@ -1793,11 +1793,12 @@ function renderPacing(){
   const cellRoas=(planBgt,planRev,actSpd,actRev)=>{
     const pR=planBgt>0?planRev*k/planBgt*100:0,aR=roas(actSpd,actRev);
     if(!pR)return aR?`<span class="pc-flat">${Math.round(aR)}%</span>`:'<span class="dash">—</span>';
-    // 달성률(%)보다 ROAS 자체의 %p 차이가 직관적. 색 등급은 달성률 기준을 유지 —
-    // %p는 채널마다 스케일이 달라(브랜드검색 8500% vs 메타 280%) 심각도 비교가 안 됨.
+    // 금액 셀과 동일한 위계 — 큰 숫자는 "계획 대비 얼마나 차이나는지", 원본 값은 아래 보조줄.
+    // 색 등급만 달성률(%) 기준을 쓴다: %p는 채널마다 스케일이 달라(브랜드검색 8500% vs
+    // 메타 280%) 같은 %p라도 심각도가 전혀 달라 비교가 안 되기 때문.
     const p=Math.round(aR/pR*100),col=sig(p,100,'gain'),d=Math.round(aR-pR);
-    return`<div><span class="pc-n" style="color:${col}">${Math.round(aR)}%</span></div>`+
-      `<span class="pace-plan">계획 ${Math.round(pR)}% · <b style="color:${col}">${d>=0?'+':''}${d}%p</b></span>`;
+    return`<div><span class="pc-n" style="color:${col}">${d>=0?'+':''}${d}%p</span></div>`+
+      `<span class="pace-plan">계획 ${Math.round(pR)}% → 현재 ${Math.round(aR)}%</span>`;
   };
   const row=(cls,label,planBgt,actSpd,planRaw,actM,planC24,actC)=>
     `<tr class="${cls}"><td>${label}</td>
