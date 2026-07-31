@@ -1768,27 +1768,27 @@ function renderPacing(){
   // 페이싱이 주인공이므로 달성률 %를 크게, 원본 금액은 "계획 X → 실적 Y" 한 줄로 작게.
   // (원본 금액 자체는 위 매체별 비교 테이블에서 보면 된다)
   const fmtM=v=>fmtV(v).replace('<span class="won">원</span>','');
-  // 경과 3일 미만에서는 하루 실적을 ×총일수 하는 셈이라 월말 예상이 심하게 요동친다 → 숨김
+  // 경과 3일 미만에서는 하루 실적을 ×총일수 하는 셈이라 예상 마감이 심하게 요동친다 → 숨김
   const thinSample=elapsed<3;
   // kind='spend' → 기준선보다 빠르면 주의(주황)/느리면 파랑, kind='gain' → 높을수록 좋음
   const sig=(v,base,kind)=>kind==='spend'
     ?(Math.abs(v-base)<=5?'#2e7d32':v-base>5?'#ef6c00':'#3f6fd8')
     :(v-base>=0?'#2e7d32':v-base>=-10?'#ef6c00':'#c62828');
   // 금액 셀 — 큰 숫자는 "지금 계획 대비 얼마나 달성했나"(기준선 = 경과율),
-  //           아래 보조줄에 계획→현재, 그 아래 월말 예상(기준선 100%)
+  //           아래 보조줄에 계획→현재, 그 아래 예상 마감(기준선 100%)
   const cellAmt=(act,plan,kind)=>{
     if(!plan)return act?`<span class="pc-flat">${fmtM(act)}</span>`:'<span class="dash">—</span>';
     const p=Math.round(act/plan*100);
     const col=sig(p,elapsedPct,kind);
     const proj=ratio>0?act/ratio:0,pp=Math.round(proj/plan*100);
     const projLine=thinSample
-      ?`<span style="color:#c8cdda">월말 예상 — 표본 부족 (${elapsed}일)</span>`
-      :`월말 예상 ${fmtM(proj)} <b style="color:${sig(pp,100,kind)}">${pp}%</b>`;
+      ?`<span style="color:#c8cdda">예상 마감 — 표본 부족 (${elapsed}일)</span>`
+      :`예상 마감 ${fmtM(proj)} <b style="color:${sig(pp,100,kind)}">${pp}%</b>`;
     return`<div><span class="pc-n" style="color:${col}">${p}%</span></div>`+
       `<span class="pace-plan">계획 ${fmtM(plan)} → 현재 ${fmtM(act)}</span>`+
       `<span class="pace-plan pc-proj">${projLine}</span>`;
   };
-  // ROAS는 비율이라 경과일과 무관 — 현재 누적 ROAS가 곧 월말 예상값이므로 한 줄로 끝낸다
+  // ROAS는 비율이라 경과일과 무관 — 현재 누적 ROAS가 곧 예상 마감값이므로 한 줄로 끝낸다
   // (월말예상 = 예상매출÷예상광고비 = (매출/경과×총)÷(광고비/경과×총) = 현재 누적 ROAS)
   const cellRoas=(planBgt,planRev,actSpd,actRev)=>{
     const pR=planBgt>0?planRev*k/planBgt*100:0,aR=roas(actSpd,actRev);
@@ -1800,6 +1800,16 @@ function renderPacing(){
     return`<div><span class="pc-n" style="color:${col}">${d>=0?'+':''}${d}%p</span></div>`+
       `<span class="pace-plan">계획 ${Math.round(pR)}% → 현재 ${Math.round(aR)}%</span>`;
   };
+  // 실매출 갭 = C24매출 ÷ 매체매출 − 100%. 계획 갭은 계산기의 갭비율(메타 0.81 등)이 그대로 대응.
+  // crev·mrev 모두 실매출 모드에서 ×0.86 되므로 비율은 모드와 무관 — 그래서 별도 보정 없음.
+  const cellGap=(planRaw,planC24,actM,actC)=>{
+    const pG=planRaw>0?planC24/planRaw*100:0,aG=actM>0?actC/actM*100:0;
+    if(!pG||!aG)return'<span class="dash">—</span>';
+    const d=Math.round(aG-pG),col=d>=0?'#2e7d32':d>=-10?'#ef6c00':'#c62828';
+    const s=v=>(v-100>=0?'+':'')+Math.round(v-100)+'%';
+    return`<div><span class="pc-n" style="color:${col}">${d>=0?'+':''}${d}%p</span></div>`+
+      `<span class="pace-plan">계획 ${s(pG)} → 현재 ${s(aG)}</span>`;
+  };
   const row=(cls,label,planBgt,actSpd,planRaw,actM,planC24,actC)=>
     `<tr class="${cls}"><td>${label}</td>
       <td>${cellAmt(actSpd,planBgt,'spend')}</td>
@@ -1807,6 +1817,7 @@ function renderPacing(){
       <td>${cellRoas(planBgt,planRaw,actSpd,actM)}</td>
       <td class="dv">${cellAmt(actC,planC24*k,'gain')}</td>
       <td>${cellRoas(planBgt,planC24,actSpd,actC)}</td>
+      <td class="dv">${cellGap(planRaw,planC24,actM,actC)}</td>
     </tr>`;
   const dashRow=(cls,label,cells)=>`<tr class="${cls}"><td>${label}</td>${cells}</tr>`;
 
@@ -1823,32 +1834,48 @@ function renderPacing(){
           <td>${cellAmt(ss,sp.bgt,'spend')}</td>
           <td class="dv">${cellAmt(sm,sp.raw*k,'gain')}</td>
           <td>${cellRoas(sp.bgt,sp.raw,ss,sm)}</td>
-          <td class="dv dash">—</td><td class="dash">—</td></tr>`;
+          <td class="dv dash">—</td><td class="dash">—</td><td class="dv dash">—</td></tr>`;
       });
     }
   });
-  // 신규 매체 — 유료 매체이므로 기존 채널 바로 뒤. 대시보드에 대응 채널이 없어
-  // 실적 매핑은 불가하고 합계에서도 제외된다.
-  plan.custom.forEach(c=>{
-    rows+=dashRow('pace-cust',`${c.name} <small style="display:inline;color:#b070c8">신규</small>`,
-      `<td><span class="pc-flat">계획 ${fmtM(c.bgt)}</span><span class="pace-plan">실적 매핑 없음</span></td>
-       <td class="dv dash">—</td><td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td>`);
-  });
-  // 콘텐츠 비용 (예산만 — 매출 귀속 없음)
-  rows+=dashRow('pace-cf','<span class="ci ci-content"></span>콘텐츠 비용',
-    `<td>${cellAmt(agg.content_fee.spd,plan.cfBgt,'spend')}</td>
-     <td class="dv dash">—</td><td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td>`);
-  // 오가닉 (계획 = 총 광고비 × 오가닉 비율). 광고비가 없어 C24 매출 칸만 채워진다.
-  rows+=dashRow('pace-org',`오가닉 <small style="display:inline;color:#7aa88f">광고비×${Math.round(cfg.organicRatio*100)}% 예측</small>`,
-    `<td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td>
-     <td class="dv">${cellAmt(agg.organic.crev,plan.organic*k,'gain')}</td><td class="dash">—</td>`);
-  // 합계 (유료 7채널 + 콘텐츠 비용, 신규매체·오가닉 제외)
+  // 합계 (유료 7채널 + 콘텐츠 비용, 신규매체·오가닉 제외) — 오가닉 행이 참조하므로 먼저 계산
   const tPB=PAID_CH.reduce((s,c)=>s+(plan.per[c]||{bgt:0}).bgt,0)+plan.cfBgt;
   const tPR=PAID_CH.reduce((s,c)=>s+(plan.per[c]||{raw:0}).raw,0);
   const tPC=PAID_CH.reduce((s,c)=>s+(plan.per[c]||{c24:0}).c24,0);
   const tAS=PAID_CH.reduce((s,c)=>s+agg[c].spd,0)+agg.content_fee.spd;
   const tAM=PAID_CH.reduce((s,c)=>s+agg[c].mrev,0);
   const tAC=PAID_CH.reduce((s,c)=>s+agg[c].crev,0);
+  // 신규 매체 — 유료 매체이므로 기존 채널 바로 뒤. 대시보드에 대응 채널이 없어
+  // 실적 매핑은 불가하고 합계에서도 제외된다.
+  plan.custom.forEach(c=>{
+    rows+=dashRow('pace-cust',`${c.name} <small style="display:inline;color:#b070c8">신규</small>`,
+      `<td><span class="pc-flat">계획 ${fmtM(c.bgt)}</span><span class="pace-plan">실적 매핑 없음</span></td>
+       <td class="dv dash">—</td><td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td><td class="dv dash">—</td>`);
+  });
+  // 콘텐츠 비용 (예산만 — 매출 귀속 없음)
+  rows+=dashRow('pace-cf','<span class="ci ci-content"></span>콘텐츠 비용',
+    `<td>${cellAmt(agg.content_fee.spd,plan.cfBgt,'spend')}</td>
+     <td class="dv dash">—</td><td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td><td class="dv dash">—</td>`);
+  // ── 오가닉 2행 ────────────────────────────────────────────────
+  // 예산을 계획대로 안 쓰는 달이 많아 "계획 예산 기준" 하나만으로는 판단이 왜곡된다.
+  //  ① 계획예산 기준 = 월 계획 광고비 × 오가닉비율 (원래 목표)
+  //  ② 실집행 기준   = 실제 소진 광고비 × 오가닉비율 (쓴 만큼의 기대치)
+  // ②의 달성률은 분자·분모가 똑같이 경과일에 비례해 약분되므로 시점과 무관한 값이다.
+  const orgAct=agg.organic.crev;
+  const orgExp=tAS*cfg.organicRatio*k;                       // 실집행 광고비 기준 기대 오가닉
+  const orgRealRatio=tAS>0?orgAct/(tAS*k)*100:0;             // 실제 오가닉/광고비 비율 (RAW 환산)
+  const orgP=orgExp>0?Math.round(orgAct/orgExp*100):0;
+  const orgCol=sig(orgP,100,'gain');
+  rows+=dashRow('pace-org',`오가닉 <small style="display:inline;color:#7aa88f">계획예산 기준</small>`,
+    `<td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td>
+     <td class="dv">${cellAmt(orgAct,plan.organic*k,'gain')}</td><td class="dash">—</td><td class="dv dash">—</td>`);
+  rows+=dashRow('pace-org',`└ <small style="display:inline;color:#7aa88f">실집행 광고비 기준</small>`,
+    `<td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td>
+     <td class="dv">${orgExp?`<div><span class="pc-n" style="color:${orgCol}">${orgP}%</span></div>`+
+       `<span class="pace-plan">기대 ${fmtM(orgExp)} → 현재 ${fmtM(orgAct)}</span>`+
+       `<span class="pace-plan pc-proj">오가닉비율 실제 ${Math.round(orgRealRatio)}% · 기준 ${Math.round(cfg.organicRatio*100)}%</span>`
+       :'<span class="dash">—</span>'}</td>
+     <td class="dash">—</td><td class="dv dash">—</td>`);
   // 오가닉이 합계 위에 오므로, 합계가 오가닉을 포함하지 않는다는 걸 라벨에 명시
   rows+=row('tr-total','합계 <small style="display:inline;font-weight:600;color:#8a91a8">유료+콘텐츠</small>',
     tPB,tAS,tPR,tAM,tPC,tAC);
@@ -1860,6 +1887,7 @@ function renderPacing(){
         <th rowspan="2">광고비<br><span style="font-weight:600;text-transform:none;letter-spacing:0">소진률</span></th>
         <th colspan="2" class="ga dv">매체 보고</th>
         <th colspan="2" class="gb dv">Cafe24 실측</th>
+        <th rowspan="2" class="gc dv">실매출 갭<br><span style="font-weight:600;text-transform:none;letter-spacing:0">계획 대비</span></th>
       </tr>
       <tr>
         <th class="ga dv">매출 달성</th><th class="ga">ROAS 달성</th>
@@ -1873,8 +1901,11 @@ function renderPacing(){
     광고비가 ${elapsedPct}%면 계획대로, 그보다 높으면 <span style="color:#ef6c00;font-weight:700">빨리 쓰는 중</span>,
     낮으면 <span style="color:#3f6fd8;font-weight:700">느림</span>. 매출은 높을수록 좋고 밑돌면
     <span style="color:#ef6c00;font-weight:700">주황</span>·<span style="color:#c62828;font-weight:700">빨강</span>.<br>
-    <b>월말 예상</b> = 현재 실적 ÷ ${elapsed}일 × ${totalDays}일 (일평균 유지 가정) — 이건 기준선이 100%.
-    <b>ROAS</b>는 비율이라 현재 누적값이 곧 월말 예상값입니다 (${revMode==='actual'?'실매출 ×0.86':'RAW'} 기준)
+    <b>예상 마감</b> = 현재 실적 ÷ ${elapsed}일 × ${totalDays}일 (일평균 유지 가정) — 이건 기준선이 100%.
+    <b>ROAS</b>와 <b>실매출 갭</b>은 비율이라 현재 누적값이 곧 예상 마감값입니다.<br>
+    <b>오가닉</b>은 예산을 계획대로 안 쓰는 달이 많아 두 기준으로 나눴습니다 —
+    ①계획예산 기준(원래 목표) ②실집행 기준(실제 쓴 광고비 × ${Math.round(cfg.organicRatio*100)}%).
+    ②는 시점과 무관한 값이라 월중 아무 때나 봐도 됩니다 (${revMode==='actual'?'실매출 ×0.86':'RAW'} 기준)
     ${plan.custom.length?'<br>신규 매체는 대시보드에 대응 채널이 없어 합계에서 제외':''}
   </div>`;
 }
