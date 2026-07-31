@@ -1827,16 +1827,21 @@ function renderPacing(){
       });
     }
   });
-  // 콘텐츠 비용 (예산만 — 매출 귀속 없음)
-  rows+=dashRow('pace-cf','<span class="ci ci-content"></span>콘텐츠 비용',
-    `<td>${cellAmt(agg.content_fee.spd,plan.cfBgt,'spend')}</td>
-     <td class="dv dash">—</td><td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td>`);
-  // 신규 매체 (대시보드에 대응 채널이 없어 실적 매핑 불가 → 합계에서도 제외)
+  // 신규 매체 — 유료 매체이므로 기존 채널 바로 뒤. 대시보드에 대응 채널이 없어
+  // 실적 매핑은 불가하고 합계에서도 제외된다.
   plan.custom.forEach(c=>{
     rows+=dashRow('pace-cust',`${c.name} <small style="display:inline;color:#b070c8">신규</small>`,
       `<td><span class="pc-flat">계획 ${fmtM(c.bgt)}</span><span class="pace-plan">실적 매핑 없음</span></td>
        <td class="dv dash">—</td><td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td>`);
   });
+  // 콘텐츠 비용 (예산만 — 매출 귀속 없음)
+  rows+=dashRow('pace-cf','<span class="ci ci-content"></span>콘텐츠 비용',
+    `<td>${cellAmt(agg.content_fee.spd,plan.cfBgt,'spend')}</td>
+     <td class="dv dash">—</td><td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td>`);
+  // 오가닉 (계획 = 총 광고비 × 오가닉 비율). 광고비가 없어 C24 매출 칸만 채워진다.
+  rows+=dashRow('pace-org',`오가닉 <small style="display:inline;color:#7aa88f">광고비×${Math.round(cfg.organicRatio*100)}% 예측</small>`,
+    `<td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td>
+     <td class="dv">${cellAmt(agg.organic.crev,plan.organic*k,'gain')}</td><td class="dash">—</td>`);
   // 합계 (유료 7채널 + 콘텐츠 비용, 신규매체·오가닉 제외)
   const tPB=PAID_CH.reduce((s,c)=>s+(plan.per[c]||{bgt:0}).bgt,0)+plan.cfBgt;
   const tPR=PAID_CH.reduce((s,c)=>s+(plan.per[c]||{raw:0}).raw,0);
@@ -1844,11 +1849,9 @@ function renderPacing(){
   const tAS=PAID_CH.reduce((s,c)=>s+agg[c].spd,0)+agg.content_fee.spd;
   const tAM=PAID_CH.reduce((s,c)=>s+agg[c].mrev,0);
   const tAC=PAID_CH.reduce((s,c)=>s+agg[c].crev,0);
-  rows+=row('tr-total','합계',tPB,tAS,tPR,tAM,tPC,tAC);
-  // 오가닉 (계획 = 총 광고비 × 오가닉 비율)
-  rows+=dashRow('pace-org',`오가닉 <small style="display:inline;color:#7aa88f">광고비×${Math.round(cfg.organicRatio*100)}% 예측</small>`,
-    `<td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td>
-     <td class="dv">${cellAmt(agg.organic.crev,plan.organic*k,'gain')}</td><td class="dash">—</td>`);
+  // 오가닉이 합계 위에 오므로, 합계가 오가닉을 포함하지 않는다는 걸 라벨에 명시
+  rows+=row('tr-total','합계 <small style="display:inline;font-weight:600;color:#8a91a8">유료+콘텐츠</small>',
+    tPB,tAS,tPR,tAM,tPC,tAC);
 
   document.getElementById('pacing-table').innerHTML=`<table>
     <thead>
