@@ -1873,7 +1873,9 @@ function renderPacing(){
     `<td class="dash">—</td><td class="dv dash">—</td><td class="dash">—</td>
      <td class="dv">${orgExp?`<div><span class="pc-n" style="color:${orgCol}">${orgP}%</span></div>`+
        `<span class="pace-plan">기대 ${fmtM(orgExp)} → 현재 ${fmtM(orgAct)}</span>`+
-       `<span class="pace-plan pc-proj">오가닉비율 실제 ${Math.round(orgRealRatio)}% · 기준 ${Math.round(cfg.organicRatio*100)}%</span>`
+       // 위의 달성률(%)과 같은 단위로 보이면 "왜 숫자가 다르지?" 하고 헷갈리므로 배수로 표기.
+       // 달성률 = 실제배수 ÷ 기준배수 (예: 1.19 ÷ 1.07 = 112%)
+       `<span class="pace-plan pc-proj">오가닉 = 광고비의 <b style="color:${orgCol}">${(orgRealRatio/100).toFixed(2)}배</b> · 기준 ${cfg.organicRatio.toFixed(2)}배</span>`
        :'<span class="dash">—</span>'}</td>
      <td class="dash">—</td><td class="dv dash">—</td>`);
   // 오가닉이 합계 위에 오므로, 합계가 오가닉을 포함하지 않는다는 걸 라벨에 명시
@@ -1904,8 +1906,9 @@ function renderPacing(){
     <b>예상 마감</b> = 현재 실적 ÷ ${elapsed}일 × ${totalDays}일 (일평균 유지 가정) — 이건 기준선이 100%.
     <b>ROAS</b>와 <b>실매출 갭</b>은 비율이라 현재 누적값이 곧 예상 마감값입니다.<br>
     <b>오가닉</b>은 예산을 계획대로 안 쓰는 달이 많아 두 기준으로 나눴습니다 —
-    ①계획예산 기준(원래 목표) ②실집행 기준(실제 쓴 광고비 × ${Math.round(cfg.organicRatio*100)}%).
-    ②는 시점과 무관한 값이라 월중 아무 때나 봐도 됩니다 (${revMode==='actual'?'실매출 ×0.86':'RAW'} 기준)
+    ①계획예산 기준(원래 목표) ②실집행 기준(실제 쓴 광고비 × ${cfg.organicRatio.toFixed(2)}배).
+    ②의 달성률은 <b>실제 배수 ÷ 기준 배수</b>이고 시점과 무관해 월중 아무 때나 봐도 됩니다
+    (${revMode==='actual'?'실매출 ×0.86':'RAW'} 기준)
     ${plan.custom.length?'<br>신규 매체는 대시보드에 대응 채널이 없어 합계에서 제외':''}
   </div>`;
 }
