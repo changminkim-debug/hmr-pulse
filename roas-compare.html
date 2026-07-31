@@ -1793,9 +1793,11 @@ function renderPacing(){
   const cellRoas=(planBgt,planRev,actSpd,actRev)=>{
     const pR=planBgt>0?planRev*k/planBgt*100:0,aR=roas(actSpd,actRev);
     if(!pR)return aR?`<span class="pc-flat">${Math.round(aR)}%</span>`:'<span class="dash">—</span>';
-    const p=Math.round(aR/pR*100),col=sig(p,100,'gain');
+    // 달성률(%)보다 ROAS 자체의 %p 차이가 직관적. 색 등급은 달성률 기준을 유지 —
+    // %p는 채널마다 스케일이 달라(브랜드검색 8500% vs 메타 280%) 심각도 비교가 안 됨.
+    const p=Math.round(aR/pR*100),col=sig(p,100,'gain'),d=Math.round(aR-pR);
     return`<div><span class="pc-n" style="color:${col}">${Math.round(aR)}%</span></div>`+
-      `<span class="pace-plan">계획 ${Math.round(pR)}% · 달성 <b style="color:${col}">${p}%</b></span>`;
+      `<span class="pace-plan">계획 ${Math.round(pR)}% · <b style="color:${col}">${d>=0?'+':''}${d}%p</b></span>`;
   };
   const row=(cls,label,planBgt,actSpd,planRaw,actM,planC24,actC)=>
     `<tr class="${cls}"><td>${label}</td>
