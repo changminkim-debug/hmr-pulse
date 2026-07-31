@@ -1059,6 +1059,13 @@ const MM_PUBLISHED={
   }},
 };
 function mmPub(month){const p=MM_PUBLISHED[month||mmMonth];return p&&p.data?p:null;}
+// 예산이 하나라도 들어있는 값인지 (빈 폼이 저장/보관되는 사고를 걸러내는 기준)
+function mmHasBudget(d){
+  if(!d)return false;
+  const num=v=>parseFloat(String(v==null?'':v).replace(/,/g,''))||0;
+  return CALC_CH.some(ch=>num(d['b_'+ch.key])>0)||num(d['b_content'])>0
+    ||(d.custom||[]).some(c=>num(c.bgt)>0);
+}
 
 let mmMonth='07';
 let mmSource='';        // 현재 화면에 뜬 값의 출처: published | local | url | default
@@ -1077,13 +1084,16 @@ function mmDataFromUrl(month){
 // 해당 월의 값을 화면에 세팅 (draft > URL > 내 로컬저장 > 게시본 > 기본값)
 // 다른 사람은 로컬 저장이 없으므로 곧바로 "게시본"을 보게 된다.
 function mmApplyMonth(month){
+  mmApplied[month]=true;
   mmResetInputs();
   mmRenderMonthLabels();
   if(mmDraft[month]){mmSource=mmSrcByMonth[month]||'local';mmLoadData(mmDraft[month]);mmSetSavedState(!!mmSavedFlag[month]);mmRenderSource();return;}
   const urlData=mmDataFromUrl(month);
   if(urlData){mmSource='url';mmLoadData(urlData);mmSetSavedState(true);mmRenderSource();return;}
   const saved=localStorage.getItem(MM_MONTHS[month].storeKey);
-  if(saved){mmSource='local';mmLoadData(JSON.parse(saved));mmSetSavedState(true);mmRenderSource();return;}
+  // 예산이 하나도 없는 저장본은 위 사고(빈 폼이 저장된 경우)의 잔해로 보고 무시한다 —
+  // 그대로 두면 게시본이 가려진 채 백지가 새로고침 후에도 계속 남는다.
+  if(saved&&mmHasBudget(JSON.parse(saved))){mmSource='local';mmLoadData(JSON.parse(saved));mmSetSavedState(true);mmRenderSource();return;}
   const pub=mmPub(month);
   if(pub){mmSource='published';mmLoadData(pub.data);mmSetSavedState(true);mmRenderSource();return;}
   mmSource='default';
@@ -1149,9 +1159,14 @@ function mmResetInputs(){
   mmClearCustom();   // 신규 매체는 월별로 독립
   mmLoading=false;
 }
+const mmApplied={};   // 그 달을 화면에 한 번이라도 실제로 로드했는지
 function mmSwitchMonth(month){
   if(month===mmMonth)return;
-  mmDraft[mmMonth]=mmCollectData();          // 현재 월 편집 내용 보관
+  // ⚠️ 한 번도 로드된 적 없는 달의 빈 폼을 draft로 저장하면 안 된다.
+  // (2026-07-31 사고: URL에 mmM=08이 있으면 openMMCalc가 7월을 로드하기 전에
+  //  mmSwitchMonth('08')을 불러 "빈 7월"이 draft로 박혔고, 이후 7월 탭이 백지로 떴음.
+  //  draft는 게시본보다 우선순위가 높아 게시본이 있어도 가려짐)
+  if(mmApplied[mmMonth])mmDraft[mmMonth]=mmCollectData();   // 현재 월 편집 내용 보관
   mmMonth=month;
   Object.keys(MM_MONTHS).forEach(m=>{
     const t=document.getElementById(`mm-tab-${m}`);
@@ -1166,8 +1181,14 @@ function openMMCalc(){
     // URL에 명시된 월이 있으면 그 월로 열기 (링크 공유용)
     const urlMonth=new URLSearchParams(location.search).get('mmM');
     const startMonth=MM_MONTHS[urlMonth]?urlMonth:(mmDataFromUrl('08')&&!mmDataFromUrl('07')?'08':'07');
-    if(startMonth!=='07'){mmMonth='07';mmSwitchMonth(startMonth);}
-    else mmApplyMonth('07');
+    // 시작 월은 곧바로 세팅한다. 예전엔 mmMonth='07'로 둔 뒤 mmSwitchMonth(startMonth)를
+    // 불렀는데, 그 과정에서 아직 로드도 안 된 7월의 빈 폼이 draft로 저장되는 사고가 있었음.
+    mmMonth=startMonth;
+    Object.keys(MM_MONTHS).forEach(m=>{
+      const t=document.getElementById(`mm-tab-${m}`);
+      if(t)t.classList.toggle('active',m===startMonth);
+    });
+    mmApplyMonth(startMonth);
   }
   document.addEventListener('keydown',mmEsc);
 }
@@ -1215,6 +1236,8 @@ function mmCollectData(){
 }
 function mmSave(){
   const data=mmCollectData();
+  // 안전장치: 예산이 전부 빈 채로 저장하면 게시본이 가려진 채 백지가 고착된다
+  if(!mmHasBudget(data)&&!confirm('예산이 모두 비어 있습니다.\n이대로 저장하면 게시본 대신 빈 값이 보입니다. 그래도 저장할까요?'))return;
   mmDraft[mmMonth]=data;
   const encoded=btoa(encodeURIComponent(JSON.stringify(data)));
   localStorage.setItem(MM_MONTHS[mmMonth].storeKey,JSON.stringify(data));
