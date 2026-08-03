@@ -358,13 +358,8 @@ input.mm-gap-in:focus{border-color:#4466cc}
   <!-- 기간 필터 -->
   <div class="filter-bar">
     <span class="flabel">기간</span>
-    <button class="fbtn" data-m="all">전체 (3~7월)</button>
-    <button class="fbtn" data-m="q2">4~7월</button>
-    <button class="fbtn" data-m="2026-03">3월</button>
-    <button class="fbtn" data-m="2026-04">4월</button>
-    <button class="fbtn" data-m="2026-05">5월</button>
-    <button class="fbtn" data-m="2026-06">6월 (~30일)</button>
-    <button class="fbtn" data-m="2026-07">7월 (~31일)</button>
+    <!-- 월 버튼은 데이터에서 자동 생성 (buildMonthFilter) — 하드코딩하면 달이 바뀔 때마다 누락됨 -->
+    <span id="m-btns" style="display:contents"></span>
     <div class="fsep"></div>
     <button class="fbtn" data-view="monthly">월별</button>
     <button class="fbtn" data-view="daily">일별</button>
@@ -422,24 +417,12 @@ input.mm-gap-in:focus{border-color:#4466cc}
       <div class="cmp-ctrl">
         <div style="display:flex;align-items:center;gap:8px">
           <span class="side-chip a">A</span>
-          <select id="sel-a">
-            <option value="2026-03">3월</option>
-            <option value="2026-04">4월</option>
-            <option value="2026-05">5월</option>
-            <option value="2026-06">6월</option>
-            <option value="2026-07">7월</option>
-          </select>
+          <select id="sel-a"></select>
         </div>
         <span class="cmp-vs">vs</span>
         <div style="display:flex;align-items:center;gap:8px">
           <span class="side-chip b">B</span>
-          <select id="sel-b">
-            <option value="2026-03">3월</option>
-            <option value="2026-04" selected>4월</option>
-            <option value="2026-05">5월</option>
-            <option value="2026-06">6월</option>
-            <option value="2026-07">7월</option>
-          </select>
+          <select id="sel-b"></select>
         </div>
         <div class="cmp-sep"></div>
         <div style="display:flex;align-items:center;gap:8px">
@@ -624,6 +607,7 @@ async function loadMedia(){
         },c24:{...c24base,organic:organicMap[d]??c24base.organic??0}};
     });
     setStatus('완료 · '+new Date().toLocaleTimeString('ko-KR'),'#4caf50',true);
+    buildMonthFilter();
     render();
   }catch(e){
     setStatus('오류: '+e.message,'#e53935',false);
@@ -676,7 +660,9 @@ function render(){
   renderMainTable(agg,days);
   renderPacing();
   renderCompare();
-  document.getElementById('tbl-badge').textContent=activeMonth==='all'?'3~6월 합계':activeMonth==='q2'?'4~6월 합계':activeMonth;
+  const _ms=monthList(),_f=_ms.length?+_ms[0].slice(5):0,_l=_ms.length?+_ms[_ms.length-1].slice(5):0;
+  document.getElementById('tbl-badge').textContent=
+    activeMonth==='all'?`${_f}~${_l}월 합계`:activeMonth==='q2'?`4~${_l}월 합계`:activeMonth;
   if(activeView==='daily'){document.getElementById('daily-section').style.display='';renderDailyTable(days);}
   else{document.getElementById('daily-section').style.display='none';}
   renderOrganicTable();
@@ -945,14 +931,44 @@ function toggleSection(bodyId,togId){
   });
 }
 
-// ═══ EVENTS ═══════════════════════════════════════════════════════
-document.querySelectorAll('[data-m]').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('[data-m]').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');activeMonth=btn.dataset.m;naverExpanded=false;
-    if(rawDays.length)render();
+// ═══ 기간 필터 (데이터에서 자동 생성) ═══════════════════════════════
+// 2026-08-03: 월 버튼과 A/B 셀렉트가 3~7월로 하드코딩돼 있어 8월 데이터가 들어왔는데도
+// 화면에서 8월을 고를 수 없었음. 매달 손대지 않도록 rawDays에서 만들어 쓴다.
+function monthList(){return [...new Set(rawDays.map(d=>d.month))].sort();}
+function monthLabel(m){
+  const mm=+m.slice(5);
+  const ds=rawDays.filter(d=>d.month===m);
+  const maxDay=ds.length?+ds[ds.length-1].date.slice(8,10):0;
+  const total=new Date(+m.slice(0,4),mm,0).getDate();
+  return mm+'월'+(maxDay&&maxDay<total?` (~${maxDay}일)`:'');
+}
+function buildMonthFilter(){
+  const months=monthList();if(!months.length)return;
+  const first=+months[0].slice(5),last=+months[months.length-1].slice(5);
+  let html=`<button class="fbtn" data-m="all">전체 (${first}~${last}월)</button>`;
+  if(first<4)html+=`<button class="fbtn" data-m="q2">4~${last}월</button>`;
+  months.forEach(m=>{html+=`<button class="fbtn" data-m="${m}">${monthLabel(m)}</button>`;});
+  const box=document.getElementById('m-btns');
+  box.innerHTML=html;
+  box.querySelectorAll('[data-m]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      box.querySelectorAll('[data-m]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');activeMonth=btn.dataset.m;naverExpanded=false;
+      if(rawDays.length)render();
+    });
   });
-});
+  (box.querySelector(`[data-m="${activeMonth}"]`)||box.querySelector('[data-m="all"]')).classList.add('active');
+  // 월별 성과 비교 A/B 셀렉트 — 기본값은 최신월 vs 직전월
+  const opts=months.map(m=>`<option value="${m}">${+m.slice(5)}월</option>`).join('');
+  ['sel-a','sel-b'].forEach((id,i)=>{
+    const el=document.getElementById(id);if(!el)return;
+    const prev=el.value;
+    el.innerHTML=opts;
+    el.value=months.includes(prev)?prev:months[Math.max(0,months.length-1-i)];
+  });
+}
+
+// ═══ EVENTS ═══════════════════════════════════════════════════════
 document.querySelectorAll('[data-view]').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('[data-view]').forEach(b=>b.classList.remove('active'));
@@ -972,7 +988,7 @@ document.querySelectorAll('#ch-filter .ch-btn').forEach(btn=>{
 });
 
 // ═══ INIT ═════════════════════════════════════════════════════════
-document.querySelector('[data-m="all"]').classList.add('active');
+// 월 버튼은 데이터 로드 후 buildMonthFilter()가 만들면서 active까지 지정한다
 document.querySelector('[data-view="monthly"]').classList.add('active');
 loadMedia();
 
