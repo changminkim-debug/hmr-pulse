@@ -576,7 +576,11 @@ async function loadMedia(){
   try{
     const [t1,t2,metaC1]=await Promise.all([
       fetchGviz(['C','J','K','L','O','Q','T','V','Y','AA']),
-      fetchGviz(['C','AY','BA','BJ','BL','BX','BZ','CH','CI','CC','CE','CL']),
+      // 열 매핑(01.DATA 시트 5행 라벨 기준): AY 구글SA SPD / BA 구글SA REV / BJ 구글DA SPD / BL 구글DA REV
+      // BX 페이코 SPD / BZ 페이코 REV / CH 에디ai SPD / CI 에디ai REV / CC 토스 SPD / CE 토스 REV / CO 콘텐츠비용 SPD
+      // ※ 2026-08 크리테오 그룹(CK~CM)이 새로 끼면서 콘텐츠비용이 CL→CO로 3칸 밀렸다.
+      //   시트에 채널 열이 추가되면 여기 letter가 조용히 어긋나 값이 0으로 사라진다 — 아래 검증 로그 확인.
+      fetchGviz(['C','AY','BA','BJ','BL','BX','BZ','CH','CI','CC','CE','CO']),
       fetchMetaC1Rev(),
     ]);
     let organicMap={};let organicSrc='채널없음 Cafe24';
@@ -606,6 +610,9 @@ async function loadMedia(){
           content_fee:{spd:n(x[11]),rev:0},
         },c24:{...c24base,organic:organicMap[d]??c24base.organic??0}};
     });
+    // 열 밀림 감지: 콘텐츠 비용은 매일 집행되는 고정비라 전 구간 0이면 열이 어긋난 것
+    const cfSum=rawDays.reduce((s,d)=>s+d.media.content_fee.spd,0);
+    if(!cfSum)console.warn('[경고] 콘텐츠 비용이 전 구간 0 — 시트 열(CO)이 밀렸는지 확인 필요');
     setStatus('완료 · '+new Date().toLocaleTimeString('ko-KR'),'#4caf50',true);
     buildMonthFilter();
     render();
