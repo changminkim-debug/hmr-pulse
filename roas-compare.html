@@ -248,6 +248,12 @@ input.mm-org-days:focus{border-color:#4466cc}
 input.mm-total-bgt{width:160px;padding:7px 9px;border:1.5px solid #b8c4f0;border-radius:7px;font-size:14px;font-weight:700;text-align:right;font-family:inherit;outline:none;background:#fff}
 input.mm-total-bgt:focus{border-color:#4466cc}
 .mm-total-bgt-diff{font-size:12px;font-weight:600;color:#5a6380}
+/* 전체 비고 (미디어믹스 논의 메모) — 총 예산 박스와 같은 폭 */
+.mm-memo-wrap{margin-bottom:12px;padding:12px 16px;background:#fffdf2;border-radius:10px;border:1.5px solid #ece0b8}
+.mm-memo-label{display:block;font-size:13px;font-weight:800;color:#6a5000;margin-bottom:7px}
+textarea.mm-memo{display:block;width:100%;box-sizing:border-box;min-height:66px;resize:vertical;padding:8px 10px;border:1.5px solid #e0d4a8;border-radius:7px;font-size:13px;line-height:1.55;font-family:inherit;color:#3a3320;background:#fff;outline:none}
+textarea.mm-memo:focus{border-color:#c9a94a}
+textarea.mm-memo::placeholder{color:#b8ad86}
 .mm-bgt-pct-val{font-size:11px;color:#8a91a8;font-weight:700;margin-left:4px;white-space:nowrap}
 .mm-tbl thead th.mmh-pct{background:#f3f0ff;color:#6a4fd8;text-align:center}
 .mm-tbl tbody td.mmh-pct{background:#faf9ff;text-align:center}
@@ -267,7 +273,7 @@ input.mm-gap-in:focus{border-color:#4466cc}
 .mm-gap-hint{font-size:10px;color:#aaa;display:block;margin-top:2px}
 .mm-del-btn{margin-left:5px;background:none;border:none;color:#c0c4d4;font-size:15px;cursor:pointer;padding:0 3px;line-height:1;font-family:inherit}
 .mm-del-btn:hover{color:#c62828}
-/* 월 탭 (7월/8월) */
+/* 월 탭 (7월/8월/9월) */
 .mm-month-tabs{display:inline-flex;gap:4px;background:rgba(255,255,255,.1);padding:3px;border-radius:10px}
 .mm-month-tab{padding:5px 15px;border:none;border-radius:8px;background:none;color:rgba(255,255,255,.6);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:.12s}
 .mm-month-tab:hover{color:#fff;background:rgba(255,255,255,.12)}
@@ -294,6 +300,7 @@ input.mm-gap-in:focus{border-color:#4466cc}
       <div class="mm-month-tabs">
         <button class="mm-month-tab active" id="mm-tab-07" onclick="mmSwitchMonth('07')">7월</button>
         <button class="mm-month-tab" id="mm-tab-08" onclick="mmSwitchMonth('08')">8월</button>
+        <button class="mm-month-tab" id="mm-tab-09" onclick="mmSwitchMonth('09')">9월</button>
       </div>
       <span class="mm-modal-badge" id="mm-month-badge">7월 시뮬레이션</span>
       <span class="mm-src-label" id="mm-src-label">기본값 (미작성)</span>
@@ -307,6 +314,10 @@ input.mm-gap-in:focus{border-color:#4466cc}
     </div>
     <div class="mm-modal-body">
       <div class="mm-roas-note">RAW ROAS 기본값은 6월 실적 기준 · 예산은 원(₩) 단위 입력 · C24 갭비율은 4~6월 평균 기준 · 오가닉은 4~6월 일평균 예측값</div>
+      <div class="mm-memo-wrap">
+        <span class="mm-memo-label">전체 비고</span>
+        <textarea class="mm-memo" id="mm-memo" rows="3" placeholder="미디어믹스 논의하면서 나온 내용을 적어두세요 (월별로 따로 저장됩니다)" oninput="mmDirty()"></textarea>
+      </div>
       <div class="mm-total-bgt-wrap">
         <span class="mm-total-bgt-label">총 예산(원)</span>
         <input class="mm-total-bgt" id="mm-total-budget" type="text" inputmode="numeric" placeholder="0" oninput="mmBgtFmt(this)">
@@ -1040,6 +1051,21 @@ const MM_MONTHS={
     // 5~7월 평균 C24/RAW
     gap:{meta:0.81,google_sa:0.43,google_da:0.75,payco:0.22,toss:0.22,aedi:1.00},
   },
+  // 2026-08-31 산출. 산출법은 07/08과 동일 (대시보드 파이프라인 그대로 재집계):
+  //   RAW ROAS = 8월 1~30일 실적 / C24 갭 = 6·7·8월 월별비율의 평균 / 오가닉 = 6~8월 오가닉÷총광고비
+  //   ※ 구글 SA 갭은 08 게시값(0.43)보다 낮게 나온다 — 재집계 기준 6~8월 월별값이
+  //     0.29 / 0.35 / 0.41 로, 3개월 평균이 0.35. 08 때의 0.43은 그 뒤 시트 수정으로 재현되지 않음.
+  '09':{
+    label:'9월', storeKey:'mm-calc-save-09', urlKey:'mm9',
+    gapLabel:'6~8월 평균', organicLabel:'6~8월',
+    naverGap:0.64,        // 6~8월 평균 (0.711 / 0.605 / 0.602)
+    organicRatio:1.07,    // 6~8월 오가닉/광고비 (합산 106.7% · 월평균 107.0%)
+    note:'RAW ROAS 기본값은 8월(1~30일) 실적 기준 · 예산은 원(₩) 단위 입력 · C24 갭비율은 6~8월 평균 기준 · 오가닉은 6~8월 비율(광고비×107%) 예측값',
+    // 8월 1~30일 실적 RAW ROAS
+    roas:{brand:8958,power:782,shop:502,meta:278,google_sa:2270,google_da:371,payco:628,toss:518,aedi:699},
+    // 6~8월 평균 C24/RAW
+    gap:{meta:0.81,google_sa:0.35,google_da:0.72,payco:0.24,toss:0.21,aedi:1.00},
+  },
 };
 function mmCfg(){return MM_MONTHS[mmMonth];}
 function mmDefRoas(key){return mmCfg().roas[key]||0;}
@@ -1079,6 +1105,23 @@ const MM_PUBLISHED={
     b_content:'20,866,348',  note_content:'여유 557만원',
     total_budget:'1,260,000,000',
     custom:[{name:'크리테오',bgt:'5,000,000',roas:'',gap:'',note:'100만원으로 집행 가능한지 확인'}],
+  }},
+  // 9월: 논의 시작용 초안. 예산은 8월 확정안을 그대로 이월했고(합계 12.6억 그대로 맞음),
+  // RAW ROAS만 8월 실적 기준으로 갱신했다. 채널별 비고는 8월 것을 지우고 비워둠.
+  '09':{publishedAt:'2026-08-31',data:{
+    memo:'[초안] 8월 확정안 예산을 그대로 이월한 시작점입니다. 총 12.6억.\n· RAW ROAS 기본값 = 8월 1~30일 실적 / C24 갭 = 6~8월 평균으로 갱신\n· 9월 논의 내용을 여기에 적어주세요.',
+    b_brand:'18,703,354',    r_brand:'8958',     note_brand:'',
+    b_power:'30,000,000',    r_power:'782',      note_power:'',
+    b_shop:'16,000,000',     r_shop:'502',       note_shop:'',
+    b_meta:'1,014,530,298',  r_meta:'278',       note_meta:'',
+    b_google_sa:'22,000,000',r_google_sa:'2270', note_google_sa:'',
+    b_google_da:'85,000,000',r_google_da:'371',  note_google_da:'',
+    b_payco:'10,000,000',    r_payco:'628',      note_payco:'',
+    b_toss:'10,000,000',     r_toss:'518',       note_toss:'',
+    b_aedi:'27,900,000',     r_aedi:'699',       note_aedi:'',
+    b_content:'20,866,348',  note_content:'',
+    total_budget:'1,260,000,000',
+    custom:[{name:'크리테오',bgt:'5,000,000',roas:'',gap:'',note:''}],
   }},
 };
 function mmPub(month){const p=MM_PUBLISHED[month||mmMonth];return p&&p.data?p:null;}
@@ -1179,6 +1222,7 @@ function mmResetInputs(){
   const bc=document.getElementById('mm-b-content');if(bc)bc.value='';
   const nc=document.getElementById('mm-note-content');if(nc)nc.value='';
   const tb=document.getElementById('mm-total-budget');if(tb)tb.value='';
+  const mo=document.getElementById('mm-memo');if(mo)mo.value='';
   mmClearCustom();   // 신규 매체는 월별로 독립
   mmLoading=false;
 }
@@ -1203,7 +1247,13 @@ function openMMCalc(){
     buildMMTable();mmBuilt=true;
     // URL에 명시된 월이 있으면 그 월로 열기 (링크 공유용)
     const urlMonth=new URLSearchParams(location.search).get('mmM');
-    const startMonth=MM_MONTHS[urlMonth]?urlMonth:(mmDataFromUrl('08')&&!mmDataFromUrl('07')?'08':'07');
+    // 링크로 특정 월 값만 공유된 경우 그 달을, 아니면 가장 마지막에 등록된 월을 연다.
+    // (예전엔 '07'/'08'이 하드코딩돼 있어 달이 늘 때마다 손봐야 했다.
+    //  '이번 달'이 아니라 '마지막 월'인 이유 — 미디어믹스는 늘 다음 달 것을 월말에 짜므로
+    //  새 달을 MM_MONTHS에 추가한 시점부터 그게 작업 대상이다)
+    const mms=Object.keys(MM_MONTHS);
+    const shared=mms.filter(m=>mmDataFromUrl(m));
+    const startMonth=MM_MONTHS[urlMonth]?urlMonth:(shared.length===1?shared[0]:mms[mms.length-1]);
     // 시작 월은 곧바로 세팅한다. 예전엔 mmMonth='07'로 둔 뒤 mmSwitchMonth(startMonth)를
     // 불렀는데, 그 과정에서 아직 로드도 안 된 7월의 빈 폼이 draft로 저장되는 사고가 있었음.
     mmMonth=startMonth;
@@ -1225,6 +1275,8 @@ function mmSetSavedState(isSaved){
   if(e)e.style.display=isSaved?'':'none';
 }
 function mmEdit(){mmSetSavedState(false);}
+// 계산 결과와 무관한 입력(전체 비고)이 바뀌었을 때 저장 버튼을 다시 노출
+function mmDirty(){if(!mmLoading&&mmSavedFlag[mmMonth])mmSetSavedState(false);}
 function closeMMCalc(){
   document.getElementById('mm-overlay').classList.remove('open');
   document.removeEventListener('keydown',mmEsc);
@@ -1247,6 +1299,8 @@ function mmCollectData(){
   if(nc)data['note_content']=nc.value;
   const tb=document.getElementById('mm-total-budget');
   if(tb)data['total_budget']=tb.value;
+  const mo=document.getElementById('mm-memo');
+  if(mo)data['memo']=mo.value;
   // 신규 매체 행
   data.custom=mmCustom.map(id=>({
     name:document.getElementById(`mm-cn-${id}`)?.value||'',
@@ -1302,6 +1356,8 @@ function mmLoadData(data){
   if(nc&&data['note_content']!==undefined)nc.value=data['note_content'];
   const tb=document.getElementById('mm-total-budget');
   if(tb&&data['total_budget']!==undefined)tb.value=data['total_budget'];
+  const mo=document.getElementById('mm-memo');
+  if(mo)mo.value=data['memo']||'';
   // 신규 매체 행 복원 (예전 저장본에는 custom이 없으므로 빈 배열 처리)
   mmClearCustom();
   (data.custom||[]).forEach(c=>mmAddCustom(c));
