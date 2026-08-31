@@ -1140,9 +1140,9 @@ const MM_PUBLISHED={
     b_payco:'12,000,000', r_payco:'650', note_payco:'매체 650% → C24 갭 24% 반영',
     b_toss:'20,000,000', r_toss:'550', note_toss:'매체 550% → C24 갭 21% 반영',
     b_aedi:'27,000,000', r_aedi:'650', note_aedi:'매체 = C24 동일 650%',
-    b_content:'48,600,000', note_content:'1팀 2,540만원 / 2팀 2,320만원 (예상치)',
+    b_content:'48,600,000', note_content:'1팀 2,540만원 (+브검 누락 940만원) / 2팀 2,320만원',
     total_budget:'1,055,000,000',
-    custom:[{name:'크리테오',bgt:'1,000,000',roas:'',gap:'',note:'테스트 집행 (매출 0으로 반영)'}],
+    custom:[{name:'크리테오',bgt:'1,000,000',roas:'',gap:'',note:'테스트 집행 (매출 0으로 보수 반영)'}],
   }},
 };
 function mmPub(month){const p=MM_PUBLISHED[month||mmMonth];return p&&p.data?p:null;}
