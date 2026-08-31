@@ -178,7 +178,7 @@ tr.top5-hi td{background:#fff8e1!important}
 /* 미디어믹스 계산기 모달 */
 .mm-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:8000;display:none;align-items:center;justify-content:center;padding:20px}
 .mm-modal-overlay.open{display:flex}
-.mm-modal{background:#fff;border-radius:18px;width:100%;max-width:1480px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.mm-modal{background:#fff;border-radius:18px;width:100%;max-width:1860px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.4)}
 .mm-modal-hd{background:#1e2333;border-radius:18px 18px 0 0;padding:22px 28px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
 .mm-modal-title{font-size:18px;font-weight:800;color:#fff}
 .mm-modal-badge{font-size:12px;font-weight:700;padding:4px 11px;border-radius:7px;background:#4466cc;color:#fff}
@@ -186,7 +186,7 @@ tr.top5-hi td{background:#fff8e1!important}
 .mm-modal-close:hover{color:#fff;background:rgba(255,255,255,.1)}
 .mm-modal-body{padding:24px 28px}
 .mm-roas-note{font-size:12px;color:#5a6380;margin-bottom:16px;padding:10px 14px;background:#f0f2ff;border-radius:8px;border-left:3px solid #4466cc}
-.mm-tbl-wrap{overflow-x:auto;margin-bottom:20px;border-radius:12px;border:1px solid #eaecf3;overflow:hidden}
+.mm-tbl-wrap{overflow-x:auto;overflow-y:hidden;margin-bottom:20px;border-radius:12px;border:1px solid #eaecf3}
 .mm-tbl{width:100%;border-collapse:collapse;font-size:14px}
 .mm-tbl thead th{padding:9px 11px;text-align:right;font-size:11px;font-weight:700;color:#8a91a8;letter-spacing:.3px;background:#f7f8fc;white-space:nowrap;border-bottom:1px solid #eaecf3}
 .mm-tbl thead th:first-child{text-align:left;min-width:120px}
@@ -203,6 +203,7 @@ tr.top5-hi td{background:#fff8e1!important}
 .mm-tbl tbody tr:not(.mm-total):not(.mm-perf-total):hover td{background:#eef1ff!important;transition:background .1s}
 .mm-tbl tbody tr{border-bottom:1px solid #eef0f6}
 .mm-tbl tbody td{padding:9px 11px;text-align:right;white-space:nowrap;font-size:13px}
+.mm-tbl tbody td.mm-note-cell{white-space:normal;padding:7px 11px}
 .mm-tbl tbody td:first-child{text-align:left;font-weight:600}
 .mm-tbl tr.mm-naver td{background:#f8f9fd}
 .mm-tbl tr.mm-naver td:first-child{padding-left:22px;font-weight:400;color:#555}
@@ -215,8 +216,9 @@ input.mm-bgt{width:110px;padding:5px 7px;border:1.5px solid #d8dce8;border-radiu
 input.mm-bgt:focus{border-color:#4466cc}
 input.mm-roas{width:60px;padding:5px 7px;border:1.5px solid #d8dce8;border-radius:7px;font-size:12px;text-align:right;font-family:inherit;outline:none}
 input.mm-roas:focus{border-color:#4466cc}
-input.mm-note{width:120px;padding:4px 8px;border:1.5px solid #e8eaf0;border-radius:7px;font-size:12px;font-family:inherit;outline:none;color:#4a5478;background:#fafbff}
-input.mm-note:focus{border-color:#9baad8;background:#fff}
+.mm-note{display:block;width:100%;box-sizing:border-box;padding:5px 9px;border:1.5px solid #e8eaf0;border-radius:7px;font-size:12px;line-height:1.5;font-family:inherit;outline:none;color:#4a5478;background:#fafbff;resize:none;overflow:hidden;min-height:29px}
+.mm-note:focus{border-color:#9baad8;background:#fff}
+.mm-note::placeholder{color:#c2c8da}
 .mm-roas-pill{display:inline-block;padding:3px 11px;border-radius:99px;font-size:13px;font-weight:800;background:#e8f0ff;color:#3355cc}
 input.mm-org-days{width:44px;padding:3px 5px;border:1.5px solid #d8dce8;border-radius:6px;font-size:12px;text-align:center;font-family:inherit;outline:none}
 input.mm-org-days:focus{border-color:#4466cc}
@@ -248,10 +250,17 @@ input.mm-org-days:focus{border-color:#4466cc}
 input.mm-total-bgt{width:160px;padding:7px 9px;border:1.5px solid #b8c4f0;border-radius:7px;font-size:14px;font-weight:700;text-align:right;font-family:inherit;outline:none;background:#fff}
 input.mm-total-bgt:focus{border-color:#4466cc}
 .mm-total-bgt-diff{font-size:12px;font-weight:600;color:#5a6380}
-/* 전체 비고 (미디어믹스 논의 메모) — 총 예산 박스와 같은 폭 */
+/* 전체 비고 (미디어믹스 논의 메모) — 총 예산 박스와 같은 폭 · 접기/펼치기 */
 .mm-memo-wrap{margin-bottom:12px;padding:12px 16px;background:#fffdf2;border-radius:10px;border:1.5px solid #ece0b8}
-.mm-memo-label{display:block;font-size:13px;font-weight:800;color:#6a5000;margin-bottom:7px}
-textarea.mm-memo{display:block;width:100%;box-sizing:border-box;min-height:66px;resize:vertical;padding:8px 10px;border:1.5px solid #e0d4a8;border-radius:7px;font-size:13px;line-height:1.55;font-family:inherit;color:#3a3320;background:#fff;outline:none}
+.mm-memo-wrap.collapsed{padding:9px 16px}
+.mm-memo-hd{display:flex;align-items:center;gap:9px;width:100%;margin:0 0 8px;padding:0;background:none;border:none;cursor:pointer;font-family:inherit;text-align:left}
+.mm-memo-wrap.collapsed .mm-memo-hd{margin-bottom:0}
+.mm-memo-hd:hover .mm-memo-label{color:#8a6a00}
+.mm-memo-caret{font-size:11px;color:#a08a3c;width:11px;flex:none}
+.mm-memo-label{font-size:13px;font-weight:800;color:#6a5000;white-space:nowrap;flex:none}
+.mm-memo-peek{flex:1;min-width:0;font-size:12px;color:#9a8a5c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mm-memo-wrap.collapsed textarea.mm-memo{display:none}
+textarea.mm-memo{display:block;width:100%;box-sizing:border-box;min-height:132px;resize:vertical;padding:10px 12px;border:1.5px solid #e0d4a8;border-radius:7px;font-size:13.5px;line-height:1.65;font-family:inherit;color:#3a3320;background:#fff;outline:none}
 textarea.mm-memo:focus{border-color:#c9a94a}
 textarea.mm-memo::placeholder{color:#b8ad86}
 .mm-bgt-pct-val{font-size:11px;color:#8a91a8;font-weight:700;margin-left:4px;white-space:nowrap}
@@ -318,9 +327,13 @@ input.mm-gap-in:focus{border-color:#4466cc}
     </div>
     <div class="mm-modal-body">
       <div class="mm-roas-note">RAW ROAS 기본값은 6월 실적 기준 · 예산은 원(₩) 단위 입력 · C24 갭비율은 4~6월 평균 기준 · 오가닉은 4~6월 일평균 예측값</div>
-      <div class="mm-memo-wrap">
-        <span class="mm-memo-label">전체 비고</span>
-        <textarea class="mm-memo" id="mm-memo" rows="3" placeholder="미디어믹스 논의하면서 나온 내용을 적어두세요 (월별로 따로 저장됩니다)" oninput="mmDirty()"></textarea>
+      <div class="mm-memo-wrap" id="mm-memo-wrap">
+        <button class="mm-memo-hd" type="button" onclick="mmMemoToggle()" title="접기/펼치기">
+          <span class="mm-memo-caret" id="mm-memo-caret">▾</span>
+          <span class="mm-memo-label">전체 비고</span>
+          <span class="mm-memo-peek" id="mm-memo-peek"></span>
+        </button>
+        <textarea class="mm-memo" id="mm-memo" rows="6" placeholder="미디어믹스 논의하면서 나온 내용을 적어두세요 (월별로 따로 저장됩니다)" oninput="mmDirty();mmMemoPeek()"></textarea>
       </div>
       <div class="mm-total-bgt-wrap">
         <span class="mm-total-bgt-label">총 예산(원)</span>
@@ -339,7 +352,7 @@ input.mm-gap-in:focus{border-color:#4466cc}
               <th class="mmh-real" colspan="2">매체 실매출</th>
               <th class="mmh-gap" rowspan="2">매출 갭</th>
               <th class="mmh-c24" colspan="4">C24 기준</th>
-              <th rowspan="2" style="min-width:120px;background:#f8f9fa;color:#666;border-left:2px solid #d8dce8">비고</th>
+              <th rowspan="2" style="min-width:330px;width:330px;text-align:left;background:#f8f9fa;color:#666;border-left:2px solid #d8dce8">비고</th>
             </tr>
             <tr>
               <th class="mmh-real">매출</th>
@@ -1238,6 +1251,7 @@ function mmResetInputs(){
   const nc=document.getElementById('mm-note-content');if(nc)nc.value='';
   const tb=document.getElementById('mm-total-budget');if(tb)tb.value='';
   const mo=document.getElementById('mm-memo');if(mo)mo.value='';
+  mmMemoPeek();mmGrowAll();
   mmClearCustom();   // 신규 매체는 월별로 독립
   mmLoading=false;
 }
@@ -1260,6 +1274,7 @@ function openMMCalc(){
   document.getElementById('mm-overlay').classList.add('open');
   if(!mmBuilt){
     buildMMTable();mmBuilt=true;
+    try{if(localStorage.getItem('mm-memo-collapsed')==='1')mmMemoToggle(true);}catch(e){}
     // URL에 명시된 월이 있으면 그 월로 열기 (링크 공유용)
     const urlMonth=new URLSearchParams(location.search).get('mmM');
     // 링크로 특정 월 값만 공유된 경우 그 달을, 아니면 가장 마지막에 등록된 월을 연다.
@@ -1290,6 +1305,50 @@ function mmSetSavedState(isSaved){
   if(e)e.style.display=isSaved?'':'none';
 }
 function mmEdit(){mmSetSavedState(false);}
+// 입력 내용만큼 높이를 늘린다 — 비고가 잘려서 안 보이는 일을 없앤다.
+// (모달이 닫혀 있으면 scrollHeight가 0이라 열린 뒤에 불러야 한다)
+function mmNoteGrow(el){
+  if(!el)return;
+  el.style.height='auto';
+  // box-sizing:border-box라 scrollHeight(=내용+안쪽여백)에 위아래 테두리를 더해야
+  // 마지막 줄이 3px 잘리지 않는다
+  const border=el.offsetHeight-el.clientHeight;
+  el.style.height=Math.max(el.scrollHeight+border,29)+'px';
+}
+function mmGrowAll(){
+  const run=()=>{
+    document.querySelectorAll('.mm-note').forEach(mmNoteGrow);
+    const mo=document.getElementById('mm-memo');
+    if(mo&&!document.getElementById('mm-memo-wrap')?.classList.contains('collapsed')){
+      mo.style.height='auto';
+      mo.style.height=Math.max(mo.scrollHeight+(mo.offsetHeight-mo.clientHeight),132)+'px';
+    }
+  };
+  run();
+  // 표의 열 폭은 첫 계산 뒤에 다시 잡힌다 — 폭이 확정된 다음 프레임에 한 번 더 재야
+  // 두 줄짜리 비고가 한 줄로 잘리지 않는다.
+  requestAnimationFrame(run);
+}
+// 전체 비고 접기/펼치기. 접힌 상태는 브라우저에 기억시켜 다음에 열 때도 유지한다.
+function mmMemoToggle(force){
+  const w=document.getElementById('mm-memo-wrap');if(!w)return;
+  const collapsed=(force===undefined)?!w.classList.contains('collapsed'):!!force;
+  w.classList.toggle('collapsed',collapsed);
+  const c=document.getElementById('mm-memo-caret');if(c)c.textContent=collapsed?'▸':'▾';
+  try{localStorage.setItem('mm-memo-collapsed',collapsed?'1':'0');}catch(e){}
+  mmMemoPeek();
+  if(!collapsed)mmGrowAll();
+}
+// 접혔을 때 첫 줄만 미리보기로 보여준다 (몇 줄 더 있는지도 같이)
+function mmMemoPeek(){
+  const w=document.getElementById('mm-memo-wrap'),p=document.getElementById('mm-memo-peek');
+  if(!w||!p)return;
+  if(!w.classList.contains('collapsed')){p.textContent='';return;}
+  const v=(document.getElementById('mm-memo')?.value||'').trim();
+  if(!v){p.textContent='비어 있음';return;}
+  const ls=v.split('\n').filter(l=>l.trim());
+  p.textContent=ls[0]+(ls.length>1?`   (+${ls.length-1}줄)`:'');
+}
 function mmTodayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 // 계산 결과와 무관한 입력(전체 비고)이 바뀌었을 때 저장 버튼을 다시 노출
 function mmDirty(){if(!mmLoading&&mmSavedFlag[mmMonth])mmSetSavedState(false);}
@@ -1375,6 +1434,7 @@ function mmLoadData(data){
   if(tb&&data['total_budget']!==undefined)tb.value=data['total_budget'];
   const mo=document.getElementById('mm-memo');
   if(mo)mo.value=data['memo']||'';
+  mmMemoPeek();mmGrowAll();
   // 신규 매체 행 복원 (예전 저장본에는 custom이 없으므로 빈 배열 처리)
   mmClearCustom();
   (data.custom||[]).forEach(c=>mmAddCustom(c));
@@ -1483,7 +1543,7 @@ function buildMMTable(){
       <td class="mmh-real"><span class="mm-val-real" id="mm-rel-${ch.key}">—</span></td>
       <td class="mmh-real-roas"><span class="mm-val-realr" id="mm-relr-${ch.key}">—</span></td>
       ${c24Cols}
-      <td style="border-left:2px solid #d8dce8"><input class="mm-note" id="mm-note-${ch.key}" type="text" placeholder="메모"></td>
+      <td class="mm-note-cell" style="border-left:2px solid #d8dce8"><textarea class="mm-note" id="mm-note-${ch.key}" rows="1" placeholder="메모" oninput="mmNoteGrow(this)"></textarea></td>
     </tr>`;
     if(ch.key==='shop'){
       html+=`<tr class="mm-naver-c24">
@@ -1519,7 +1579,7 @@ function buildMMTable(){
     <td class="mmh-raw">—</td><td class="mmh-real">—</td><td class="mmh-real-roas">—</td>
     <td class="mmh-gap">—</td>
     <td class="mmh-c24">—</td><td class="mmh-c24-roas">—</td><td class="mmh-c24-real">—</td><td class="mmh-c24-real-roas">—</td>
-    <td style="border-left:2px solid #d8dce8"><input class="mm-note" id="mm-note-content" type="text" placeholder="메모"></td>
+    <td class="mm-note-cell" style="border-left:2px solid #d8dce8"><textarea class="mm-note" id="mm-note-content" rows="1" placeholder="메모" oninput="mmNoteGrow(this)"></textarea></td>
   </tr>`;
   // 퍼포먼스 TOTAL
   html+=`<tr class="mm-perf-total">
@@ -1583,9 +1643,11 @@ function mmCustomRowHtml(id){
     <td class="mmh-c24-roas"><span class="mm-val-c24r" id="mm-cc24r-${id}">—</span></td>
     <td class="mmh-c24-real"><span class="mm-val-c24rr" id="mm-cc24rr-${id}">—</span></td>
     <td class="mmh-c24-real-roas"><span class="mm-val-c24rrr" id="mm-cc24rrr-${id}">—</span></td>
-    <td style="border-left:2px solid #d8dce8">
-      <input class="mm-note" id="mm-cnote-${id}" type="text" placeholder="메모" style="width:88px">
-      <button class="mm-del-btn" onclick="mmRemoveCustom('${id}')" title="이 행 삭제">✕</button>
+    <td class="mm-note-cell" style="border-left:2px solid #d8dce8">
+      <div style="display:flex;align-items:flex-start;gap:3px">
+        <textarea class="mm-note" id="mm-cnote-${id}" rows="1" placeholder="메모" oninput="mmNoteGrow(this)" style="flex:1;min-width:0"></textarea>
+        <button class="mm-del-btn" onclick="mmRemoveCustom('${id}')" title="이 행 삭제">✕</button>
+      </div>
     </td>
   </tr>`;
 }
