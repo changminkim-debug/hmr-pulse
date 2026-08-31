@@ -1093,33 +1093,37 @@ function mmGapOf(ch){return ch.group==='naver'?mmCfg().naverGap:(mmCfg().gap[ch.
 // 갱신 절차: 계산기에서 값 완성 → [📤 게시 요청] 버튼으로 코드 복사 → 통끼에게 전달 →
 //            아래 data에 반영 후 재배포. (publishedAt은 표시용 날짜)
 const MM_PUBLISHED={
-  // 7월: 원래 로컬 저장(localStorage)에만 있다가 유실 → 2026-07-22 마지막 저장본을 복원해 게시본으로 고정.
-  // 2026-07-31 사용자가 확정본으로 재확인 (31개 필드 전부 기존 게시본과 동일 — 내용 변경 없음, 날짜만 갱신)
-  '07':{publishedAt:'2026-07-31',data:{
-    b_brand:'20,563,354',    r_brand:'8500',     note_brand:'고정 금액',
-    b_power:'25,000,000',    r_power:'750',      note_power:'',
-    b_shop:'10,000,000',     r_shop:'700',       note_shop:'전월 대비 예산 감액',
-    b_meta:'1,082,936,646',  r_meta:'280',       note_meta:'',
-    b_google_sa:'20,000,000',r_google_sa:'950',  note_google_sa:'',
-    b_google_da:'18,600,000',r_google_da:'600',  note_google_da:'',
-    b_payco:'10,000,000',    r_payco:'500',      note_payco:'',
-    b_toss:'10,000,000',     r_toss:'500',       note_toss:'',
-    b_aedi:'27,900,000',     r_aedi:'500',       note_aedi:'평일 90 / 주말 60',
-    b_content:'34,300,000',  note_content:'유머니즘, 줄리엔강, 혜린, 2팀추가, 홍사운드 ',
+  // 게시본 = 모두에게 보이는 확정안. 계산기의 [📤 게시 요청] 코드를 받아 여기에 반영한다.
+  // 로컬 저장(💾)은 각자 브라우저에만 남으므로, 팀 전체가 같은 값을 보려면 여기에 값이 박혀야 한다.
+  // 7월: 2026-08-31 재게시. 브랜드검색 예산이 20,563,354 → 18,703,354 로 정정됨.
+  '07':{publishedAt:'2026-08-31',data:{
+    memo:'',
+    b_brand:'18,703,354', r_brand:'8500', note_brand:'고정 금액',
+    b_power:'25,000,000', r_power:'750', note_power:'',
+    b_shop:'10,000,000', r_shop:'700', note_shop:'전월 대비 예산 감액',
+    b_meta:'1,082,936,646', r_meta:'280', note_meta:'',
+    b_google_sa:'20,000,000', r_google_sa:'950', note_google_sa:'',
+    b_google_da:'18,600,000', r_google_da:'600', note_google_da:'',
+    b_payco:'10,000,000', r_payco:'500', note_payco:'',
+    b_toss:'10,000,000', r_toss:'500', note_toss:'',
+    b_aedi:'27,900,000', r_aedi:'500', note_aedi:'평일 90 / 주말 60',
+    b_content:'34,300,000', note_content:'유머니즘, 줄리엔강, 혜린, 2팀추가, 홍사운드 ',
     total_budget:'1,253,000,000',
     custom:[],
   }},
-  '08':{publishedAt:'2026-07-30',data:{
-    b_brand:'18,703,354',    r_brand:'9000',     note_brand:'',
-    b_power:'30,000,000',    r_power:'700',      note_power:'여유분 활용 가능 (2순위)',
-    b_shop:'16,000,000',     r_shop:'500',       note_shop:'T&D 차별화 강화 / 스스 카니발 해결 후 증액 고려 / 현미크리스피 검색어 단독 사용가능 여부 확인 (스스X)',
-    b_meta:'1,014,530,298',  r_meta:'282',       note_meta:'여유분 활용 가능 (1순위)',
-    b_google_sa:'22,000,000',r_google_sa:'1500', note_google_sa:'자상호/ 경쟁사 캠페인 재구성 및 A/B TEST',
-    b_google_da:'85,000,000',r_google_da:'600',  note_google_da:'여유 2천 / 희망치 / 그릴드 운영 X / 크리스피 / 김자반밥바 효율화 ',
-    b_payco:'10,000,000',    r_payco:'650',      note_payco:'',
-    b_toss:'10,000,000',     r_toss:'550',       note_toss:'',
-    b_aedi:'27,900,000',     r_aedi:'500',       note_aedi:'이탈 고객 재구매 주기 확인 (cafe24 데이터 기반)',
-    b_content:'20,866,348',  note_content:'여유 557만원',
+  // 8월: 2026-08-31 재확인 게시 (값 변경 없음 — 게시일과 전체 비고 필드만 갱신).
+  '08':{publishedAt:'2026-08-31',data:{
+    memo:'',
+    b_brand:'18,703,354', r_brand:'9000', note_brand:'',
+    b_power:'30,000,000', r_power:'700', note_power:'여유분 활용 가능 (2순위)',
+    b_shop:'16,000,000', r_shop:'500', note_shop:'T&D 차별화 강화 / 스스 카니발 해결 후 증액 고려 / 현미크리스피 검색어 단독 사용가능 여부 확인 (스스X)',
+    b_meta:'1,014,530,298', r_meta:'282', note_meta:'여유분 활용 가능 (1순위)',
+    b_google_sa:'22,000,000', r_google_sa:'1500', note_google_sa:'자상호/ 경쟁사 캠페인 재구성 및 A/B TEST',
+    b_google_da:'85,000,000', r_google_da:'600', note_google_da:'여유 2천 / 희망치 / 그릴드 운영 X / 크리스피 / 김자반밥바 효율화 ',
+    b_payco:'10,000,000', r_payco:'650', note_payco:'',
+    b_toss:'10,000,000', r_toss:'550', note_toss:'',
+    b_aedi:'27,900,000', r_aedi:'500', note_aedi:'이탈 고객 재구매 주기 확인 (cafe24 데이터 기반)',
+    b_content:'20,866,348', note_content:'여유 557만원',
     total_budget:'1,260,000,000',
     custom:[{name:'크리테오',bgt:'5,000,000',roas:'',gap:'',note:'100만원으로 집행 가능한지 확인'}],
   }},
@@ -1128,19 +1132,19 @@ const MM_PUBLISHED={
   // 메타 = 총예산 - 나머지 전부 (802,493,316). 구글DA r=390은 C24 281%의 역산값 (RAW × 갭 0.72).
   // 이 안의 감도: 메타 RAW 1%p = C24 650만 / 브랜드 RAW 100%p = C24 1,178만.
   '09':{publishedAt:'2026-08-31',data:{
-    memo:'[9월 목표] 광고비 10.55억 / C24 매출 47.45억 / C24 ROAS 450% (오가닉 포함)\n· 원 목표는 41.8억(396%)이나, 450%·47.45억 도달안으로 구성\n· 9월은 추석이 끼어 있어 예산·효율 가정을 8월보다 보수적으로 내려 잡음 (광고비 12.6억 → 10.55억)\n· 브랜드검색 예산 고정 (9/27부터 계약금액 변동) · 파워링크 3,100만@700% · 쇼핑 550만@500%\n· 구글SA는 8월 소진 페이스 유지 · 구글DA 7,000만(일 250만 중순 시작 가정, C24 281% 역산)\n· 크리테오 100만 테스트 · 콘텐츠비 4,860만 · 메타는 잔여 전액(8.02억)\n[검증] 8월 실적 광고비 10.49억 / 총 C24 46.85억 / 446.6% → 9월안은 사실상 8월 재현 수준\n[착지] 47.41억 / 449.4% — 목표 대비 -438만 (2026-08-31 확정)\n[리스크] 네이버 갭 0.64 가정 (8월 실제 0.602) → 현실화 시 -7,557만 / 메타 RAW 1%p = C24 650만',
-    b_brand:'18,406,684',    r_brand:'8850',     note_brand:'고정 → 9/27부터 계약금액 변동',
-    b_power:'31,000,000',    r_power:'700',      note_power:'매체 700% 가정 (8월 실적 782%)',
-    b_shop:'5,500,000',      r_shop:'500',       note_shop:'매체 500% (8월 실적 502%)',
-    b_meta:'802,493,316',    r_meta:'285',       note_meta:'잔여 예산 전액 → RAW 285% (8월 실적 278%)',
-    b_google_sa:'19,000,000',r_google_sa:'2200', note_google_sa:'8월 소진 페이스 유지 (8월 실집행 1,859만)',
-    b_google_da:'70,000,000',r_google_da:'390',  note_google_da:'C24 281% 역산 / 일 250만 중순 시작 가정 (8월 실적 C24 267%)',
-    b_payco:'12,000,000',    r_payco:'650',      note_payco:'매체 650% → C24 갭 24% 반영',
-    b_toss:'20,000,000',     r_toss:'550',       note_toss:'매체 550% → C24 갭 21% 반영 (8월 실제 갭 16%)',
-    b_aedi:'27,000,000',     r_aedi:'650',       note_aedi:'매체=C24 동일 650%',
-    b_content:'48,600,000',  note_content:'8월 실집행 2,294만 대비 2.1배',
+    memo:'[9월 목표] 광고비 10.55억 / C24 매출 47.41억 / C24 ROAS 449% (오가닉 포함)\n· 원 목표는 41.8억(396%)이나, 449% / 47.41억 도달안으로 구성\n· 브랜드검색 예산 고정 (9/27부터 계약금액 변동) / 파워링크 3,100만@700% / 쇼핑 550만@500%\n· 구글SA 8월 소진 페이스 유지 / 구글DA 7,000만(일 250만 중순 시작 가정, C24 281% 역산)\n· 크리테오 100만 테스트 / 콘텐츠비 4,860만 / 메타는 잔여 전액(8.02억)\n[검증] 8월 실적이 광고비 10.49억 / 총 C24 46.85억 / 446.6% → 9월안은 사실상 8월 재현 +2%',
+    b_brand:'18,406,684', r_brand:'8850', note_brand:'9/27부터 계약금액 변동 (일예산 60만→68만)',
+    b_power:'31,000,000', r_power:'700', note_power:'매체 700% 가정 (8월 실적 782%)',
+    b_shop:'5,500,000', r_shop:'500', note_shop:'매체 500% (8월 실적 502%)',
+    b_meta:'802,493,316', r_meta:'285', note_meta:'잔여 예산 전액 → RAW 285% (8월 실적 278%)',
+    b_google_sa:'19,000,000', r_google_sa:'2200', note_google_sa:'8월 소진 페이스 유지 (8/30까지  실집행 1,859만)',
+    b_google_da:'70,000,000', r_google_da:'390', note_google_da:'C24 281% 역산 / 일 250만 중순 시작 가정\n(8월 실적 C24 267%)',
+    b_payco:'12,000,000', r_payco:'650', note_payco:'매체 650% → C24 갭 24% 반영',
+    b_toss:'20,000,000', r_toss:'550', note_toss:'매체 550% → C24 갭 21% 반영',
+    b_aedi:'27,000,000', r_aedi:'650', note_aedi:'매체 = C24 동일 650%',
+    b_content:'48,600,000', note_content:'1팀 2,540만원 / 2팀 2,320만원 (예상치)',
     total_budget:'1,055,000,000',
-    custom:[{name:'크리테오',bgt:'1,000,000',roas:'',gap:'',note:'테스트 집행 (매출 0으로 보수 반영)'}],
+    custom:[{name:'크리테오',bgt:'1,000,000',roas:'',gap:'',note:'테스트 집행 (매출 0으로 반영)'}],
   }},
 };
 function mmPub(month){const p=MM_PUBLISHED[month||mmMonth];return p&&p.data?p:null;}
