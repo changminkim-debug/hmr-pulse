@@ -526,7 +526,10 @@ const CH_META={
 const NAVER_SUBS=[{key:'naver_brand',label:'브랜드검색'},{key:'naver_pl',label:'파워링크'},{key:'naver_sh',label:'쇼핑검색'}];
 let rawDays=[],activeMonth='all',activeView='monthly',activeCh='all',naverExpanded=false,revMode='raw';
 function mRev(v,ch){
-  if(ch==='aedi') return revMode==='actual'?v/0.9*0.86:v/0.9;
+  // 에디ai는 2026-09-02부터 에디 시트 K열(전환금액)을 쓴다 = 매체가 보고한 RAW.
+  // 예전에는 01.DATA CI열을 썼는데 그 값이 사실 Cafe24 순매출×0.9였다 —
+  // 그래서 매체 매출과 C24 매출이 늘 똑같이(갭 0%) 나왔다. 메타와 같은 규칙으로 통일.
+  if(ch==='aedi') return revMode==='actual'?v*0.86:v;
   if(ch==='meta') return revMode==='actual'?v*0.86:v; // C1=RAW → 실매출=C1×0.86
   return revMode==='actual'?v:v/0.86;
 }
@@ -584,6 +587,23 @@ async function fetchMetaC1Rev(){
   return map;
 }
 
+// 에디ai 매체 매출 = '에디ai' 시트(gid 284676012) A열 날짜 / K열 전환금액.
+// 01.DATA의 에디 매출 열은 Cafe24 순매출이 들어와 있어 매체 실적으로 쓸 수 없다.
+async function fetchAediRev(){
+  const GID_AEDI='284676012';
+  const tq=`SELECT A, K WHERE A >= date '${START}' AND A <= date '${END}'`;
+  const url='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:csv&gid='+GID_AEDI+'&tq='+encodeURIComponent(tq);
+  const r=await fetch(url);
+  if(!r.ok)throw new Error('에디시트 HTTP '+r.status);
+  const rows=parseCSV(await r.text()).slice(1);
+  const map={};
+  rows.forEach(row=>{
+    if(!row[0])return;
+    const d=row[0].trim();
+    if(d>=START&&d<=END)map[d]=n(row[1]);
+  });
+  return map;
+}
 async function fetchOrganicSheet(){
   const GID_ORG='897405789';
   const tq='SELECT B, D LIMIT 700 OFFSET 24';
@@ -611,6 +631,19 @@ async function loadMedia(){
       fetchGviz(['C','AY','BA','BJ','BL','BX','BZ','CH','CI','CC','CE','CO']),
       fetchMetaC1Rev(),
     ]);
+    // 에디ai: 시트를 못 읽으면 예전 방식(01.DATA CI ÷ 0.9)으로 물러난다 — 값이 통째로
+    // 사라지는 것보다는 낫고, 배지에 출처가 표시되므로 조용히 섞이지 않는다.
+    let aediMap=null;let aediSrc='에디 시트 K열(전환금액)';
+    try{
+      aediMap=await fetchAediRev();
+      const c=Object.keys(aediMap).length;
+      if(!c)throw new Error('행 0건');
+      console.log('[에디ai] 시트 로드 OK, '+c+'건');
+    }catch(e){
+      aediMap=null;aediSrc='01.DATA (구 방식 · Cafe24값)';
+      console.warn('[에디ai] 시트 로드 실패 → 01.DATA fallback:',e.message);
+    }
+    window._aediSrc=aediSrc;
     let organicMap={};let organicSrc='채널없음 Cafe24';
     try{
       organicMap=await fetchOrganicSheet();
@@ -634,7 +667,10 @@ async function loadMedia(){
           naver_brand:{spd:bs,rev:n(r[3])},naver_pl:{spd:pl,rev:n(r[5])},naver_sh:{spd:sh,rev:n(r[7])},
           meta:{spd:n(r[8]),rev:metaC1[d]||0}, // C1 기준 (02.메타 U열)
           google_sa:{spd:n(x[1]),rev:n(x[2])},google_da:{spd:n(x[3]),rev:n(x[4])},
-          payco:{spd:n(x[5]),rev:n(x[6])},aedi:{spd:n(x[7]),rev:n(x[8])},toss:{spd:n(x[9]),rev:n(x[10])},
+          payco:{spd:n(x[5]),rev:n(x[6])},
+          // 에디는 시트 K열(RAW) 우선, 실패 시에만 예전 값(CI÷0.9로 RAW 환산)
+          aedi:{spd:n(x[7]),rev:aediMap?(aediMap[d]??0):n(x[8])/0.9},
+          toss:{spd:n(x[9]),rev:n(x[10])},
           content_fee:{spd:n(x[11]),rev:0},
         },c24:{...c24base,organic:organicMap[d]??c24base.organic??0}};
     });
@@ -642,6 +678,7 @@ async function loadMedia(){
     const cfSum=rawDays.reduce((s,d)=>s+d.media.content_fee.spd,0);
     if(!cfSum)console.warn('[경고] 콘텐츠 비용이 전 구간 0 — 시트 열(CO)이 밀렸는지 확인 필요');
     setStatus('완료 · '+new Date().toLocaleTimeString('ko-KR'),'#4caf50',true);
+    renderRevNote();
     buildMonthFilter();
     render();
   }catch(e){
@@ -946,11 +983,18 @@ function setRevMode(mode){
   revMode=mode;
   document.getElementById('rev-raw').classList.toggle('active',mode==='raw');
   document.getElementById('rev-real').classList.toggle('active',mode==='actual');
-  const noteEl=document.getElementById('rev-note');
-  if(noteEl)noteEl.textContent=mode==='actual'
+  renderRevNote();
+  if(rawDays.length)render();
+}
+// 기준 안내문. 에디ai만 출처가 다르므로(에디 시트 K열) 어디서 온 값인지 같이 표시한다.
+function renderRevNote(){
+  const el=document.getElementById('rev-note');
+  if(!el)return;
+  const base=revMode==='actual'
     ?'매체비용 VAT제외 · 매체=시트값(×0.86 적용) / C24=RAW×0.86 — 동일 기준 비교'
     :'매체비용 VAT제외 · 매체=전환RAW(시트값÷0.86) / C24=원본';
-  if(rawDays.length)render();
+  const src=window._aediSrc||'에디 시트 K열(전환금액)';
+  el.innerHTML=base+` <span style="color:#8a4fd8;font-weight:600">· 에디ai=${src}</span>`;
 }
 
 // ═══ TOGGLE ═══════════════════════════════════════════════════════
