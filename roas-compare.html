@@ -33,6 +33,16 @@ body{font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif
 .fbtn:hover{border-color:#4466cc;color:#4466cc}
 .fbtn.active{background:#4466cc;border-color:#4466cc;color:#fff;font-weight:700}
 .fsep{width:1px;height:20px;background:#dde0ea;margin:0 4px}
+/* 날짜 직접 선택 (월 버튼과 배타적) */
+.dr-wrap{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}
+.dr-in{padding:7px 10px;border:1.5px solid #d8dce8;border-radius:12px;background:#fff;color:#4a5478;font-size:13px;font-family:inherit;outline:none;cursor:pointer}
+.dr-in:focus{border-color:#4466cc}
+.dr-wrap.on .dr-in{border-color:#4466cc;color:#1e2333;font-weight:700;background:#f4f6ff}
+.dr-tilde{color:#8a91a8;font-size:13px}
+.dr-pre{padding:6px 12px;border:1.5px solid #d8dce8;border-radius:14px;background:#fff;color:#6a7290;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.dr-pre:hover{border-color:#4466cc;color:#4466cc}
+.dr-clear{padding:6px 11px;border:none;border-radius:12px;background:#eef1f8;color:#6a7290;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+.dr-clear:hover{background:#fdeaec;color:#c62828}
 .data-badge{background:#e8f5e9;border:1px solid #4caf50;color:#2e7d32;font-size:14px;font-weight:700;padding:5px 14px;border-radius:12px;margin-left:auto}
 
 /* KPI */
@@ -391,6 +401,17 @@ input.mm-gap-in:focus{border-color:#4466cc}
     <div class="fsep"></div>
     <button class="fbtn" data-view="monthly">월별</button>
     <button class="fbtn" data-view="daily">일별</button>
+    <div class="fsep"></div>
+    <span class="flabel">날짜</span>
+    <span class="dr-wrap" id="dr-wrap">
+      <input type="date" class="dr-in" id="dr-from" onchange="drFromInputs()">
+      <span class="dr-tilde">~</span>
+      <input type="date" class="dr-in" id="dr-to" onchange="drFromInputs()">
+      <button class="dr-pre" onclick="drPreset('d1')">최근 1일</button>
+      <button class="dr-pre" onclick="drPreset('d7')">최근 7일</button>
+      <button class="dr-pre" onclick="drPreset('mtd')">당월</button>
+      <button class="dr-clear" id="dr-clear" style="display:none" onclick="drApply('','')">✕ 해제</button>
+    </span>
     <span class="data-badge">✓ Cafe24 연동</span>
   </div>
 
@@ -525,6 +546,8 @@ const CH_META={
 };
 const NAVER_SUBS=[{key:'naver_brand',label:'브랜드검색'},{key:'naver_pl',label:'파워링크'},{key:'naver_sh',label:'쇼핑검색'}];
 let rawDays=[],activeMonth='all',activeView='monthly',activeCh='all',naverExpanded=false,revMode='raw';
+// 날짜 직접 선택. 값이 있으면 월 버튼보다 우선한다 (둘 다 켜면 뭐가 적용됐는지 알 수 없으므로 배타).
+let dateFrom='',dateTo='';
 function mRev(v,ch){
   // 에디ai는 2026-09-02부터 에디 시트 K열(전환금액)을 쓴다 = 매체가 보고한 RAW.
   // 예전에는 01.DATA CI열을 썼는데 그 값이 사실 Cafe24 순매출×0.9였다 —
@@ -689,10 +712,47 @@ async function loadMedia(){
 function setStatus(m,c,ok){document.getElementById('stxt').textContent=m;const d=document.getElementById('sdot');d.style.background=c;d.className='status-dot'+(ok?' ok':'');}
 
 // ═══ AGGREGATE ════════════════════════════════════════════════════
+// 선택된 날짜 범위. 한쪽만 넣으면 나머지는 데이터 끝까지, 거꾸로 넣으면 알아서 정렬한다.
+function drRange(){
+  if(!dateFrom&&!dateTo||!rawDays.length)return null;
+  const a=dateFrom||rawDays[0].date, b=dateTo||rawDays[rawDays.length-1].date;
+  return a<=b?[a,b]:[b,a];
+}
 function filteredDays(){
+  const r=drRange();
+  if(r) return rawDays.filter(d=>d.date>=r[0]&&d.date<=r[1]);
   if(activeMonth==='all') return rawDays;
   if(activeMonth==='q2') return rawDays.filter(d=>d.month>='2026-04');
   return rawDays.filter(d=>d.month===activeMonth);
+}
+function setView(v){
+  activeView=v;
+  document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
+}
+// 날짜 적용의 단일 창구 — 입력칸·버튼 상태·월 버튼 해제·재렌더까지 여기서 다 한다
+function drApply(from,to,opt){
+  dateFrom=from||'';dateTo=to||'';
+  const fi=document.getElementById('dr-from'),ti=document.getElementById('dr-to');
+  if(fi)fi.value=dateFrom;if(ti)ti.value=dateTo;
+  const on=!!(dateFrom||dateTo);
+  const w=document.getElementById('dr-wrap');if(w)w.classList.toggle('on',on);
+  const c=document.getElementById('dr-clear');if(c)c.style.display=on?'':'none';
+  document.querySelectorAll('#m-btns [data-m]').forEach(b=>
+    b.classList.toggle('active',!on&&b.dataset.m===activeMonth));
+  // 날짜를 고르는 목적은 대개 "그날그날 보기"이므로 일별 표를 자동으로 펼친다
+  if(on&&!(opt&&opt.keepView))setView('daily');
+  naverExpanded=false;
+  if(rawDays.length)render();
+}
+function drFromInputs(){
+  drApply(document.getElementById('dr-from').value,document.getElementById('dr-to').value);
+}
+function drPreset(kind){
+  if(!rawDays.length)return;
+  const all=rawDays.map(d=>d.date),last=all[all.length-1];
+  if(kind==='d1')drApply(last,last);
+  else if(kind==='d7')drApply(all[Math.max(0,all.length-7)],last);
+  else if(kind==='mtd'){const ds=all.filter(d=>d.slice(0,7)===last.slice(0,7));drApply(ds[0],ds[ds.length-1]);}
 }
 function aggDays(days){
   const res={};PAID_CH.forEach(k=>res[k]={spd:0,mrev:0,crev:0});res.organic={crev:0};res.content_fee={spd:0};
@@ -733,8 +793,10 @@ function render(){
   renderPacing();
   renderCompare();
   const _ms=monthList(),_f=_ms.length?+_ms[0].slice(5):0,_l=_ms.length?+_ms[_ms.length-1].slice(5):0;
-  document.getElementById('tbl-badge').textContent=
-    activeMonth==='all'?`${_f}~${_l}월 합계`:activeMonth==='q2'?`4~${_l}월 합계`:activeMonth;
+  const _r=drRange();
+  document.getElementById('tbl-badge').textContent= _r
+    ? (_r[0]===_r[1]?_r[0]:`${_r[0]} ~ ${_r[1]} (${days.length}일)`)
+    : activeMonth==='all'?`${_f}~${_l}월 합계`:activeMonth==='q2'?`4~${_l}월 합계`:activeMonth;
   if(activeView==='daily'){document.getElementById('daily-section').style.display='';renderDailyTable(days);}
   else{document.getElementById('daily-section').style.display='none';}
   renderOrganicTable();
@@ -1023,6 +1085,10 @@ function monthLabel(m){
 }
 function buildMonthFilter(){
   const months=monthList();if(!months.length)return;
+  if(rawDays.length){
+    const a=rawDays[0].date,b=rawDays[rawDays.length-1].date;
+    ['dr-from','dr-to'].forEach(id=>{const e=document.getElementById(id);if(e){e.min=a;e.max=b;}});
+  }
   const first=+months[0].slice(5),last=+months[months.length-1].slice(5);
   let html=`<button class="fbtn" data-m="all">전체 (${first}~${last}월)</button>`;
   if(first<4)html+=`<button class="fbtn" data-m="q2">4~${last}월</button>`;
@@ -1031,9 +1097,9 @@ function buildMonthFilter(){
   box.innerHTML=html;
   box.querySelectorAll('[data-m]').forEach(btn=>{
     btn.addEventListener('click',()=>{
-      box.querySelectorAll('[data-m]').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');activeMonth=btn.dataset.m;naverExpanded=false;
-      if(rawDays.length)render();
+      activeMonth=btn.dataset.m;
+      // 월과 날짜를 동시에 켜두면 어느 기준인지 헷갈린다 → 월을 고르면 날짜는 해제
+      drApply('','',{keepView:true});
     });
   });
   (box.querySelector(`[data-m="${activeMonth}"]`)||box.querySelector('[data-m="all"]')).classList.add('active');
