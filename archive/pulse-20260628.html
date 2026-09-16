@@ -126,6 +126,47 @@ tr.grp-detail-row:hover td{background:#eceff8!important}
 </style>
 </head>
 <body>
+<style>
+#pw-overlay{position:fixed;inset:0;background:rgba(245,247,251,.97);display:flex;align-items:center;justify-content:center;z-index:99999}
+#pw-box{background:#fff;border:1px solid #e0e4f0;border-radius:16px;padding:48px 40px;display:flex;flex-direction:column;align-items:center;gap:20px;min-width:320px;box-shadow:0 8px 40px rgba(0,0,0,.12)}
+#pw-logo{font-size:24px;font-weight:800;color:#1a2030;letter-spacing:1px}
+#pw-sub{font-size:13px;color:#8c96ae;margin-top:-10px}
+#pw-input{width:100%;padding:12px 16px;border-radius:8px;border:1.5px solid #dde0ea;background:#fff;color:#1a2030;font-size:15px;outline:none;text-align:center;letter-spacing:3px;box-sizing:border-box}
+#pw-input:focus{border-color:#4466cc}
+#pw-btn{width:100%;padding:12px;border-radius:8px;background:#4466cc;color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer}
+#pw-btn:hover{background:#3355bb}
+#pw-err{font-size:12px;color:#e05555;height:16px}
+</style>
+<div id="pw-overlay">
+  <div id="pw-box">
+    <div id="pw-logo">HMR 실시간 펄스</div>
+    <div id="pw-sub">접근 비밀번호를 입력하세요</div>
+    <input id="pw-input" type="password" placeholder="비밀번호" onkeydown="if(event.key==='Enter')checkPw()">
+    <div id="pw-err"></div>
+    <button id="pw-btn" onclick="checkPw()">확인</button>
+  </div>
+</div>
+<script>
+(function(){
+  const PW = 'hankkipulse7052';
+  if (sessionStorage.getItem('pls_auth') === '1') { document.getElementById('pw-overlay').style.display='none'; return; }
+  function checkPw() {
+    const v = document.getElementById('pw-input').value;
+    if (v === PW) {
+      sessionStorage.setItem('pls_auth','1');
+      document.getElementById('pw-overlay').style.display='none';
+    } else {
+      const err = document.getElementById('pw-err');
+      err.textContent = '비밀번호가 틀렸습니다';
+      document.getElementById('pw-input').value='';
+      document.getElementById('pw-input').focus();
+      setTimeout(function(){ err.textContent=''; },2000);
+    }
+  }
+  window.checkPw = checkPw;
+  document.getElementById('pw-input').focus();
+})();
+</script>
 <div class="hd">
   <div class="hd-left">
     <div class="hd-logo">Egnis Ads</div>
