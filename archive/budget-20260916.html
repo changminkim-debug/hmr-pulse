@@ -150,10 +150,10 @@ table.itemgrid tr.lv1 td{padding:16px 22px;font-size:15.5px}
 table.itemgrid tfoot td{padding:14px 22px}
 table.itemgrid td.itemname{padding-left:18px}
 /* 모달 안 표 — 지표끼리 더 띄운다 */
-#dd table.grid th{padding:11px 20px}
-#dd tr.lv2 td{padding:11px 20px}
-#dd tr.lv3 td{padding:10px 20px}
-#dd table.grid td.nmcell{padding-left:16px;padding-right:12px}
+#dd table.grid th{padding:12px 13px}
+#dd tr.lv2 td{padding:12px 13px}
+#dd tr.lv3 td{padding:11px 13px}
+#dd table.grid td.nmcell{padding-left:14px;padding-right:10px}
 #dd tr.lv2 td:first-child{padding-left:20px}
 #dd tr.lv3 td:first-child{padding-left:42px}
 table.grid td{overflow:visible}
@@ -272,8 +272,9 @@ tr.lv1 .pill{font-size:13px;padding:3px 12px}
 /* ── 품목 드릴다운 모달 (dashboard.html 소재 드릴다운과 같은 방식) ── */
 #dd-ov{display:none;position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:200}
 #dd{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
-    width:min(1680px,96vw);max-height:90vh;overflow-y:auto;background:var(--surface);
+    width:min(1700px,86vw);max-height:92vh;overflow-y:auto;background:var(--surface);
     border-radius:16px;padding:26px 28px;z-index:201;box-shadow:0 24px 64px rgba(16,24,40,.22)}
+/* zoom 1.1 이 걸려 있어 vw 가 실제 화면보다 크게 잡힌다 — 86vw 로 여유를 둔다 */
 .dd-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px}
 .dd-t{font-size:22px;font-weight:700;color:var(--ink);letter-spacing:-.3px}
 .dd-s{font-size:12.5px;color:var(--ink-4);margin-top:4px}
@@ -355,7 +356,7 @@ td.pace{position:relative}
   </div>
   <div class="hd-right">
     <div class="hd-date">2026-09-16 <span class="hd-time">23:59</span></div>
-    <div class="hd-gen">생성 2026. 9. 21. 오후 5:52:14</div>
+    <div class="hd-gen">생성 2026. 9. 21. 오후 5:55:40</div>
   </div>
  </div>
 </div>
@@ -955,16 +956,16 @@ function itemCode(it){
    서로 다른 자리에 떨어져 "합계와 항목이 안 맞는" 것처럼 보였다(2026-09-21 피드백).
    같은 colgroup 을 공유하면 어느 깊이든 같은 세로선 위에 놓인다. */
 var COLS = [
-  { k:'name',      h:'캠페인',     left:true,  w:'44%' },
+  { k:'name',      h:'캠페인',     left:true,  w:'35%' },
   { k:'mode',      h:'체계',       left:true,  w:'5%'  },
   { k:'attr',      h:'기여',       left:true,  w:'4%'  },
-  { k:'strategy',  h:'입찰 · 캡값', left:true,  w:'9%'  },
-  { k:'daily',     h:'일예산',                 w:'8%'  },
+  { k:'strategy',  h:'입찰 · 캡값', left:true,  w:'10%' },
+  { k:'daily',     h:'일예산',                 w:'9%'  },
   { k:'spend',     h:'소진',                   w:'8%'  },
-  { k:'remain',    h:'잔여',                   w:'7%'  },
-  { k:'pace',      h:'페이스',                 w:'5%'  },
+  { k:'remain',    h:'잔여',                   w:'8%'  },
+  { k:'pace',      h:'페이스',                 w:'6%'  },
   { k:'purchases', h:'전환수',                 w:'4%'  },
-  { k:'val',       h:'전환값',                 w:'5%'  },
+  { k:'val',       h:'전환값',                 w:'6%'  },
   { k:'roas',      h:'ROAS',                   w:'5%'  }
 ];
 var NCOL = COLS.length;
