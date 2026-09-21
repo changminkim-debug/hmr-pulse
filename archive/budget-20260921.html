@@ -238,12 +238,13 @@ table.chgtbl td.left{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bid-none{color:var(--ink-4);font-weight:400}
 
 td.nmcell{text-align:left;user-select:text}
-/* 이름만 말줄임하고 아이콘 버튼은 항상 오른쪽에 남긴다.
-   예전엔 셀 전체를 overflow:hidden 으로 잘라, 이름이 길면 버튼까지 같이 잘려 눌리지 않았다. */
-.nm{color:var(--ink-2);font-size:12.5px;line-height:1.45;letter-spacing:-.2px;
-    flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.nmwrap{display:flex;align-items:center;gap:3px;min-width:0;max-width:100%}
-.nmwrap .arrow,.nmwrap .iconbtn{flex:0 0 auto}
+/* 캠페인명은 절대 자르지 않는다 — 잘리면 비슷한 이름끼리 구분이 안 된다(2026-09-22 피드백).
+   대신 글자를 줄이고 줄바꿈을 허용해 전체를 보여준다. 버튼은 첫 줄 오른쪽에 고정. */
+.nm{color:var(--ink-2);font-size:11.5px;line-height:1.4;letter-spacing:-.3px;
+    flex:1 1 auto;min-width:0;white-space:normal;word-break:break-all;overflow-wrap:anywhere}
+.nmwrap{display:flex;align-items:flex-start;gap:3px;min-width:0;max-width:100%}
+.nmwrap .arrow,.nmwrap .iconbtn{flex:0 0 auto;margin-top:1px}
+table.grid td.nmcell{white-space:normal;vertical-align:middle}
 table.grid td.itemname{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sub-wrap .nm{font-size:12.5px}
 .iconbtn{border:none;background:transparent;cursor:pointer;font-size:11px;padding:0 2px;border-radius:5px;opacity:.4;line-height:1;vertical-align:middle}
@@ -978,16 +979,16 @@ function itemCode(it){
    서로 다른 자리에 떨어져 "합계와 항목이 안 맞는" 것처럼 보였다(2026-09-21 피드백).
    같은 colgroup 을 공유하면 어느 깊이든 같은 세로선 위에 놓인다. */
 var COLS = [
-  { k:'name',      h:'캠페인',     left:true,  w:'34%' },
-  { k:'mode',      h:'체계',       left:true,  w:'5%'  },
+  { k:'name',      h:'캠페인',     left:true,  w:'38%' },
+  { k:'mode',      h:'체계',       left:true,  w:'4%'  },
   { k:'attr',      h:'기여',       left:true,  w:'4%'  },
-  { k:'strategy',  h:'입찰 · 캡값', left:true,  w:'10%' },
+  { k:'strategy',  h:'입찰 · 캡값', left:true,  w:'9%'  },
   { k:'daily',     h:'일예산',                 w:'9%'  },
   { k:'spend',     h:'소진',                   w:'8%'  },
-  { k:'remain',    h:'잔여',                   w:'8%'  },
+  { k:'remain',    h:'잔여',                   w:'7%'  },
   { k:'pace',      h:'페이스',                 w:'6%'  },
   { k:'purchases', h:'전환수',                 w:'4%'  },
-  { k:'val',       h:'전환값',                 w:'6%'  },
+  { k:'val',       h:'전환값',                 w:'5%'  },
   { k:'roas',      h:'ROAS',                   w:'6%'  }
 ];
 var NCOL = COLS.length;
