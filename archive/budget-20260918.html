@@ -242,6 +242,7 @@ td.roas{font-weight:600}
 .pill-mid{background:#EEF1F6;color:#344054}
 .pill-lo{background:#FDECEA;color:#B42318}
 .pill-na{background:var(--line-2);color:var(--ink-4);font-weight:600}
+.pill-tight{padding:3px 6px;font-size:11.5px;letter-spacing:-.3px}
 tr.lv1 .pill{font-size:13px;padding:3px 12px}
 .r-hi3,.r-hi2,.r-hi1{color:var(--good)}
 .r-lo1,.r-lo2,.r-lo3{color:var(--bad)}
@@ -356,7 +357,7 @@ td.pace{position:relative}
   </div>
   <div class="hd-right">
     <div class="hd-date">2026-09-18 <span class="hd-time">23:59</span></div>
-    <div class="hd-gen">생성 2026. 9. 21. 오후 7:27:45</div>
+    <div class="hd-gen">생성 2026. 9. 21. 오후 7:28:33</div>
   </div>
  </div>
 </div>
@@ -427,8 +428,10 @@ function roasPill(r, spend){
   var t = S.tRoas;
   // 낮은 쪽을 빨갛게 칠하면 표가 온통 붉어져 오히려 안 읽힌다.
   // 목표 이상만 초록으로 집고 나머지는 중립으로 둔다.
-  var c = r >= t ? 'pill-hi' : 'pill-mid';
-  return '<span class="pill ' + c + '">' + pct(r) + '</span>';
+    var c = r >= t ? 'pill-hi' : 'pill-mid';
+  // 네 자리 %(소진이 아주 적은 캠페인)는 기본 pill 폭을 넘겨 잘린다 — 좁은 변형을 쓴다
+  var tight = r >= 1000 ? ' pill-tight' : '';
+  return '<span class="pill ' + c + tight + '>' + pct(r) + '</span>';
 }
 // 페이스 경고 — 이 시각 평년 소진비중의 60% 미만이면 "예산이 안 나가고 있다"는 신호
 // 잔여 예산 = 일예산 - 소진. 예산을 넘겨 쓴 경우(-)도 그대로 보여준다.
@@ -956,7 +959,7 @@ function itemCode(it){
    서로 다른 자리에 떨어져 "합계와 항목이 안 맞는" 것처럼 보였다(2026-09-21 피드백).
    같은 colgroup 을 공유하면 어느 깊이든 같은 세로선 위에 놓인다. */
 var COLS = [
-  { k:'name',      h:'캠페인',     left:true,  w:'35%' },
+  { k:'name',      h:'캠페인',     left:true,  w:'34%' },
   { k:'mode',      h:'체계',       left:true,  w:'5%'  },
   { k:'attr',      h:'기여',       left:true,  w:'4%'  },
   { k:'strategy',  h:'입찰 · 캡값', left:true,  w:'10%' },
@@ -966,7 +969,7 @@ var COLS = [
   { k:'pace',      h:'페이스',                 w:'6%'  },
   { k:'purchases', h:'전환수',                 w:'4%'  },
   { k:'val',       h:'전환값',                 w:'6%'  },
-  { k:'roas',      h:'ROAS',                   w:'5%'  }
+  { k:'roas',      h:'ROAS',                   w:'6%'  }
 ];
 var NCOL = COLS.length;
 
