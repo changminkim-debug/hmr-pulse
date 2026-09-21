@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>한끼통살 · 메타 일예산 보드 · 2026-09-21 10:38</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI','Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:#e8ebf0;color:#222836;font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}
+
+.hd{background:#fff;padding:15px 36px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #dce0ea;position:sticky;top:0;z-index:20;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.hd-left{display:flex;align-items:center;gap:14px}
+.hd-logo{font-size:13px;font-weight:700;color:#5a6a8a;padding:4px 11px;border-radius:4px;background:#eef0f6}
+.hd-title{font-size:20px;font-weight:700;color:#1a2030;letter-spacing:-.2px}
+.hd-sub{font-size:13px;color:#8c96ae;margin-top:2px}
+.hd-right{text-align:right}
+.hd-date{font-size:16px;font-weight:600;color:#3a4460}
+.hd-gen{font-size:13px;color:#b4bece;margin-top:2px}
+
+.fbar{background:#fff;padding:10px 36px;border-bottom:1px solid #dce0ea;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.fg{display:flex;align-items:center;gap:7px}
+.fl{font-size:13px;color:#8c96ae;font-weight:700;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap}
+.seg{display:flex;gap:4px;background:#eef0f6;border-radius:6px;padding:3px}
+.seg-btn{border:none;background:transparent;padding:5px 14px;border-radius:5px;font-size:13px;font-weight:700;color:#8c96ae;cursor:pointer;font-family:inherit;white-space:nowrap}
+.seg-btn:hover{color:#5a6a8a}
+.seg-btn.active{background:#fff;color:#2c3347;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.tin{padding:6px 11px;border:1.5px solid #dce0ea;border-radius:6px;font-size:15px;font-weight:700;color:#1a2030;font-family:inherit;background:#fff;width:130px;text-align:right}
+.tin.small{width:74px}
+.tin:focus{outline:none;border-color:#4466cc}
+.tsuf{font-size:13px;color:#8c96ae;font-weight:600}
+.reset-btn{border:1px solid #dce0ea;background:#fff;padding:5px 12px;border-radius:6px;font-size:13px;font-weight:700;color:#8c96ae;cursor:pointer;font-family:inherit}
+.reset-btn:hover{background:#f0f2f8;color:#5a6a8a}
+
+.page-body{padding:20px 32px;display:flex;flex-direction:column;gap:16px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{background:#fff;border-radius:10px;padding:22px 24px;box-shadow:0 1px 3px rgba(0,0,0,.07),0 2px 8px rgba(0,0,0,.04)}
+.cl{font-size:13px;color:#8c96ae;letter-spacing:.3px;margin-bottom:10px;text-transform:uppercase;font-weight:600}
+.cv{font-size:34px;font-weight:700;line-height:1.0;letter-spacing:-.6px;color:#1a2030}
+.cs{font-size:13px;color:#b4bece;margin-top:8px;white-space:normal;word-break:keep-all;line-height:1.45}
+.cs b{color:#5a6a8a}
+
+.panel{background:#fff;border-radius:10px;padding:20px 22px;box-shadow:0 1px 3px rgba(0,0,0,.07),0 2px 8px rgba(0,0,0,.04)}
+.sec-title{font-size:16px;font-weight:700;color:#1a2030;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.hint{font-size:13px;color:#c0c6d4;font-weight:400;margin-left:4px}
+
+table{width:100%;border-collapse:collapse;background:#fff}
+thead tr{background:#f0f2f8}
+th{padding:10px 14px;color:#505870;font-size:13.5px;font-weight:700;text-align:right;white-space:nowrap;border-top:1px solid #dde0ea;border-bottom:2px solid #dde0ea}
+th.left{text-align:left}
+td{padding:10px 14px;font-size:16px;text-align:right;border-bottom:1px solid #eceef5;white-space:nowrap;color:#2c3347}
+td.left{text-align:left}
+td.name{font-weight:600;color:#1a2030}
+td.nm{text-align:left;max-width:420px;overflow:hidden;text-overflow:ellipsis;font-size:14.5px;color:#48506a}
+tbody tr:nth-child(even) td{background:#f8f9fd}
+tbody tr:hover td{background:#edf1f8!important}
+tfoot td{background:#eef0f6!important;font-weight:700;color:#1a2030;border-top:2px solid #dde0ea;border-bottom:none}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable:hover{background:#dde0ea}
+th.sort-active{color:#2c3347!important;background:#d8dcec!important}
+.sort-ic{font-size:10px;margin-left:3px;opacity:.4}
+th.sort-active .sort-ic{opacity:1;color:#4466cc}
+
+tr.camp-row{cursor:pointer}
+tr.camp-row td:first-child{border-left:3px solid transparent;padding-left:11px}
+tr.camp-row.open td:first-child{border-left-color:#4466cc}
+tr.detail-row td{background:#f2f4fa!important;padding:10px 12px}
+tr.detail-row:hover td{background:#f2f4fa!important}
+.detail-wrap table{border:1px solid #dde0ea;border-radius:6px;overflow:hidden}
+.detail-wrap thead tr{background:#484e64}
+.detail-wrap th{font-size:13px;padding:8px 13px;border:none;color:rgba(255,255,255,.9);font-weight:600;background:transparent}
+.detail-wrap td{font-size:14.5px;padding:8px 13px;background:#fff}
+.detail-wrap tbody tr:nth-child(even) td{background:#f8f9fc}
+.detail-title{font-size:12.5px;color:#3a4460;font-weight:700;margin-bottom:7px;padding-left:2px}
+
+.acct-hd{font-size:14px;font-weight:700;color:#3a4460;margin:18px 0 8px;padding-left:2px;display:flex;align-items:center;gap:8px}
+.acct-hd:first-child{margin-top:0}
+.acct-hd .meta{font-size:12.5px;font-weight:600;color:#b4bece}
+
+.chip{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.2px}
+.chip-cbo{background:#e8ecfa;color:#2a4090}
+.chip-abo{background:#f1e8fa;color:#5a2a90}
+.chip-troas{background:#fdeee0;color:#9a5410}
+.chip-tcpa{background:#fde8e8;color:#9a2020}
+.chip-bidcap{background:#f0e8fd;color:#5a3098}
+.chip-free{background:#eaf2ea;color:#2a6040}
+
+.roas400{color:#146028}.roas300{color:#208040}.roas250{color:#349050}
+.roas200{color:#c03030}.roas150{color:#a02020}.roas100{color:#801818}.roas0{color:#a8adba}
+.pace-low{color:#c03030;font-weight:700}
+.pace-ok{color:#2c3347}
+.pace-high{color:#2a58b0;font-weight:700}
+.muted{color:#b4bece}
+.na{color:#c8cdd8;font-size:13px}
+
+/* 착지 예측 */
+.proj{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid #dde0ea;border-radius:8px;overflow:hidden}
+.proj-cell{padding:15px 18px;border-right:1px solid #eceef5;background:#fbfcfe}
+.proj-cell:last-child{border-right:none}
+.proj-l{font-size:12.5px;color:#8c96ae;font-weight:700;text-transform:uppercase;letter-spacing:.3px;margin-bottom:8px}
+.proj-v{font-size:27px;font-weight:700;color:#1a2030;line-height:1.05;letter-spacing:-.4px}
+.proj-s{font-size:13px;margin-top:6px;font-weight:600}
+.proj-s.good{color:#208040}.proj-s.bad{color:#c03030}.proj-s.warn{color:#b07010}
+
+/* 액션 제언 */
+.act{border-left:4px solid #4466cc}
+.act-verdict{font-size:15px;font-weight:700;padding:13px 16px;border-radius:8px;margin-bottom:14px;line-height:1.55}
+.act-verdict.ok{background:#eaf4ec;color:#1a5030;border:1px solid #c8e2cf}
+.act-verdict.warn{background:#fdf3e3;color:#7a4c08;border:1px solid #f0dcb8}
+.act-verdict.bad{background:#fdeaea;color:#8a1c1c;border:1px solid #f2c8c8}
+.act-grp{margin-bottom:16px}
+.act-grp:last-child{margin-bottom:0}
+.act-grp-t{font-size:14px;font-weight:700;color:#1a2030;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.act-num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:5px;background:#4466cc;color:#fff;font-size:12px;font-weight:800}
+.act-num.red{background:#c03030}
+.act-num.grey{background:#8c96ae}
+.act-note{font-size:13.5px;color:#8c96ae;margin:-2px 0 9px 27px;line-height:1.5}
+.act-empty{font-size:14px;color:#b4bece;padding:6px 0 6px 27px}
+
+.ft{text-align:center;padding:10px 32px 24px;font-size:12px;color:#c0c6d4;line-height:1.7}
+@media(max-width:1100px){.cards{grid-template-columns:repeat(2,1fr)}.proj{grid-template-columns:repeat(2,1fr)}}
+
+#pw-overlay{position:fixed;inset:0;background:rgba(245,247,251,.97);display:flex;align-items:center;justify-content:center;z-index:99999}
+#pw-box{background:#fff;border:1px solid #e0e4f0;border-radius:16px;padding:48px 40px;display:flex;flex-direction:column;align-items:center;gap:20px;min-width:320px;box-shadow:0 8px 40px rgba(0,0,0,.12)}
+#pw-logo{font-size:22px;font-weight:800;color:#1a2030;letter-spacing:.5px}
+#pw-sub{font-size:13px;color:#8c96ae;margin-top:-10px}
+#pw-input{width:100%;padding:12px 16px;border-radius:8px;border:1.5px solid #dde0ea;font-size:15px;outline:none;text-align:center;letter-spacing:3px}
+#pw-input:focus{border-color:#4466cc}
+#pw-btn{width:100%;padding:12px;border-radius:8px;background:#4466cc;color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer}
+#pw-err{font-size:12px;color:#e05555;height:16px}
+</style>
+</head>
+<body>
+<div id="pw-overlay">
+  <div id="pw-box">
+    <div id="pw-logo">HMR 일예산 보드</div>
+    <div id="pw-sub">접근 비밀번호를 입력하세요</div>
+    <input id="pw-input" type="password" placeholder="비밀번호" onkeydown="if(event.key==='Enter')checkPw()">
+    <div id="pw-err"></div>
+    <button id="pw-btn" onclick="checkPw()">확인</button>
+  </div>
+</div>
+<script>
+(function(){
+  const PW = 'hankkipulse7052';
+  if (sessionStorage.getItem('bdg_auth') === '1') { document.getElementById('pw-overlay').style.display='none'; return; }
+  window.checkPw = function() {
+    if (document.getElementById('pw-input').value === PW) {
+      sessionStorage.setItem('bdg_auth','1');
+      document.getElementById('pw-overlay').style.display='none';
+    } else {
+      const err = document.getElementById('pw-err');
+      err.textContent = '비밀번호가 틀렸습니다';
+      document.getElementById('pw-input').value=''; document.getElementById('pw-input').focus();
+      setTimeout(function(){ err.textContent=''; },2000);
+    }
+  };
+})();
+</script>
+
+<div class="hd">
+  <div class="hd-left">
+    <div class="hd-logo">HMR</div>
+    <div>
+      <div class="hd-title">메타 일예산 보드</div>
+      <div class="hd-sub">계정 → 캠페인(CBO/ABO) → 광고세트 일예산 · 당일 소진 · C1 성과 · 착지 예측</div>
+    </div>
+  </div>
+  <div class="hd-right">
+    <div class="hd-date">2026-09-21 <span style="color:#8c96ae;font-weight:500">10:38</span></div>
+    <div class="hd-gen">생성 2026. 9. 21. 오전 10:38:47</div>
+  </div>
+</div>
+
+<div class="fbar">
+  <div class="fg"><span class="fl">계정</span><div class="seg" id="acct-seg"></div></div>
+  <div class="fg"><span class="fl">목표 소진</span>
+    <input class="tin" id="t-spend" type="text" inputmode="numeric"><span class="tsuf">원</span></div>
+  <div class="fg"><span class="fl">목표 C1 ROAS</span>
+    <input class="tin small" id="t-roas" type="text" inputmode="numeric"><span class="tsuf">%</span></div>
+  <button class="reset-btn" onclick="resetTargets()">기본값</button>
+  <span class="hint" style="margin-left:auto">목표는 이 브라우저에 저장됩니다</span>
+</div>
+
+<div class="page-body">
+  <div class="cards" id="kpi"></div>
+  <div class="panel"><div class="sec-title">오늘 착지 예측<span class="hint" id="curve-note"></span></div><div class="proj" id="proj"></div><div id="ckpt" style="margin-top:16px"></div></div>
+  <div class="panel"><div class="sec-title">입찰 전략별<span class="hint">예산이 걸려 있는 곳 vs 실제로 나가는 곳</span></div><div id="bid-tbl"></div></div>
+  <div class="panel"><div class="sec-title">품목별 일예산 롤업</div><div id="item-tbl"></div></div>
+  <div class="panel"><div class="sec-title">캠페인 전수<span class="hint">행을 클릭하면 광고세트별 일예산이 펼쳐집니다</span></div><div id="camp-tbl"></div></div>
+</div>
+
+<div class="ft">
+  C1 = 1일 클릭 기여(1d_click) · 일예산은 활성(ACTIVE) 캠페인 기준 · CBO는 캠페인 일예산, ABO는 광고세트 일예산 합<br>
+  착지 예측은 <code>data/learn/intraday-curve.json</code>(일중 곡선 실측)을 씁니다 · 읽기 전용 수집, 예산을 바꾸지 않습니다
+</div>
+
+<script>
+const D = {"dateStr":"2026-09-21","pollTime":"10:38","accounts":[{"id":"906987379684182","label":"통합마케팅"},{"id":"1723779808065856","label":"신제품"}],"campaigns":[{"account":"906987379684182","accountLabel":"통합마케팅","id":"120251767575080200","name":"03.닭다리살(ASC)(하이브리드)_A+SC캠페인_구매최적화_수_표준기여_3111_260921","item":"닭다리살","mode":"CBO","bid":"캡 없음","bidRaw":"LOWEST_COST_WITHOUT_CAP","lifetime":0,"daily":150000,"spend":984,"imp":39,"clicks":0,"purchases":0,"val":0,"adsets":[{"id":"120251767605830200","name":"03.닭다리살(ASC)(하이브리드)_A+SC캠페인_9월3주차_ALL_C7_구매최적화_수_표준기여_3111_26021","daily":0,"spend":984,"imp":39,"purchases":0,"val":0}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120251767533980200","name":"20.김자반밥바(ASC)(하이브리드)_A+SC캠페인_구매최적화_수_3159_260921","item":"김자반","mode":"CBO","bid":"캡 없음","bidRaw":"LOWEST_COST_WITHOUT_CAP","lifetime":0,"daily":150000,"spend":3689,"imp":422,"clicks":4,"purchases":0,"val":0,"adsets":[{"id":"120251767534090200","name":"20.김자반밥바(ASC)(하이브리드)_A+SC캠페인_9월3주차_ALL_C7_구매최적화_수_3159_260921","daily":0,"spend":3689,"imp":422,"purchases":0,"val":0}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120251767206700200","name":"22.닭가슴살볼(ASC)(메가딜)_A+SC캠페인_구매최적화_수_표준기여_2905_260921","item":"닭가슴살볼","mode":"CBO","bid":"캡 없음","bidRaw":"LOWEST_COST_WITHOUT_CAP","lifetime":0,"daily":100000,"spend":4421,"imp":505,"clicks":0,"purchases":2,"val":128900,"adsets":[{"id":"120251767206840200","name":"22.닭가슴살볼(ASC)(메가딜)_A+SC캠페인_9월3주차_ALL_C7_구매최적화_수_표준기여_2905_260921","daily":0,"spend":4421,"imp":505,"purchases":2,"val":128900}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120251755255290200","name":"07.크리스피(3078)_1_ABO_전환수최대_신규확보","item":"크리스피","mode":"ABO","bid":"캡 없음","bidRaw":"LOWEST_COST_WITHOUT_CAP","lifetime":0,"daily":350000,"spend":98422,"imp":7354,"clicks":64,"purchases":2,"val":125400,"adsets":[{"id":"120251755255170200","name":"260918_크리스피(3078)_C7_전환수최대_신규확보","daily":150000,"spend":42158,"imp":2488,"purchases":0,"val":0},{"id":"120251755255000200","name":"260918_크리스피(3078)_C7_전환수최대_신규확보_F-20","daily":100000,"spend":30275,"imp":3463,"purchases":1,"val":61300},{"id":"120251755255220200","name":"260918_크리스피(3078)_C7_전환수최대_신규확보_M-20","daily":100000,"spend":25989,"imp":1403,"purchases":1,"val":64100}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120251755255280200","name":"07.크리스피(3078)_3_CBO_TROAS_300_클릭기여_C1_신규확보","item":"크리스피","mode":"CBO","bid":"tROAS 캡","bidRaw":"LOWEST_COST_WITH_MIN_ROAS","lifetime":0,"daily":200000,"spend":23220,"imp":1717,"clicks":19,"purchases":0,"val":0,"adsets":[{"id":"120251755255340200","name":"260918_크리스피(3078)_TROAS_릴스/파트너십_300_C1_신규확보(180일제외)","daily":0,"spend":23220,"imp":1717,"purchases":0,"val":0}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120251755254950200","name":"07.크리스피(3078)_1_ABO_전환값최대_신규확보","item":"크리스피","mode":"ABO","bid":"캡 없음","bidRaw":"LOWEST_COST_WITHOUT_CAP","lifetime":0,"daily":400000,"spend":105783,"imp":9356,"clicks":80,"purchases":3,"val":219700,"adsets":[{"id":"120251755255050200","name":"260918_크리스피(3078)_C7_전환값최대_신규확보","daily":150000,"spend":48945,"imp":5083,"purchases":3,"val":219700},{"id":"120251755255060200","name":"260918_크리스피(3078)_C7_전환값최대_신규확보_M-20","daily":150000,"spend":36291,"imp":2479,"purchases":0,"val":0},{"id":"120251755255120200","name":"260918_크리스피(3078)_C7_전환값최대_신규확보_F-20","daily":100000,"spend":20547,"imp":1794,"purchases":0,"val":0}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120251755192030200","name":"01.통살(3028)_3_CBO_TROAS_300_클릭기여_C1_신규확보","item":"통살","mode":"CBO","bid":"tROAS 캡","bidRaw":"LOWEST_COST_WITH_MIN_ROAS","lifetime":0,"daily":200000,"spend":9628,"imp":439,"clicks":13,"purchases":0,"val":0,"adsets":[{"id":"120251755192020200","name":"260918_통살(3028)_TROAS_릴스/파트너십_300_C1_신규확보(180일제외)","daily":0,"spend":9628,"imp":439,"purchases":0,"val":0}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120251707937630200","name":"07_크리스피(3078)_1_ABO_전환수최대_신규확보_기존소재복제용","item":"크리스피","mode":"ABO","bid":"캡 없음","bidRaw":"LOWEST_COST_WITHOUT_CAP","lifetime":0,"daily":900000,"spend":282741,"imp":30754,"clicks":264,"purchases":8,"val":521140,"adsets":[{"id":"120251707937660200","name":"260917_크리스피(3078)_전환수최대_신규(180일제외)","daily":600000,"spend":186419,"imp":23667,"purchases":5,"val":365140},{"id":"120251707937750200","name":"260917_크리스피(3078)_전환수최대_신규(180일제외)_F-20","daily":150000,"spend":57528,"imp":3336,"purchases":2,"val":98100},{"id":"120251707937760200","name":"260917_크리스피(3078)_전환수최대_신규(180일제외)_M-20","daily":150000,"spend":38794,"imp":3751,"purchases":1,"val":57900}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120251692220130200","name":"03.닭다리살(ASC)(하이브리드)_A+SC캠페인_구매최적화_값_표준기여_3111_260916","item":"닭다리살","mode":"CBO","bid":"캡 없음","bidRaw":"LOWEST_COST_WITHOUT_CAP","lifetime":0,"daily":500000,"spend":234011,"imp":23584,"clicks":245,"purchases":5,"val":462400,"adsets":[{"id":"120251692220250200","name":"03.닭다리살(ASC)(하이브리드)_A+SC캠페인_ALL_C7_구매최적화_값_표준기여_3111_260916","daily":0,"spend":234011,"imp":23584,"purchases":5,"val":462400}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120251679607360200","name":"01.통살(3028)_1_ABO_전환수최대_신규확보","item":"통살","mode":"ABO","bid":"캡 없음","bidRaw":"LOWEST_COST_WITHOUT_CAP","lifetime":0,"daily":400000,"spend":75791,"imp":8165,"clicks":350,"purchases":3,"val":281700,"adsets":[{"id":"120251679607330200","name":"260915_소스통살(3028)_C7_전환수최대_신규확보_M-20","daily":200000,"spend":35737,"imp":2637,"purchases":2,"val":182200},{"id":"120251679607320200","name":"260915_소스통살(3028)_C7_전환수최대_신규확보_F-20","daily":100000,"spend":31473,"imp":4780,"purchases":0,"val":0},{"id":"120251679607350200","name":"260915_소스통살(3028)_C7_전환수최대_신규확보","daily":100000,"spend":8581,"imp":748,"purchases":1,"val":99500}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120251679454250200","name":"01.통살(3028)_1_ABO_전환값최대_신규확보","item":"통살","mode":"ABO","bid":"캡 없음","bidRaw":"LOWEST_COST_WITHOUT_CAP","lifetime":0,"daily":500000,"spend":85096,"imp":5690,"clicks":62,"purchases":3,"val":254140,"adsets":[{"id":"120251679454280200","name":"260915_소스통살(3028)_C7_전환값최대_신규확보_F-20","daily":200000,"spend":45029,"imp":3524,"purchases":1,"val":111890},{"id":"120251679454270200","name":"260915_소스통살(3028)_C7_전환값최대_신규확보","daily":200000,"spend":14293,"imp":689,"purchases":1,"val":96350},{"id":"120251679454290200","name":"260915_소스통살(3028)_C7_전환값최대_신규확보_M-20","daily":100000,"spend":25774,"imp":1477,"purchases":1,"val":45900}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120251444359310200","name":"07_크리스피(ASC)(하이브리드)_TROAS_A+SC캠페인_구매최적화_값_표준기여_3078_260901(테무콘2)_330_완료","item":"크리스피","mode":"CBO","bid":"tROAS 캡","bidRaw":"LOWEST_COST_WITH_MIN_ROAS","lifetime":0,"daily":100000,"spend":1092,"imp":52,"clicks":0,"purchases":0,"val":0,"adsets":[{"id":"120251444359300200","name":"07.크리스피(ASC)(하이브리드)_TROAS_A+SC캠페인_ALL_C7_구매최적화_값_표준기여_3078_260901(테무콘2)_330","daily":0,"spend":1092,"imp":52,"purchases":0,"val":0}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120251369567660200","name":"20.김자반밥바(ASC)(메가딜)_ABO캠페인_구매최적화_수_표준기여_3003_260827","item":"김자반","mode":"ABO","bid":"캡 없음","bidRaw":"LOWEST_COST_WITHOUT_CAP","lifetime":0,"daily":150000,"spend":19400,"imp":1673,"clicks":16,"purchases":5,"val":163490,"adsets":[{"id":"120251369567640200","name":"20.김자반밥바(ASC)(메가딜)_ABO캠페인_(adv)_9월_C7_구매최적화_수_표준기여_3002_260827","daily":150000,"spend":19400,"imp":1673,"purchases":5,"val":163490}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120251369567620200","name":"20.김자반밥바(ASC)(메가딜)_TROAS_ABO캠페인_구매최적화_수_표준기여_3003_260827","item":"김자반","mode":"ABO","bid":"tROAS 캡","bidRaw":"LOWEST_COST_WITH_MIN_ROAS","lifetime":0,"daily":200000,"spend":82614,"imp":7782,"clicks":91,"purchases":4,"val":231200,"adsets":[{"id":"120251369567690200","name":"20.김자반밥바(ASC)(메가딜)_TROAS_ABO캠페인_(adv)_9월_C7_구매최적화_수_표준기여_3003_260827","daily":100000,"spend":49055,"imp":4488,"purchases":2,"val":127100},{"id":"120251369567680200","name":"20.김자반밥바(ASC)(메가딜)_TROAS_ABO캠페인_(NEW)_9월_C7_구매최적화_수_표준기여_3003_260827","daily":100000,"spend":33559,"imp":3294,"purchases":2,"val":104100}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120251369567610200","name":"20.김자반밥바(ASC)(메가딜)_TCPA_ABO캠페인_구매최적화_수_표준기여_3003_260827","item":"김자반","mode":"ABO","bid":"tCPA 캡","bidRaw":"COST_CAP","lifetime":0,"daily":450000,"spend":112801,"imp":10078,"clicks":106,"purchases":5,"val":157500,"adsets":[{"id":"120251369567650200","name":"20.김자반밥바(ASC)(메가딜)_TCPA_ABO캠페인_(NEW)_9월 1주차_C7_구매최적화_수_표준기여_3003_260827","daily":300000,"spend":71915,"imp":6478,"purchases":2,"val":51800},{"id":"120251369567630200","name":"20.김자반밥바(ASC)(메가딜)_TCPA_ABO캠페인_(adv)_9월 1주차_C7_구매최적화_수_표준기여_3003_260827","daily":150000,"spend":40886,"imp":3600,"purchases":3,"val":105700}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120251251665220200","name":"07_크리스피(ASC)(하이브리드)_CBO_TROAS_구매최적화_수_표준기여_3078_260821_330_완료","item":"크리스피","mode":"CBO","bid":"tROAS 캡","bidRaw":"LOWEST_COST_WITH_MIN_ROAS","lifetime":0,"daily":900000,"spend":83611,"imp":10683,"clicks":125,"purchases":5,"val":578300,"adsets":[{"id":"120251367986990200","name":"07.크리스피(ASC)(하이브리드)_TROAS_ABO캠페인_(adv)_9월_ALL_C7_구매최적화_수_표준기여_3078_260827_330_완료","daily":0,"spend":74991,"imp":10197,"purchases":4,"val":535100},{"id":"120251251665100200","name":"07.크리스피(ASC)(하이브리드)_TROAS_ABO캠페인_(NEW)_테무콘모음_ALL_C7_구매최적화_수_표준기여_3078_260821_330_완료","daily":0,"spend":6644,"imp":288,"purchases":0,"val":0},{"id":"120251251969310200","name":"07.크리스피(ASC)(하이브리드)_TROAS_ABO캠페인_(NEW)_이미지모음_ALL_C7_구매최적화_값_표준기여_3078_260821_330_완료","daily":0,"spend":664,"imp":94,"purchases":0,"val":0},{"id":"120251251665310200","name":"07.크리스피(ASC)(하이브리드)_TROAS_ABO캠페인_(NEW)_영상모음_ALL_C7_구매최적화_수_표준기여_3078_260821_330_완료","daily":0,"spend":642,"imp":57,"purchases":1,"val":43200},{"id":"120251251665330200","name":"07.크리스피(ASC)(하이브리드)_TROAS_ABO캠페인_(NEW)_네고홈쇼핑모음_ALL_C7_구매최적화_수_표준기여_3078_260821_330_완료","daily":0,"spend":456,"imp":34,"purchases":0,"val":0},{"id":"120251251665200200","name":"07.크리스피(ASC)(하이브리드)_TROAS_ABO캠페인_(NEW)_AI모음_ALL_C7_구매최적화_값_표준기여_3078_260821_330_완료","daily":0,"spend":193,"imp":10,"purchases":0,"val":0},{"id":"120251367956920200","name":"07.크리스피(ASC)(하이브리드)_TROAS_ABO캠페인_(NEW)_9월_ALL_C7_구매최적화_수_표준기여_3078_260827_330_완료","daily":0,"spend":21,"imp":3,"purchases":0,"val":0}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120251211164300200","name":"07_크리스피(ASC)(하이브리드)_TCPA_A+SC캠페인_ALL_C7_수_표준기여_3078_260819(테무콘)_완료","item":"크리스피","mode":"CBO","bid":"tCPA 캡","bidRaw":"COST_CAP","lifetime":0,"daily":200000,"spend":30792,"imp":1384,"clicks":80,"purchases":0,"val":0,"adsets":[{"id":"120251211165280200","name":"07.크리스피(ASC)(하이브리드)_TCPA18000_A+SC캠페인_ALL_C7_수_표준기여_3078_260819(테무콘)_완료","daily":0,"spend":30792,"imp":1384,"purchases":0,"val":0}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120251066794930200","name":"07_크리스피(ASC)(하이브리드)_TROAS_A+SC캠페인_구매최적화_값_표준기여_3078_260816_AI _2_330_완료","item":"크리스피","mode":"CBO","bid":"tROAS 캡","bidRaw":"LOWEST_COST_WITH_MIN_ROAS","lifetime":0,"daily":400000,"spend":71030,"imp":4780,"clicks":62,"purchases":3,"val":207100,"adsets":[{"id":"120251066794760200","name":"07.크리스피(ASC)(하이브리드)_TROAS_A+SC캠페인_ALL_C7_구매최적화_값_표준기여_3078_260816_AI_2_330_완료","daily":0,"spend":71030,"imp":4780,"purchases":3,"val":207100}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120250859367430200","name":"20.김자반밥바(ASC)(하이브리드)_A+SC캠페인_구매최적화_수_가치조정_3159_260806","item":"김자반","mode":"CBO","bid":"캡 없음","bidRaw":"LOWEST_COST_WITHOUT_CAP","lifetime":0,"daily":200000,"spend":99017,"imp":3105,"clicks":64,"purchases":3,"val":143200,"adsets":[{"id":"120251162155540200","name":"20.김자반밥바(ASC)(하이브리드)_A+SC캠페인_ALL_C7_구매최적화_수_2544가치조정_3159_2608017(쇼호스트)","daily":0,"spend":89647,"imp":2758,"purchases":3,"val":143200}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120250859189820200","name":"17.안심볶음밥(ASC)(메가딜)_TROAS_A+SC캠페인_구매최적화_값_표준기여_2903_260907","item":"안심폭탄볶음밥","mode":"CBO","bid":"tROAS 캡","bidRaw":"LOWEST_COST_WITH_MIN_ROAS","lifetime":0,"daily":500000,"spend":66925,"imp":4765,"clicks":80,"purchases":1,"val":93000,"adsets":[{"id":"120250859189850200","name":"17.안심볶음밥(ASC)(메가딜)_TROAS_A+SC캠페인_ALL_C7_구매최적화_값_표준기여_2903_260907","daily":0,"spend":66925,"imp":4765,"purchases":1,"val":93000}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120250859189800200","name":"17.안심볶음밥(ASC)(메가딜)_A+SC캠페인_구매최적화_수_표준기여_2903_260907","item":"안심폭탄볶음밥","mode":"CBO","bid":"캡 없음","bidRaw":"LOWEST_COST_WITHOUT_CAP","lifetime":0,"daily":500000,"spend":160153,"imp":10345,"clicks":192,"purchases":6,"val":372200,"adsets":[{"id":"120250859189830200","name":"17.안심볶음밥(ASC)(메가딜)_A+SC캠페인_ALL_C7_구매최적화_수_표준기여_2903_260806","daily":0,"spend":160153,"imp":10345,"purchases":6,"val":372200}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120250858902260200","name":"07_크리스피(ASC)(메가딜)_TROAS_A+SC캠페인_구매최적화_값_표준기여_2464_260806_330_완료","item":"크리스피","mode":"CBO","bid":"tROAS 캡","bidRaw":"LOWEST_COST_WITH_MIN_ROAS","lifetime":0,"daily":400000,"spend":46290,"imp":3808,"clicks":44,"purchases":2,"val":108690,"adsets":[{"id":"120250858902350200","name":"07.크리스피(ASC)(메가딜)_TROAS_A+SC캠페인_ALL_C7_구매최적화_값_표준기여_2464_260806_330_완료","daily":0,"spend":46290,"imp":3808,"purchases":2,"val":108690}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120250858456470200","name":"01_통살(ASC)(하이브리드)_A+SC캠페인_구매최적화_수_표준기여_3028_260806_완료","item":"통살","mode":"ABO","bid":"캡 없음","bidRaw":"LOWEST_COST_WITHOUT_CAP","lifetime":0,"daily":250000,"spend":74596,"imp":5774,"clicks":277,"purchases":4,"val":356540,"adsets":[{"id":"120251306773200200","name":"01.통살(ASC)(하이브리드)_A+SC캠페인_ALL_C7_구매최적화_수_표준기여_3028_260824_모든타겟(28일제외)","daily":250000,"spend":74596,"imp":5774,"purchases":4,"val":356540}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120250858093380200","name":"01_통살(ASC)(하이브리드)_TCPA_A+SC캠페인_ALL_C7_수_표준기여_3028_260806_완료","item":"통살","mode":"CBO","bid":"tCPA 캡","bidRaw":"COST_CAP","lifetime":0,"daily":300000,"spend":244,"imp":15,"clicks":0,"purchases":0,"val":0,"adsets":[{"id":"120250858093910200","name":"01.통살(ASC)(하이브리드)_TCPA18000_A+SC캠페인_ALL_C7_수_표준기여_3028_260806_완료","daily":0,"spend":244,"imp":15,"purchases":0,"val":0}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120250858093370200","name":"01_통살(ASC)(하이브리드)_TROAS_A+SC캠페인_구매최적화_값_표준기여_3028_260806_완료","item":"통살","mode":"CBO","bid":"tROAS 캡","bidRaw":"LOWEST_COST_WITH_MIN_ROAS","lifetime":0,"daily":1800000,"spend":317593,"imp":27173,"clicks":270,"purchases":20,"val":1580210,"adsets":[{"id":"120250858093620200","name":"01.통살(ASC)(하이브리드)_TROAS_A+SC캠페인_ALL_C7_구매최적화_값_표준기여_3028_260806_330_완료","daily":0,"spend":317593,"imp":27173,"purchases":20,"val":1580210}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120250649570130200","name":"07_크리스피(ASC)(하이브리드)_TROAS_A+SC캠페인_구매최적화_값_표준기여_3078_260802_AI_330_완료","item":"크리스피","mode":"CBO","bid":"tROAS 캡","bidRaw":"LOWEST_COST_WITH_MIN_ROAS","lifetime":0,"daily":1500000,"spend":48799,"imp":2492,"clicks":28,"purchases":1,"val":47650,"adsets":[{"id":"120250649570170200","name":"07.크리스피(ASC)(하이브리드)_TROAS_A+SC캠페인_ALL_C7_구매최적화_값_표준기여_3078_260802_AI_330","daily":0,"spend":48799,"imp":2492,"purchases":1,"val":47650}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120250268133470200","name":"03.닭다리살(ASC)(하이브리드)_TROAS_A+SC캠페인_구매최적화_값_표준기여_3111_260726","item":"닭다리살","mode":"CBO","bid":"tROAS 캡","bidRaw":"LOWEST_COST_WITH_MIN_ROAS","lifetime":0,"daily":400000,"spend":79215,"imp":4335,"clicks":72,"purchases":2,"val":200100,"adsets":[{"id":"120250268133600200","name":"03.닭다리살(ASC)(하이브리드)_TROAS_A+SC캠페인_ALL_C7_구매최적화_값_표준기여_3111_26026","daily":0,"spend":79215,"imp":4335,"purchases":2,"val":200100}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120250099159330200","name":"07_크리스피(ASC)(메가딜)_TCPA_A+SC캠페인_ALL_C7_수_표준기여_2464_260712","item":"크리스피","mode":"CBO","bid":"tCPA 캡","bidRaw":"COST_CAP","lifetime":0,"daily":200000,"spend":509,"imp":22,"clicks":2,"purchases":0,"val":0,"adsets":[{"id":"120250099159350200","name":"07.크리스피(ASC)(메가딜)_TCPA16000_A+SC캠페인_ALL_C7_수_표준기여_2464_260712","daily":0,"spend":509,"imp":22,"purchases":0,"val":0}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120249878429160200","name":"01_통살(ASC)(하이브리드)_TROAS_A+SC캠페인_구매최적화_값_표준기여_3028_260705_완료","item":"통살","mode":"CBO","bid":"tROAS 캡","bidRaw":"LOWEST_COST_WITH_MIN_ROAS","lifetime":0,"daily":1000000,"spend":20913,"imp":1820,"clicks":21,"purchases":0,"val":0,"adsets":[{"id":"120249878429230200","name":"01.통살(ASC)(하이브리드)_TROAS_A+SC캠페인_ALL_C7_구매최적화_값_표준기여_3028_260705_330_완료","daily":0,"spend":20913,"imp":1820,"purchases":0,"val":0}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120249317264140200","name":"07_크리스피(ASC)(하이브리드)_TROAS_A+SC캠페인_구매최적화_값_표준기여_3078_260713_330_완료","item":"크리스피","mode":"CBO","bid":"tROAS 캡","bidRaw":"LOWEST_COST_WITH_MIN_ROAS","lifetime":0,"daily":700000,"spend":192232,"imp":10857,"clicks":154,"purchases":10,"val":815390,"adsets":[{"id":"120249317264300200","name":"07.크리스피(ASC)(하이브리드)_TROAS_A+SC캠페인_ALL_C7_구매최적화_값_표준기여_3078_260712_330_완료","daily":0,"spend":192232,"imp":10857,"purchases":10,"val":815390}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120246898384670200","name":"03.닭다리살(ASC)(1010)_TROAS_A+SC캠페인_구매최적화_값_표준기여_2604_260519","item":"닭다리살","mode":"CBO","bid":"tROAS 캡","bidRaw":"LOWEST_COST_WITH_MIN_ROAS","lifetime":0,"daily":1400000,"spend":314737,"imp":28125,"clicks":366,"purchases":20,"val":1187048,"adsets":[{"id":"120246898384680200","name":"03.닭다리살(ASC)(1010)_TROAS_A+SC캠페인_ALL_C7_구매최적화_값_표준기여_2604_260519","daily":0,"spend":314737,"imp":28125,"purchases":20,"val":1187048}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120246898203940200","name":"03.닭다리살(ASC)(1010)_A+SC캠페인_구매최적화_수_표준기여_2604_260519","item":"닭다리살","mode":"CBO","bid":"캡 없음","bidRaw":"LOWEST_COST_WITHOUT_CAP","lifetime":0,"daily":500000,"spend":176328,"imp":12406,"clicks":168,"purchases":2,"val":177600,"adsets":[{"id":"120246898203930200","name":"03.닭다리살(ASC)(1010)_A+SC캠페인_ALL_C7_구매최적화_수_표준기여_2604_260519","daily":0,"spend":176328,"imp":12406,"purchases":2,"val":177600}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120237509836570200","name":"07_크리스피(ASC)(메가딜)_TCPA16000_A+SC 캠페인_ALL_수_표준기여_2464_완료","item":"크리스피","mode":"CBO","bid":"tCPA 캡","bidRaw":"COST_CAP","lifetime":0,"daily":400000,"spend":39806,"imp":2623,"clicks":44,"purchases":0,"val":0,"adsets":[{"id":"120244042561060200","name":"01.크리스피(ASC)(여성)(메가딜)_TCPA16000_A+SC 캠페인_ALL_수_2464_260403_모든타겟_완료","daily":0,"spend":39806,"imp":2623,"purchases":0,"val":0}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120228788396590200","name":"01_통살(ASC)(메가딜)_TCPA20000_A+SC 캠페인_ALL_V1C7_수_표준기여_1874","item":"통살","mode":"CBO","bid":"tCPA 캡","bidRaw":"COST_CAP","lifetime":0,"daily":600000,"spend":106952,"imp":7161,"clicks":329,"purchases":7,"val":760100,"adsets":[{"id":"120238230967890200","name":"01.통살(ASC)(ALL)_TCPA20000_A+SC 캠페인_ALL_V1C7_수_1874_표준기여","daily":0,"spend":106952,"imp":7161,"purchases":7,"val":760100}]},{"account":"906987379684182","accountLabel":"통합마케팅","id":"120228320649100200","name":"01_통살(ASC)(101010)_TCPA16000_A+SC 캠페인_ALL_V1C7_수_표준기여_2336","item":"통살","mode":"CBO","bid":"tCPA 캡","bidRaw":"COST_CAP","lifetime":0,"daily":600000,"spend":45507,"imp":1928,"clicks":42,"purchases":3,"val":193240,"adsets":[{"id":"120238231214510200","name":"01.통살(ASC)(ALL)(여성)_TCPA16000_A+SC 캠페인_ALL_V1C7_수_2336_표준기여","daily":0,"spend":45507,"imp":1928,"purchases":3,"val":193240},{"id":"120235638055720200","name":"01.통살(ASC)(251019)(남성)_TCPA16000_A+SC 캠페인_ALL_V1C7_수_2336_표준기여_time_rule","daily":0,"spend":0,"imp":0,"purchases":0,"val":0}]},{"account":"1723779808065856","accountLabel":"신제품","id":"120251920312280272","name":"09_3mm슬라이스(2845)_3_CBO_TROAS_300_클릭기여_C1_신규확보","item":"3mm슬라이스","mode":"CBO","bid":"tROAS 캡","bidRaw":"LOWEST_COST_WITH_MIN_ROAS","lifetime":0,"daily":100000,"spend":32031,"imp":2367,"clicks":23,"purchases":1,"val":42000,"adsets":[{"id":"120251920360030272","name":"TROAS_260918_3mm슬라이스(2845)_릴스/파트너십_300_C1_신규확보(180일제외)","daily":0,"spend":16138,"imp":1176,"purchases":0,"val":0},{"id":"120251920332450272","name":"TROAS_260918_3mm슬라이스(2845)_릴스/파트너십_300_C1_신규확보(28일제외)","daily":0,"spend":15893,"imp":1191,"purchases":1,"val":42000}]},{"account":"1723779808065856","accountLabel":"신제품","id":"120251874219260272","name":"09_3mm슬라이스(2845)_1_ABO_전환값최대_신규확보","item":"3mm슬라이스","mode":"ABO","bid":"캡 없음","bidRaw":"LOWEST_COST_WITHOUT_CAP","lifetime":0,"daily":470000,"spend":165555,"imp":13390,"clicks":155,"purchases":4,"val":205000,"adsets":[{"id":"120251874220500272","name":"260915_3mm슬라이스(2845)_C7_전환값최대_신규확보_M-20","daily":250000,"spend":83250,"imp":6334,"purchases":4,"val":205000},{"id":"120251874220580272","name":"260915_3mm슬라이스(2845)_C7_전환값최대_신규확보_F-20","daily":120000,"spend":44873,"imp":4345,"purchases":0,"val":0},{"id":"120251874220570272","name":"260915_3mm슬라이스(2845)_C7_전환값최대_신규확보","daily":100000,"spend":37432,"imp":2711,"purchases":0,"val":0}]}],"hourly":[{"hour":"00","spend":639075,"purchases":33,"val":2250860},{"hour":"01","spend":428908,"purchases":18,"val":1253640},{"hour":"02","spend":286864,"purchases":10,"val":1080480},{"hour":"03","spend":170699,"purchases":4,"val":269140},{"hour":"04","spend":114886,"purchases":4,"val":257500},{"hour":"05","spend":117235,"purchases":4,"val":362100},{"hour":"06","spend":178967,"purchases":4,"val":198848},{"hour":"07","spend":302760,"purchases":20,"val":1329230},{"hour":"08","spend":394668,"purchases":16,"val":1023850},{"hour":"09","spend":444158,"purchases":19,"val":1279690},{"hour":"10","spend":249396,"purchases":6,"val":492200}],"curve":{"days":21,"generatedAt":"2026-07-28T01:37:44.746Z","byHour":{"0":{"ratio":0.7142852199390856,"cumShare":0.036271366778846174,"share":0.036271366778846174},"1":{"ratio":0.7469625510131954,"cumShare":0.06020637209304625,"share":0.023935005314200074},"2":{"ratio":0.7564134233603356,"cumShare":0.07551743408925447,"share":0.015311061996208221},"3":{"ratio":0.756831598344218,"cumShare":0.08585929055411146,"share":0.010341856464856991},"4":{"ratio":0.7560556661168127,"cumShare":0.09374439000714554,"share":0.007885099453034077},"5":{"ratio":0.7648916080270118,"cumShare":0.10145217869392818,"share":0.007707788686782632},"6":{"ratio":0.785496116244756,"cumShare":0.11275760964870746,"share":0.011305430954779266},"7":{"ratio":0.8273743578832105,"cumShare":0.13175326719145197,"share":0.018995657542744536},"8":{"ratio":0.8575715876434942,"cumShare":0.1633822131181278,"share":0.03162894592667584},"9":{"ratio":0.8746840146459716,"cumShare":0.19908267809827337,"share":0.035700464980145556},"10":{"ratio":0.8729370746395902,"cumShare":0.24132321252332078,"share":0.042240534425047424},"11":{"ratio":0.85860605524919,"cumShare":0.28798972957762176,"share":0.04666651705430099},"12":{"ratio":0.8898589599631093,"cumShare":0.34404354250533714,"share":0.05605381292771536},"13":{"ratio":0.9335604219956805,"cumShare":0.39778174953580975,"share":0.053738207030472565},"14":{"ratio":0.953540912088893,"cumShare":0.44866799587045925,"share":0.05088624633464955},"15":{"ratio":0.9805727361593873,"cumShare":0.49666391859137166,"share":0.04799592272091238},"16":{"ratio":0.9932076714663783,"cumShare":0.5506626668945944,"share":0.05399874830322278},"17":{"ratio":0.9961111269747517,"cumShare":0.6096911111102478,"share":0.05902844421565333},"18":{"ratio":1.004577109304779,"cumShare":0.6693081184312252,"share":0.05961700732097732},"19":{"ratio":1.0091706201971293,"cumShare":0.7305643387629942,"share":0.06125622033176917},"20":{"ratio":1.0218814037962525,"cumShare":0.7989395592604338,"share":0.06837522049743955},"21":{"ratio":1.0278571717208846,"cumShare":0.8749427752109756,"share":0.07600321595054188},"22":{"ratio":1.0173607453001055,"cumShare":0.9434386179128288,"share":0.06849584270185316},"23":{"ratio":1,"cumShare":0.9942807011705015,"share":0.05084208325767275}}}};
+const DEFAULT_SPEND = 19000000, DEFAULT_ROAS = 260;
+
+/* ── 유틸 ── */
+const won = v => Math.round(v || 0).toLocaleString('ko-KR');
+const pct = v => (v || 0).toFixed(0) + '%';
+const man = v => (Math.round((v||0)/10000)).toLocaleString('ko-KR') + '만';
+function roasCls(r){ if(!r) return 'roas0'; if(r>=400)return 'roas400'; if(r>=300)return 'roas300'; if(r>=250)return 'roas250'; if(r>=200)return 'roas200'; if(r>=150)return 'roas150'; return 'roas100'; }
+function paceCls(p, expect){ if(p < expect*0.6) return 'pace-low'; if(p > expect*1.35) return 'pace-high'; return 'pace-ok'; }
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const bidChip = b => '<span class="chip ' + ({'tROAS 캡':'chip-troas','tCPA 캡':'chip-tcpa','입찰가 캡':'chip-bidcap'}[b] || 'chip-free') + '">' + b + '</span>';
+
+/* ── 상태 ── */
+const S = {
+  acct: '',
+  tSpend: Number(localStorage.getItem('bdg_tspend')) || DEFAULT_SPEND,
+  tRoas:  Number(localStorage.getItem('bdg_troas'))  || DEFAULT_ROAS,
+  sort: { key: 'spend', dir: -1 },
+  open: {},
+};
+
+function rows(){ return S.acct ? D.campaigns.filter(r => r.account === S.acct) : D.campaigns; }
+function agg(list){
+  const o = { daily:0, spend:0, purchases:0, val:0, n:list.length };
+  for (const r of list){ o.daily+=r.daily; o.spend+=r.spend; o.purchases+=r.purchases; o.val+=r.val; }
+  o.pace = o.daily ? o.spend/o.daily*100 : 0;
+  o.roas = o.spend ? o.val/o.spend*100 : 0;
+  return o;
+}
+
+/* ── 일중 곡선: 지금 시각의 소진 비중과 마감 환산 계수 ──
+   cumShare[h] = h시가 끝난 시점까지의 누적 소진 비중. 분 단위는 그 시간대 share로 선형 보간한다. */
+function curveNow(){
+  if (!D.curve) return null;
+  const [hh, mm] = D.pollTime.split(':').map(Number);
+  const B = D.curve.byHour;
+  const prev = hh > 0 ? (B[hh-1]?.cumShare ?? 0) : 0;
+  const cur  = B[hh];
+  if (!cur) return null;
+  const frac = mm / 60;
+  const cumShare = prev + frac * (cur.share ?? (cur.cumShare - prev));
+  const rPrev = hh > 0 ? (B[hh-1]?.ratio ?? cur.ratio) : cur.ratio;
+  const ratio = rPrev + frac * (cur.ratio - rPrev);
+  return { cumShare: Math.max(cumShare, 0.001), ratio, hour: hh, min: mm };
+}
+
+/* ── 렌더 ── */
+function render(){
+  const list = rows();
+  const A = agg(list);
+  const cn = curveNow();
+  const landSpend = cn ? A.spend / cn.cumShare : null;
+  const landRoas  = cn ? A.roas * cn.ratio : null;
+
+  document.getElementById('curve-note').textContent = D.curve
+    ? '일중 곡선 ' + D.curve.days + '일치 실측 · 현시각 소진비중 ' + (cn ? (cn.cumShare*100).toFixed(1) : '?') + '% · 마감÷현재 ×' + (cn ? cn.ratio.toFixed(3) : '?')
+    : 'intraday-curve.json 없음 — 예측 비활성';
+
+  renderSeg();
+  renderKpi(A, landRoas, cn);
+  renderProj(A, landSpend, landRoas, cn);
+  renderCkpt();
+  renderBid(list);
+  renderItem(list);
+  renderCamp(list, cn);
+}
+
+function renderSeg(){
+  const el = document.getElementById('acct-seg');
+  const opts = [{ id:'', label:'전체' }, ...D.accounts];
+  el.innerHTML = opts.map(o => {
+    const a = agg(o.id ? D.campaigns.filter(r=>r.account===o.id) : D.campaigns);
+    return '<button class="seg-btn' + (S.acct===o.id?' active':'') + '" onclick="setAcct(\'' + o.id + '\')">' +
+      o.label + ' <span style="font-size:12px;font-weight:600;opacity:.65">' + man(a.daily) + '</span></button>';
+  }).join('');
+}
+
+function renderKpi(A, landRoas, cn){
+  const expect = cn ? cn.cumShare*100 : null;
+  const need = cn ? S.tRoas / cn.ratio : null;
+  document.getElementById('kpi').innerHTML = [
+    ['총 일예산', won(A.daily) + '원', A.n + '개 캠페인 · 목표 소진 ' + man(S.tSpend) + (A.daily < S.tSpend ? ' <b style="color:#c03030">· 예산이 목표보다 ' + man(S.tSpend-A.daily) + ' 적음</b>' : '')],
+    ['현재 소진', won(A.spend) + '원',
+      '페이스 <b class="' + (expect?paceCls(A.pace, expect):'') + '">' + pct(A.pace) + '</b>' +
+      (expect ? ' · 이 시각 평년 <b>' + expect.toFixed(0) + '%</b>' : '')],
+    ['C1 전환값', won(A.val) + '원', '전환수 <b>' + won(A.purchases) + '건</b> · 객단가 ' + (A.purchases ? won(A.val/A.purchases) : 0) + '원'],
+    ['현재 C1 ROAS', '<span class="' + roasCls(A.roas) + '">' + pct(A.roas) + '</span>',
+      landRoas != null
+        ? '마감 예상 <b class="' + roasCls(landRoas) + '">' + pct(landRoas) + '</b> · 목표 달성엔 지금 <b>' + pct(need) + '</b> 필요'
+        : '마감 환산 불가'],
+  ].map(([l,v,s]) => '<div class="card"><div class="cl">' + l + '</div><div class="cv">' + v + '</div><div class="cs">' + s + '</div></div>').join('');
+}
+
+function renderProj(A, landSpend, landRoas, cn){
+  const el = document.getElementById('proj');
+  if (!cn){ el.innerHTML = '<div class="act-empty">일중 곡선 데이터가 없어 착지 예측을 낼 수 없습니다. <code>node scripts/learn-curve.js</code> 실행 후 다시 생성하세요.</div>'; return; }
+  const gapS = S.tSpend - landSpend;
+  const gapR = landRoas - S.tRoas;
+  // 갭을 더 태우면서도 목표 ROAS를 지키려면, 추가로 태우는 돈이 최소 이만큼은 나와줘야 한다.
+  const beRoas = gapS > 0 ? (S.tSpend*S.tRoas/100 - landSpend*landRoas/100) / gapS * 100 : null;
+  const cell = (l,v,s,cls) => '<div class="proj-cell"><div class="proj-l">' + l + '</div><div class="proj-v">' + v + '</div><div class="proj-s ' + (cls||'') + '">' + s + '</div></div>';
+  el.innerHTML =
+    cell('착지 예상 소진', won(landSpend) + '원',
+      (gapS > 0 ? '목표 대비 <b>−' + won(gapS) + '</b> 부족' : '목표 대비 <b>+' + won(-gapS) + '</b> 초과'),
+      gapS > S.tSpend*0.03 ? 'bad' : (gapS > 0 ? 'warn' : 'good')) +
+    cell('착지 예상 C1 ROAS', '<span class="' + roasCls(landRoas) + '">' + pct(landRoas) + '</span>',
+      (gapR >= 0 ? '목표 대비 <b>+' + gapR.toFixed(0) + '%p</b>' : '목표 대비 <b>' + gapR.toFixed(0) + '%p</b>'),
+      gapR >= 5 ? 'good' : (gapR >= 0 ? 'warn' : 'bad')) +
+    cell('남은 소진 여력', won(Math.max(A.daily - A.spend, 0)) + '원',
+      '활성 일예산 중 미소진분', A.daily - A.spend < Math.max(gapS,0) ? 'bad' : 'good') +
+    cell('추가분 손익분기 ROAS', beRoas != null ? pct(beRoas) : '—',
+      beRoas != null ? '남은 ' + man(gapS) + '을 이 효율 이상으로 태우면 목표 동시 달성' : '소진 목표는 이미 충족',
+      beRoas == null ? 'good' : (beRoas > 320 ? 'bad' : beRoas > 240 ? 'warn' : 'good'));
+}
+
+function renderCkpt(){
+  if (!D.curve) { document.getElementById('ckpt').innerHTML=''; return; }
+  const B = D.curve.byHour;
+  const hs = [12,15,18,21,23].filter(h => B[h]);
+  const nowH = Number(D.pollTime.split(':')[0]);
+  document.getElementById('ckpt').innerHTML =
+    '<div class="detail-title">체크포인트 — 이 선 아래로 떨어지면 목표 미달</div>' +
+    '<table><thead><tr><th class="left">시각(해당 시간대 종료)</th><th>필요 누적 소진</th><th>필요 누적 C1 ROAS</th><th class="left" style="width:38%">비고</th></tr></thead><tbody>' +
+    hs.map(h => {
+      const past = h < nowH;
+      return '<tr' + (past ? ' style="opacity:.45"' : '') + '><td class="left name">' + String(h).padStart(2,'0') + ':59</td>' +
+        '<td>' + won(S.tSpend * B[h].cumShare) + '원</td>' +
+        '<td class="' + roasCls(S.tRoas / B[h].ratio) + '" style="font-weight:700">' + pct(S.tRoas / B[h].ratio) + '</td>' +
+        '<td class="left muted" style="font-size:14px">' + (past ? '지남' : '누적 소진비중 ' + (B[h].cumShare*100).toFixed(0) + '%') + '</td></tr>';
+    }).join('') + '</tbody></table>';
+}
+
+function renderBid(list){
+  const g = {};
+  for (const r of list){
+    const o = (g[r.bid] ??= { bid:r.bid, daily:0, spend:0, purchases:0, val:0, n:0 });
+    o.daily+=r.daily; o.spend+=r.spend; o.purchases+=r.purchases; o.val+=r.val; o.n++;
+  }
+  const arr = Object.values(g).sort((a,b)=>b.daily-a.daily);
+  const T = agg(list);
+  document.getElementById('bid-tbl').innerHTML =
+    '<table><thead><tr><th class="left">입찰 전략</th><th>캠</th><th>일예산</th><th>예산 비중</th><th>소진</th><th>페이스</th><th>C1 전환수</th><th>C1 전환값</th><th>C1 ROAS</th><th>잔여 예산</th></tr></thead><tbody>' +
+    arr.map(o => {
+      const pace = o.daily ? o.spend/o.daily*100 : 0, roas = o.spend ? o.val/o.spend*100 : 0;
+      return '<tr><td class="left name">' + bidChip(o.bid) + '</td><td>' + o.n + '</td><td>' + won(o.daily) + '</td>' +
+        '<td class="muted">' + pct(T.daily?o.daily/T.daily*100:0) + '</td><td>' + won(o.spend) + '</td>' +
+        '<td class="' + (pace<15?'pace-low':'') + '">' + pct(pace) + '</td><td>' + won(o.purchases) + '</td><td>' + won(o.val) + '</td>' +
+        '<td class="' + roasCls(roas) + '" style="font-weight:700">' + pct(roas) + '</td><td>' + won(o.daily-o.spend) + '</td></tr>';
+    }).join('') +
+    '</tbody><tfoot><tr><td class="left">합계</td><td>' + T.n + '</td><td>' + won(T.daily) + '</td><td></td><td>' + won(T.spend) + '</td><td>' + pct(T.pace) + '</td><td>' + won(T.purchases) + '</td><td>' + won(T.val) + '</td><td class="' + roasCls(T.roas) + '">' + pct(T.roas) + '</td><td>' + won(T.daily-T.spend) + '</td></tr></tfoot></table>';
+}
+
+function renderItem(list){
+  const g = {};
+  for (const r of list){
+    const o = (g[r.item] ??= { item:r.item, daily:0, spend:0, purchases:0, val:0, n:0, cbo:0, abo:0 });
+    o.daily+=r.daily; o.spend+=r.spend; o.purchases+=r.purchases; o.val+=r.val; o.n++;
+    if (r.mode==='CBO') o.cbo+=r.daily; else o.abo+=r.daily;
+  }
+  const arr = Object.values(g).sort((a,b)=>b.daily-a.daily);
+  const T = agg(list);
+  document.getElementById('item-tbl').innerHTML =
+    '<table><thead><tr><th class="left">품목</th><th>캠</th><th>일예산</th><th>CBO</th><th>ABO</th><th>소진</th><th>페이스</th><th>C1 전환수</th><th>C1 전환값</th><th>C1 ROAS</th></tr></thead><tbody>' +
+    arr.map(o => {
+      const pace = o.daily ? o.spend/o.daily*100 : 0, roas = o.spend ? o.val/o.spend*100 : 0;
+      return '<tr><td class="left name">' + esc(o.item) + '</td><td>' + o.n + '</td><td style="font-weight:700">' + won(o.daily) + '</td>' +
+        '<td class="muted">' + (o.cbo?won(o.cbo):'<span class="na">—</span>') + '</td><td class="muted">' + (o.abo?won(o.abo):'<span class="na">—</span>') + '</td>' +
+        '<td>' + won(o.spend) + '</td><td>' + pct(pace) + '</td><td>' + won(o.purchases) + '</td><td>' + won(o.val) + '</td>' +
+        '<td class="' + roasCls(roas) + '" style="font-weight:700">' + pct(roas) + '</td></tr>';
+    }).join('') +
+    '</tbody><tfoot><tr><td class="left">전체</td><td>' + T.n + '</td><td>' + won(T.daily) + '</td><td></td><td></td><td>' + won(T.spend) + '</td><td>' + pct(T.pace) + '</td><td>' + won(T.purchases) + '</td><td>' + won(T.val) + '</td><td class="' + roasCls(T.roas) + '">' + pct(T.roas) + '</td></tr></tfoot></table>';
+}
+
+const CAMP_COLS = [
+  { k:'item',  h:'품목',   left:true,  v:r=>'<span class="name">'+esc(r.item)+'</span>' },
+  { k:'mode',  h:'체계',   left:true,  v:r=>'<span class="chip chip-'+r.mode.toLowerCase()+'">'+r.mode+'</span>' },
+  { k:'bid',   h:'입찰',   left:true,  v:r=>bidChip(r.bid) },
+  { k:'daily', h:'일예산', v:r=>'<b>'+won(r.daily)+'</b>' },
+  { k:'spend', h:'소진',   v:r=>won(r.spend) },
+  { k:'pace',  h:'페이스', v:r=>pct(r.pace) },
+  { k:'purchases', h:'C1 전환수', v:r=>won(r.purchases) },
+  { k:'val',   h:'C1 전환값', v:r=>won(r.val) },
+  { k:'roas',  h:'C1 ROAS', v:r=>'<span class="'+roasCls(r.roas)+'" style="font-weight:700">'+pct(r.roas)+'</span>' },
+  { k:'name',  h:'캠페인', left:true, v:r=>'<span title="'+esc(r.name)+'">'+esc(r.name)+'</span>' },
+];
+
+function renderCamp(list, cn){
+  const expect = cn ? cn.cumShare*100 : 0;
+  const accts = S.acct ? D.accounts.filter(a=>a.id===S.acct) : D.accounts;
+  let html = '';
+  for (const acct of accts){
+    const sub = list.filter(r => r.account === acct.id)
+      .map(r => ({ ...r, pace: r.daily ? r.spend/r.daily*100 : 0, roas: r.spend ? r.val/r.spend*100 : 0 }));
+    if (!sub.length) continue;
+    const T = agg(sub);
+    sub.sort((a,b) => {
+      const k = S.sort.key;
+      const av = a[k], bv = b[k];
+      if (typeof av === 'string') return S.sort.dir * av.localeCompare(bv);
+      return S.sort.dir * (av - bv);
+    });
+    html += '<div class="acct-hd">' + acct.label +
+      '<span class="meta">일예산 ' + won(T.daily) + ' · 소진 ' + won(T.spend) + ' (' + pct(T.pace) + ') · C1 ROAS ' + pct(T.roas) + '</span></div>';
+    html += '<table><thead><tr>' + CAMP_COLS.map(c =>
+      '<th class="sortable' + (c.left?' left':'') + (S.sort.key===c.k?' sort-active':'') + '" onclick="setSort(\'' + c.k + '\')">' +
+      c.h + '<span class="sort-ic">' + (S.sort.key===c.k ? (S.sort.dir<0?'▼':'▲') : '◆') + '</span></th>').join('') + '</tr></thead><tbody>';
+    for (const r of sub){
+      const isOpen = !!S.open[r.id];
+      html += '<tr class="camp-row' + (isOpen?' open':'') + '" onclick="toggleRow(\'' + r.id + '\')">' +
+        CAMP_COLS.map(c => '<td' + (c.left?' class="left' + (c.k==='name'?' nm':'') + '"':'') +
+          (c.k==='pace' ? ' class="' + paceCls(r.pace, expect||20) + '"' : '') + '>' + c.v(r) + '</td>').join('') + '</tr>';
+      if (isOpen) html += '<tr class="detail-row"><td colspan="' + CAMP_COLS.length + '">' + adsetTable(r) + '</td></tr>';
+    }
+    html += '</tbody><tfoot><tr><td class="left">합계</td><td></td><td></td><td>' + won(T.daily) + '</td><td>' + won(T.spend) + '</td><td>' + pct(T.pace) + '</td><td>' + won(T.purchases) + '</td><td>' + won(T.val) + '</td><td class="' + roasCls(T.roas) + '">' + pct(T.roas) + '</td><td></td></tr></tfoot></table>';
+  }
+  document.getElementById('camp-tbl').innerHTML = html || '<div class="act-empty">표시할 캠페인이 없습니다.</div>';
+}
+
+function adsetTable(r){
+  if (!r.adsets.length) return '<div class="detail-title">광고세트 없음</div>';
+  const budgeted = r.adsets.some(a => a.daily > 0);
+  return '<div class="detail-wrap"><div class="detail-title">' +
+    (r.mode === 'ABO'
+      ? '광고세트별 일예산 — 합 ' + won(r.adsets.reduce((s,a)=>s+a.daily,0)) + '원'
+      : 'CBO 캠페인 · 광고세트에 개별 일예산 없음 (캠페인 예산 ' + won(r.daily) + '원을 메타가 배분)') +
+    '</div><table><thead><tr><th class="left">광고세트</th>' + (budgeted?'<th>일예산</th>':'') +
+    '<th>소진</th>' + (budgeted?'<th>페이스</th>':'<th>배분 비중</th>') +
+    '<th>C1 전환수</th><th>C1 전환값</th><th>C1 ROAS</th></tr></thead><tbody>' +
+    r.adsets.map(a => {
+      const roas = a.spend ? a.val/a.spend*100 : 0;
+      const share = r.spend ? a.spend/r.spend*100 : 0;
+      return '<tr><td class="left nm" title="' + esc(a.name) + '">' + esc(a.name) + '</td>' +
+        (budgeted ? '<td><b>' + won(a.daily) + '</b></td>' : '') +
+        '<td>' + won(a.spend) + '</td>' +
+        '<td>' + (budgeted ? (a.daily ? pct(a.spend/a.daily*100) : '<span class="na">—</span>') : pct(share)) + '</td>' +
+        '<td>' + won(a.purchases) + '</td><td>' + won(a.val) + '</td>' +
+        '<td class="' + roasCls(roas) + '" style="font-weight:700">' + pct(roas) + '</td></tr>';
+    }).join('') + '</tbody></table></div>';
+}
+
+/* ── 인터랙션 ── */
+function setAcct(id){ S.acct = id; render(); }
+function setSort(k){ if (S.sort.key === k) S.sort.dir *= -1; else { S.sort.key = k; S.sort.dir = -1; } render(); }
+function toggleRow(id){ S.open[id] = !S.open[id]; render(); }
+function resetTargets(){
+  S.tSpend = DEFAULT_SPEND; S.tRoas = DEFAULT_ROAS;
+  localStorage.removeItem('bdg_tspend'); localStorage.removeItem('bdg_troas');
+  syncInputs(); render();
+}
+function syncInputs(){
+  document.getElementById('t-spend').value = S.tSpend.toLocaleString('ko-KR');
+  document.getElementById('t-roas').value = S.tRoas;
+}
+function bindTargets(){
+  const sp = document.getElementById('t-spend'), rs = document.getElementById('t-roas');
+  sp.addEventListener('input', () => {
+    const v = Number(sp.value.replace(/[^0-9]/g,''));
+    if (v > 0) { S.tSpend = v; localStorage.setItem('bdg_tspend', v); render(); }
+  });
+  sp.addEventListener('blur', syncInputs);
+  rs.addEventListener('input', () => {
+    const v = Number(rs.value.replace(/[^0-9.]/g,''));
+    if (v > 0) { S.tRoas = v; localStorage.setItem('bdg_troas', v); render(); }
+  });
+}
+
+syncInputs(); bindTargets(); render();
+</script>
+</body>
+</html>
