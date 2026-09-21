@@ -227,10 +227,13 @@ table.chgtbl td.left{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bid-none{color:var(--ink-4);font-weight:400}
 
 td.nmcell{text-align:left;user-select:text}
-/* 이름은 칸 안에서 말줄임. 전체 이름은 title 툴팁과 📋 복사로 본다 */
-.nm{color:var(--ink-2);font-size:12.5px;line-height:1.45;letter-spacing:-.2px}
-table.grid td.nmcell,table.grid td.itemname{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-table.grid td.nmcell .nm{display:inline}
+/* 이름만 말줄임하고 아이콘 버튼은 항상 오른쪽에 남긴다.
+   예전엔 셀 전체를 overflow:hidden 으로 잘라, 이름이 길면 버튼까지 같이 잘려 눌리지 않았다. */
+.nm{color:var(--ink-2);font-size:12.5px;line-height:1.45;letter-spacing:-.2px;
+    flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nmwrap{display:flex;align-items:center;gap:3px;min-width:0;max-width:100%}
+.nmwrap .arrow,.nmwrap .iconbtn{flex:0 0 auto}
+table.grid td.itemname{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sub-wrap .nm{font-size:12.5px}
 .iconbtn{border:none;background:transparent;cursor:pointer;font-size:11px;padding:0 2px;border-radius:5px;opacity:.4;line-height:1;vertical-align:middle}
 .iconbtn:hover{opacity:1;background:var(--line-2)}
@@ -357,7 +360,7 @@ td.pace{position:relative}
   </div>
   <div class="hd-right">
     <div class="hd-date">2026-09-16 <span class="hd-time">23:59</span></div>
-    <div class="hd-gen">생성 2026. 9. 21. 오후 7:29:38</div>
+    <div class="hd-gen">생성 2026. 9. 21. 오후 7:43:27</div>
   </div>
  </div>
 </div>
@@ -1052,9 +1055,9 @@ function campRows(camps, expect){
     var open = !!S.openCamp[r.id];
     h += '<tr class="lv2 camp-row' + (open?' open':'') + '">' +
       '<td class="left nmcell tog" onclick="toggleCamp(\'' + r.id + '\')">' +
-        '<span class="arrow">▸</span> <span class="nm">' + esc(r.name) + '</span>' +
+        '<span class="nmwrap"><span class="arrow">▸</span><span class="nm" title="' + esc(r.name) + '">' + esc(r.name) + '</span>' +
         '<button class="iconbtn" title="캠페인명 전체 복사" onclick="copyName(event,\'' + r.id + '\')">📋</button>' +
-        '<button class="iconbtn" title="기준선 — 최근 3일 + 동요일" onclick="toggleHist(event,\'' + r.id + '\')">📊</button></td>' +
+        '<button class="iconbtn" title="기준선 — 최근 3일 + 동요일" onclick="toggleHist(event,\'' + r.id + '\')">📊</button></span></td>' +
       '<td class="left">' + modeChip(r) + '</td>' +
       '<td class="left">' + attrCell(r.attr) + '</td>' +
       '<td class="left">' + chgVal(bidCell(r.strategy, r.capText), r.chgCap, 'c:' + r.id, true) + '</td>' +
@@ -1086,7 +1089,7 @@ function adsetRows(r){
     var roas = a.spend ? a.val/a.spend*100 : 0;
     var share = r.spend ? a.spend/r.spend*100 : 0;
     h += '<tr class="lv3' + '">' +
-      '<td class="left nmcell" title="' + esc(a.name) + '"><span class="nm">' + esc(a.name) + '</span></td>' +
+      '<td class="left nmcell"><span class="nmwrap"><span class="nm" title="' + esc(a.name) + '">' + esc(a.name) + '</span></span></td>' +
       '<td></td>' +
       '<td class="left">' + attrCell(a.attr) + '</td>' +
       '<td class="left">' + chgVal(bidCell(a.strategy, a.capText), a.chgCap, 'c:' + a.id, true) + '</td>' +
