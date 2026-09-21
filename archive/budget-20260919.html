@@ -190,6 +190,10 @@ tr.sub-row:hover td{background:#FCFCFD!important}
 .sub-wrap td{font-size:13.5px;padding:7px 12px;background:var(--surface);border-bottom:1px solid var(--line-2)}
 .sub-wrap tbody tr:last-child td{border-bottom:none}
 .sub-title{font-size:12px;color:var(--ink-3);font-weight:600;margin-bottom:7px}
+/* 기준선 요일 — 달력처럼 토요일 파랑 / 일요일 빨강 */
+.dow{color:var(--ink-4);font-weight:600}
+.dow-sat{color:#2A58B0}
+.dow-sun{color:#C0392B}
 .colbtn{border:1px solid var(--line);background:var(--surface);padding:3px 10px;border-radius:7px;font-size:11.5px;font-weight:600;color:var(--ink-3);cursor:pointer;font-family:inherit}
 .colbtn:hover{border-color:var(--ink-4);color:var(--ink)}
 
@@ -360,7 +364,7 @@ td.pace{position:relative}
   </div>
   <div class="hd-right">
     <div class="hd-date">2026-09-19 <span class="hd-time">23:59</span></div>
-    <div class="hd-gen">생성 2026. 9. 21. 오후 7:43:27</div>
+    <div class="hd-gen">생성 2026. 9. 21. 오후 7:53:54</div>
   </div>
  </div>
 </div>
@@ -562,7 +566,7 @@ var S = {
   tRoas:  Number(localStorage.getItem('bdg_troas'))  || DEFAULT_ROAS,
   sort:   { key: 'spend', dir: -1 },   // 메인 품목 표
   sortDD: { key: 'daily', dir: -1 },   // 드릴다운 — 일예산 내림차순이 기본
-  modalItem: null, openCamp: {}, openHist: {}, openChg: {},
+  modalItem: null, openCamp: {}, openHist: {}, openChg: {}, stack: [],
   showCmp: localStorage.getItem('bdg_cmp') === '1'
 };
 
@@ -1112,7 +1116,7 @@ function histTable(r){
   return '<div class="sub-wrap"><div class="sub-title">기준선 — 최근 3일 + 동요일 (완결일 기준, C1)</div>' +
     '<table><thead><tr><th class="left">날짜</th><th>광고비</th><th>C1 전환수</th><th>C1 매출</th><th>C1 ROAS</th></tr></thead><tbody>' +
     r.history.map(function(x){
-      return '<tr><td class="left"><b>' + x.tag + '</b> <span class="muted">' + x.date.slice(5) + ' (' + x.dow + ')</span></td>' +
+      return '<tr><td class="left"><b>' + x.tag + '</b> <span class="muted">' + x.date.slice(5) + ' </span><span class="dow' + (x.dow === '토' ? ' dow-sat' : x.dow === '일' ? ' dow-sun' : '') + '">(' + x.dow + ')</span></td>' +
         '<td>' + won(x.spend) + '</td><td>' + won(x.purchases) + '</td><td>' + won(x.val) + '</td>' +
         '<td class="roas ' + roasCls(x.roas, x.spend) + '">' + (x.spend ? pct(x.roas) : '<span class="na">—</span>') + '</td></tr>';
     }).join('') + '</tbody></table></div>';
@@ -1175,8 +1179,21 @@ function openItem(it){
   S.sortDD = { key: 'daily', dir: -1 };   // 열 때마다 일예산 내림차순으로 시작
   render(); document.body.style.overflow = 'hidden';
 }
-function closeItem(){ S.modalItem = null; document.body.style.overflow = ''; render(); }
-document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && S.modalItem) closeItem(); });
+function closeItem(){ S.modalItem = null; S.stack = []; S.openCamp = {}; S.openHist = {}; S.openChg = {};
+  document.body.style.overflow = ''; render(); }
+// ESC 는 한 단계씩만 접는다 — 펼쳐둔 게 있으면 마지막에 편 것부터, 없을 때만 모달을 닫는다.
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'Escape') return;
+  if (S.stack.length) {
+    var last = S.stack.pop();
+    if (last.slice(0, 2) === 'h:') delete S.openHist[last.slice(2)];
+    else if (last.slice(0, 2) === 'c:') delete S.openCamp[last.slice(2)];
+    else delete S.openChg[last.slice(2)];
+    render();
+    return;
+  }
+  if (S.modalItem) closeItem();
+});
 
 // 품목 드릴다운 — 그 품목만 떼어내 한 화면에 보여준다. 캠페인/광고세트 펼침은 모달 안에서 그대로 동작.
 function renderModal(list, cn){
@@ -1207,11 +1224,28 @@ function renderModal(list, cn){
       }).join('') + '</tr></thead><tbody>' + campRows(camps, expect) + '</tbody></table>';
   ov.style.display = 'block'; dd.style.display = 'block';
 }
-function toggleCamp(id){ S.openCamp[id] = !S.openCamp[id]; render(); }
-function toggleHist(ev, id){ ev.stopPropagation(); S.openHist[id] = !S.openHist[id]; render(); }
+// 펼침 순서를 쌓아둔다 — ESC 가 마지막에 편 것부터 되돌리기 위해.
+function push(k){ var i = S.stack.indexOf(k); if (i >= 0) S.stack.splice(i, 1); S.stack.push(k); }
+function drop(k){ var i = S.stack.indexOf(k); if (i >= 0) S.stack.splice(i, 1); }
+function toggleCamp(id){
+  S.openCamp[id] = !S.openCamp[id];
+  if (S.openCamp[id]) push('c:' + id); else { delete S.openCamp[id]; drop('c:' + id); }
+  render();
+}
+function toggleHist(ev, id){
+  ev.stopPropagation();
+  S.openHist[id] = !S.openHist[id];
+  if (S.openHist[id]) push('h:' + id); else { delete S.openHist[id]; drop('h:' + id); }
+  render();
+}
 function toggleCmp(){ S.showCmp = !S.showCmp; localStorage.setItem('bdg_cmp', S.showCmp ? '1' : '0'); render(); }
 // 숫자 클릭이 드릴다운 토글로 새지 않게 막는다
-function toggleChg(ev, key){ ev.stopPropagation(); S.openChg[key] = !S.openChg[key]; render(); }
+function toggleChg(ev, key){
+  ev.stopPropagation();
+  S.openChg[key] = !S.openChg[key];
+  if (S.openChg[key]) push('g:' + key); else { delete S.openChg[key]; drop('g:' + key); }
+  render();
+}
 
 var toastTimer;
 function toast(msg){
