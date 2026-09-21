@@ -357,7 +357,7 @@ td.pace{position:relative}
   </div>
   <div class="hd-right">
     <div class="hd-date">2026-09-20 <span class="hd-time">23:59</span></div>
-    <div class="hd-gen">생성 2026. 9. 21. 오후 7:28:33</div>
+    <div class="hd-gen">생성 2026. 9. 21. 오후 7:29:38</div>
   </div>
  </div>
 </div>
@@ -428,10 +428,10 @@ function roasPill(r, spend){
   var t = S.tRoas;
   // 낮은 쪽을 빨갛게 칠하면 표가 온통 붉어져 오히려 안 읽힌다.
   // 목표 이상만 초록으로 집고 나머지는 중립으로 둔다.
-    var c = r >= t ? 'pill-hi' : 'pill-mid';
+  var c = r >= t ? 'pill-hi' : 'pill-mid';
   // 네 자리 %(소진이 아주 적은 캠페인)는 기본 pill 폭을 넘겨 잘린다 — 좁은 변형을 쓴다
   var tight = r >= 1000 ? ' pill-tight' : '';
-  return '<span class="pill ' + c + tight + '>' + pct(r) + '</span>';
+  return '<span class="pill ' + c + tight + '">' + pct(r) + '</span>';
 }
 // 페이스 경고 — 이 시각 평년 소진비중의 60% 미만이면 "예산이 안 나가고 있다"는 신호
 // 잔여 예산 = 일예산 - 소진. 예산을 넘겨 쓴 경우(-)도 그대로 보여준다.
