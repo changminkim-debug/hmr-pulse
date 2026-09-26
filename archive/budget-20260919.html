@@ -162,7 +162,7 @@ table.itemgrid th.est,table.itemgrid td.est{background:#F7F9FC}
 table.itemgrid th.est{color:var(--ink-4)}
 table.itemgrid th.estfirst,table.itemgrid td.estfirst{border-left:1px solid var(--line)}
 td.est .estv{color:var(--ink-3);font-weight:600}
-.estcap{margin-left:2px;font-size:10px;font-weight:700;color:#B54708;vertical-align:top}
+.estcap{margin-left:5px;padding:1px 5px;border-radius:4px;font-size:9.5px;font-weight:700;letter-spacing:-.2px;color:#B54708;background:#FEF0C7;vertical-align:2px}
 .pill-est{background:transparent;color:var(--ink-2);border:1px dashed #C6CEDA;padding:2px 10px}
 .pill-est-hi{color:#067647;border-color:#9BD3B4}
 /* 모달 안 표 — 지표끼리 더 띄운다 */
@@ -388,7 +388,7 @@ td.pace{position:relative}
 
 <div class="fbar">
  <div class="fbar-in">
-  <div class="fg"><span class="fl">날짜</span><select class="sel" onchange="if(this.value)location.href=this.value"><option value="../budget.html">오늘로 돌아가기</option><option value="" selected>2026-09-19 (보는 중)</option><option value="budget-20260921.html">2026-09-21</option><option value="budget-20260920.html">2026-09-20</option><option value="budget-20260918.html">2026-09-18</option><option value="budget-20260917.html">2026-09-17</option><option value="budget-20260916.html">2026-09-16</option></select></div>
+  <div class="fg"><span class="fl">날짜</span><select class="sel" onchange="if(this.value)location.href=this.value"><option value="../budget.html">오늘로 돌아가기</option><option value="" selected>2026-09-19 (보는 중)</option><option value="budget-20260926.html">2026-09-26</option><option value="budget-20260925.html">2026-09-25</option><option value="budget-20260924.html">2026-09-24</option><option value="budget-20260923.html">2026-09-23</option><option value="budget-20260922.html">2026-09-22</option><option value="budget-20260921.html">2026-09-21</option><option value="budget-20260920.html">2026-09-20</option><option value="budget-20260918.html">2026-09-18</option><option value="budget-20260917.html">2026-09-17</option><option value="budget-20260916.html">2026-09-16</option></select></div>
   <div class="fg"><span class="fl">계정</span><div class="seg" id="acct-seg"></div></div>
   <div class="fg"><span class="fl">목표 소진</span><input class="tin" id="t-spend" type="text" inputmode="numeric"><span class="tsuf">원</span></div>
   <div class="fg"><span class="fl">목표 C1 ROAS</span><input class="tin small" id="t-roas" type="text" inputmode="numeric"><span class="tsuf">%</span></div>
@@ -1008,7 +1008,7 @@ var KEYCOL = { daily:'key k1', spend:'key k2', remain:'rem' };
 /* 메인 표는 품목 롤업만 보여준다 — 체계·기여·캡값은 캠페인 단위 속성이라
    품목 줄에선 늘 비어 있었다. 빼고 그만큼 숫자 칸을 넉넉히 쓴다. */
 var ITEM_COLS = [
-  { k:'item',      h:'품목',   left:true, w:'22%', w0:'26%' },
+  { k:'item',      h:'품목',   left:true, w:'21%', w0:'26%' },
   { k:'daily',     h:'일예산',            w:'10%', w0:'12%' },
   { k:'spend',     h:'소진',              w:'10%', w0:'12%' },
   { k:'remain',    h:'잔여',              w:'9%',  w0:'11%' },
@@ -1021,7 +1021,7 @@ var ITEM_COLS = [
 /* 품목별 예상 두 칸. 끝난 날엔 '예상'이 의미 없으므로 빼고,
    그만큼 나머지 칸이 원래 폭(w0)으로 돌아간다. */
 var LAND_COLS = [
-  { k:'landSpend', h:'예상 광고비', est:true, w:'10%',
+  { k:'landSpend', h:'예상 광고비', est:true, w:'11%',
     tip:'지금 소진 ÷ 이 시각 평년 누적 소진비중. 품목 합계는 상단 예상 소진과 일치한다.' },
   { k:'landRoas',  h:'예상 ROAS',   est:true, w:'7%',
     tip:'품목별 시간대 데이터는 저장하지 않아 품목마다 감쇠를 따로 잴 수 없다. 전체가 지금→마감에 걸친 감쇠율을 품목에도 동일하게 적용한 값이다.' }
@@ -1041,8 +1041,8 @@ function itemCols(){
 function landSpendCell(it){
   if (it.landSpend == null) return '<span class="na">—</span>';
   var over = it.daily && it.landSpend > it.daily;
-  return '<span class="estv"' + (over ? ' title="이 속도면 일예산을 다 쓴다 — 실제로는 예산선에서 멈춘다"' : '') + '>' +
-    won(it.landSpend) + (over ? '<span class="estcap">↑</span>' : '') + '</span>';
+  return '<span class="estv"' + (over ? ' title="이 속도면 예상 광고비가 이 품목 일예산을 넘는다 — 실제로는 예산선에서 멈추므로 여기까지 못 간다"' : '') + '>' +
+    won(it.landSpend) + (over ? '<span class="estcap">초과</span>' : '') + '</span>';
 }
 
 // 현재 ROAS pill 과 구분되게 테두리만 있는 변형을 쓴다 — 확정값과 예상값이 같아 보이면 안 된다
