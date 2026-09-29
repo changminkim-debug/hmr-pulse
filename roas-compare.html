@@ -325,6 +325,7 @@ input.mm-gap-in:focus{border-color:#4466cc}
         <button class="mm-month-tab active" id="mm-tab-07" onclick="mmSwitchMonth('07')">7월</button>
         <button class="mm-month-tab" id="mm-tab-08" onclick="mmSwitchMonth('08')">8월</button>
         <button class="mm-month-tab" id="mm-tab-09" onclick="mmSwitchMonth('09')">9월</button>
+        <button class="mm-month-tab" id="mm-tab-10" onclick="mmSwitchMonth('10')">10월</button>
       </div>
       <span class="mm-modal-badge" id="mm-month-badge">7월 시뮬레이션</span>
       <span class="mm-src-label" id="mm-src-label">기본값 (미작성)</span>
@@ -1200,6 +1201,23 @@ const MM_MONTHS={
     roas:{brand:8958,power:782,shop:502,meta:278,google_sa:2270,google_da:371,payco:628,toss:518,aedi:699},
     // 6~8월 평균 C24/RAW
     gap:{meta:0.81,google_sa:0.35,google_da:0.72,payco:0.24,toss:0.21,aedi:1.00},
+  },
+  // 2026-09-29 산출. 산출법은 07~09와 동일 (대시보드 파이프라인 그대로 재집계):
+  //   RAW ROAS = 9월 1~28일 실적 / C24 갭 = 7·8·9월 월별비율의 평균 / 오가닉 = 7~9월 월별 오가닉÷광고비의 평균
+  //   (재계산으로 09의 6~8월 갭·오가닉 값이 그대로 재현되는 것을 확인함)
+  //   ※ 9월은 추석(9/24~26) 낀 달이라 메타 갭(0.73)·오가닉(86%)이 평소보다 낮아 3개월 평균을 끌어내림.
+  //   ※ 에디ai: 9/2부터 매체 매출을 에디 시트 K열(RAW)로 바꿔서 09까지 쓰던 갭 1.00(=C24와 동일)이 더는 안 맞는다.
+  //     7~9월 K열 기준 실제 갭 0.525 / 0.569 / 0.796 → 0.63. RAW ROAS도 같은 이유로 09 기본값(699)보다 크게 나옴.
+  '10':{
+    label:'10월', storeKey:'mm-calc-save-10', urlKey:'mm10',
+    gapLabel:'7~9월 평균', organicLabel:'7~9월',
+    naverGap:0.59,        // 7~9월 평균 (0.605 / 0.602 / 0.577)
+    organicRatio:1.06,    // 7~9월 오가닉/광고비 월평균 (1.231 / 1.092 / 0.864)
+    note:'RAW ROAS 기본값은 9월(1~28일) 실적 기준 · 예산은 원(₩) 단위 입력 · C24 갭비율은 7~9월 평균 기준 · 오가닉은 7~9월 비율(광고비×106%) 예측값',
+    // 9월 1~28일 실적 RAW ROAS
+    roas:{brand:7861,power:827,shop:539,meta:272,google_sa:2079,google_da:360,payco:478,toss:505,aedi:1886},
+    // 7~9월 평균 C24/RAW
+    gap:{meta:0.79,google_sa:0.37,google_da:0.67,payco:0.24,toss:0.20,aedi:0.63},
   },
 };
 function mmCfg(){return MM_MONTHS[mmMonth];}
