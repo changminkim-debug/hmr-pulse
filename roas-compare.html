@@ -102,6 +102,14 @@ tbody tr.tr-organic td{color:#2e7d32}
 .ci-payco{background:#ff5722}.ci-toss{background:#0064ff}.ci-aedi{background:#9c27b0}
 .ci-criteo{background:#ff9800}
 .ci-content{background:#607d8b}
+/* 전일자 성과 */
+.yd-nav{display:inline-flex;align-items:center;gap:6px}
+.yd-btn{border:1.5px solid #d8dce8;background:#fff;border-radius:8px;padding:3px 9px;font-size:12px;cursor:pointer;color:#4466cc;font-family:inherit}
+.yd-btn:disabled{opacity:.35;cursor:default}
+.yd-latest{font-weight:700}
+.yd-d{display:block;font-size:11px;font-weight:600;margin-top:2px;white-space:nowrap}
+.yd-up{color:#2e7d32}.yd-dn{color:#c62828}.yd-flat{color:#aaa}
+.yd-spd.yd-up{color:#4466cc}.yd-spd.yd-dn{color:#8a91a8}
 .expand-btn{background:none;border:none;cursor:pointer;color:#4466cc;font-size:11px;font-weight:700;padding:0 3px;font-family:inherit;vertical-align:middle}
 th.dv,td.dv{border-left:1px solid #e4e8f2}
 
@@ -441,6 +449,21 @@ input.mm-gap-in:focus{border-color:#4466cc}
     </div>
     <div class="tbl-wrap" id="main-table">
       <div class="loader"><div class="spin"></div>집계중...</div>
+    </div>
+
+    <!-- 전일자 성과 (월·기간 필터와 무관하게 항상 하루 단위, 기본 = 데이터 마지막 날 = 어제) -->
+    <div id="yd-wrap" style="display:none;margin-top:28px">
+      <div class="sec-title mb">
+        전일자 성과
+        <span class="yd-nav">
+          <button class="yd-btn" id="yd-prev" onclick="ydMove(-1)" title="이전 날">◀</button>
+          <span class="sec-badge" id="yd-badge">—</span>
+          <button class="yd-btn" id="yd-next" onclick="ydMove(1)" title="다음 날">▶</button>
+          <button class="yd-btn yd-latest" id="yd-latest" onclick="ydMove(0)" style="display:none">최신</button>
+        </span>
+        <span class="sec-note" id="yd-note"></span>
+      </div>
+      <div class="tbl-wrap" id="yd-table"></div>
     </div>
 
     <!-- 미디어믹스 계획 대비 페이싱 -->
@@ -799,6 +822,7 @@ function render(){
   renderGapWarn();
   renderKPI(agg);
   renderMainTable(agg,days);
+  renderYesterday();
   renderPacing();
   renderCompare();
   const _ms=monthList(),_f=_ms.length?+_ms[0].slice(5):0,_l=_ms.length?+_ms[_ms.length-1].slice(5):0;
@@ -874,6 +898,99 @@ function renderMainTable(agg,days){
   const tMR=roas(tS,tM),tCR=roas(tS,tC);
   rows+=`<tr class="tr-total"><td>합계</td><td>${fmtV(tS)}</td><td class="dv">${fmtV(tM)}</td><td>${rc(tMR)}</td><td class="dv">${fmtV(tC)}</td><td>${rc(tCR)}</td><td class="dv">${rcRatio(tC,tM)}</td><td class="${tC-tM>=0?'pos':'neg'}">${fmtDiff(tC-tM)}</td></tr>`;
   document.getElementById('main-table').innerHTML=`<table>
+    <thead>
+      <tr>
+        <th rowspan="2" style="text-align:left;vertical-align:bottom">매체</th>
+        <th rowspan="2">매체비용</th>
+        <th colspan="2" class="ga dv">매체 보고</th>
+        <th colspan="2" class="gb dv">Cafe24 실측</th>
+        <th colspan="2" class="gc dv">비교</th>
+      </tr>
+      <tr>
+        <th class="ga dv">매출</th><th class="ga">ROAS</th>
+        <th class="gb dv">매출</th><th class="gb">ROAS</th>
+        <th class="gc dv">실매출갭</th><th class="gc">매출액차이</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+// ═══ 전일자 성과 ══════════════════════════════════════════════════
+// 매체별 비교와 같은 양식을 하루 단위로. 월·기간 필터와 무관하게 전체 일자(rawDays)에서 고른다.
+// 기본은 "광고비가 찍힌 마지막 날"(= 보통 어제). ◀▶로 지난 날짜를 되짚어 볼 수 있다.
+// 광고비·매출 칸 아래에 직전일 대비 증감(금액·%)을 붙인다.
+let ydDate=null,ydNaverOpen=false;
+function ydDays(){
+  const tot=d=>PAID_CH.reduce((s,k)=>s+(d.media[k]||{spd:0}).spd,0);
+  return rawDays.filter(d=>tot(d)>0).map(d=>d.date);
+}
+function ydMove(step){
+  const ds=ydDays();if(!ds.length)return;
+  if(step===0){ydDate=null;}
+  else{
+    const cur=ydDate||ds[ds.length-1];
+    const i=Math.min(Math.max(ds.indexOf(cur)+step,0),ds.length-1);
+    ydDate=i===ds.length-1?null:ds[i];
+  }
+  renderYesterday();
+}
+function ydDelta(cur,prev,isSpd){
+  const cls=isSpd?'yd-spd ':'';
+  if(!prev&&!cur)return'<span class="yd-d yd-flat">—</span>';
+  if(!prev)return`<span class="yd-d ${cls}yd-up">신규</span>`;
+  const d=cur-prev,p=d/prev*100;
+  if(Math.abs(p)<0.5)return`<span class="yd-d ${cls}yd-flat">— 0%</span>`;
+  const a=Math.abs(d),s=a>=1e8?(a/1e8).toFixed(1)+'억':Math.round(a/1e4).toLocaleString()+'만';
+  return`<span class="yd-d ${cls}${d>0?'yd-up':'yd-dn'}">${d>0?'▲':'▼'} ${s} (${d>0?'+':''}${Math.round(p)}%)</span>`;
+}
+function ydToggleNaver(){
+  ydNaverOpen=!ydNaverOpen;
+  document.querySelectorAll('.yd-nv-sub').forEach(r=>r.classList.toggle('open',ydNaverOpen));
+  const b=document.getElementById('yd-nv-tog');if(b)b.textContent=ydNaverOpen?'▼':'▶';
+}
+function renderYesterday(){
+  const wrap=document.getElementById('yd-wrap');if(!wrap)return;
+  const ds=ydDays();
+  if(!ds.length){wrap.style.display='none';return;}
+  wrap.style.display='';
+  if(ydDate&&!ds.includes(ydDate))ydDate=null;
+  const date=ydDate||ds[ds.length-1],i=ds.indexOf(date),prevDate=i>0?ds[i-1]:null;
+  const day=rawDays.find(d=>d.date===date),prev=prevDate?rawDays.find(d=>d.date===prevDate):null;
+  const A=aggDays([day]),P=prev?aggDays([prev]):null;
+  const dow=s=>'일월화수목금토'[new Date(s+'T00:00:00').getDay()];
+  document.getElementById('yd-badge').textContent=`${date} (${dow(date)})`;
+  document.getElementById('yd-note').textContent=prevDate?`증감 = 전일 ${prevDate.slice(5)} (${dow(prevDate)}) 대비`:'';
+  document.getElementById('yd-prev').disabled=i<=0;
+  document.getElementById('yd-next').disabled=i>=ds.length-1;
+  document.getElementById('yd-latest').style.display=ydDate?'':'none';
+  const sub=(d,key)=>({spd:(d.media[key]||{spd:0}).spd,mrev:mRev((d.media[key]||{rev:0}).rev,key)});
+  const row=(label,c,p,extra)=>{
+    const mR=roas(c.spd,c.mrev),cR=roas(c.spd,c.crev),has=c.crev!=null;
+    return`<tr class="${extra||'parent-row'}">
+      <td>${label}</td>
+      <td>${fmtV(c.spd)}${p?ydDelta(c.spd,p.spd,true):''}</td>
+      <td class="dv">${c.mrev==null?'<span class="dash">—</span>':fmtV(c.mrev)+(p?ydDelta(c.mrev,p.mrev):'')}</td>
+      <td>${c.mrev==null?'<span class="dash">—</span>':rc(mR)}</td>
+      <td class="dv">${has?fmtV(c.crev)+(p?ydDelta(c.crev,p.crev):''):'<span class="dash">—</span>'}</td>
+      <td>${has?rc(cR):'<span class="dash">—</span>'}</td>
+      <td class="dv">${has&&c.mrev!=null?rcRatio(c.crev,c.mrev):'<span class="dash">—</span>'}</td>
+      <td class="${has&&c.mrev!=null?(c.crev-c.mrev>=0?'pos':'neg'):'dash'}">${has&&c.mrev!=null?fmtDiff(c.crev-c.mrev):'—'}</td>
+    </tr>`;
+  };
+  let rows='';
+  PAID_CH.forEach(k=>{
+    const m=CH_META[k],isNaver=k==='naver';
+    const btn=isNaver?` <button class="expand-btn" id="yd-nv-tog" onclick="ydToggleNaver()">${ydNaverOpen?'▼':'▶'}</button>`:'';
+    rows+=row(`<span class="ci ${m.ci}"></span>${m.label}${btn}`,A[k],P&&P[k]);
+    if(isNaver)NAVER_SUBS.forEach(({key,label})=>{
+      const c=sub(day,key),p=prev?sub(prev,key):null;
+      rows+=row(`&nbsp;&nbsp;└ ${label}`,{...c,crev:null},p,`sub-row yd-nv-sub${ydNaverOpen?' open':''}`);
+    });
+  });
+  rows+=row('<span class="ci ci-content"></span>콘텐츠 비용',{spd:A.content_fee.spd,mrev:null,crev:null},P&&{spd:P.content_fee.spd});
+  const tot=a=>({spd:PAID_CH.reduce((s,k)=>s+a[k].spd,0)+a.content_fee.spd,mrev:PAID_CH.reduce((s,k)=>s+a[k].mrev,0),crev:PAID_CH.reduce((s,k)=>s+a[k].crev,0)});
+  rows+=row('합계',tot(A),P&&tot(P),'tr-total');
+  document.getElementById('yd-table').innerHTML=`<table>
     <thead>
       <tr>
         <th rowspan="2" style="text-align:left;vertical-align:bottom">매체</th>
