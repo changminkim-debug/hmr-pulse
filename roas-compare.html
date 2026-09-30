@@ -107,7 +107,10 @@ tbody tr.tr-organic td{color:#2e7d32}
 .yd-btn{border:1.5px solid #d8dce8;background:#fff;border-radius:8px;padding:3px 9px;font-size:12px;cursor:pointer;color:#4466cc;font-family:inherit}
 .yd-btn:disabled{opacity:.35;cursor:default}
 .yd-latest{font-weight:700}
-.yd-d{display:block;font-size:11px;font-weight:600;margin-top:2px;white-space:nowrap}
+.yd-d{display:block;margin-top:5px;white-space:nowrap;line-height:1.35}
+.yd-d>span{display:block}
+.yd-prev{font-size:12.5px;color:#8a91a8;font-weight:500}
+.yd-d .yd-up,.yd-d .yd-dn,.yd-d .yd-flat,.yd-d.yd-flat{font-size:13.5px;font-weight:700}
 .yd-up{color:#2e7d32}.yd-dn{color:#c62828}.yd-flat{color:#aaa}
 .yd-spd.yd-up{color:#4466cc}.yd-spd.yd-dn{color:#8a91a8}
 .expand-btn{background:none;border:none;cursor:pointer;color:#4466cc;font-size:11px;font-weight:700;padding:0 3px;font-family:inherit;vertical-align:middle}
@@ -940,14 +943,23 @@ function ydMove(step){
   }
   renderYesterday();
 }
+// 전일값 + 증감을 두 줄로 크게. 금액은 증감액(%), ROAS는 %p
+const ydMoney=v=>{const a=Math.abs(v);return a>=1e8?(a/1e8).toFixed(1)+'억':Math.round(a/1e4).toLocaleString()+'만';};
 function ydDelta(cur,prev,isSpd){
   const cls=isSpd?'yd-spd ':'';
-  if(!prev&&!cur)return'<span class="yd-d yd-flat">—</span>';
-  if(!prev)return`<span class="yd-d ${cls}yd-up">신규</span>`;
+  if(!prev&&!cur)return'<span class="yd-d yd-flat">전일 —</span>';
+  if(!prev)return`<span class="yd-d"><span class="yd-prev">전일 0</span><span class="${cls}yd-up">신규</span></span>`;
   const d=cur-prev,p=d/prev*100;
-  if(Math.abs(p)<0.5)return`<span class="yd-d ${cls}yd-flat">— 0%</span>`;
-  const a=Math.abs(d),s=a>=1e8?(a/1e8).toFixed(1)+'억':Math.round(a/1e4).toLocaleString()+'만';
-  return`<span class="yd-d ${cls}${d>0?'yd-up':'yd-dn'}">${d>0?'▲':'▼'} ${s} (${d>0?'+':''}${Math.round(p)}%)</span>`;
+  const chg=Math.abs(p)<0.5?`<span class="${cls}yd-flat">— 0%</span>`
+    :`<span class="${cls}${d>0?'yd-up':'yd-dn'}">${d>0?'▲':'▼'} ${ydMoney(d)} (${d>0?'+':''}${Math.round(p)}%)</span>`;
+  return`<span class="yd-d"><span class="yd-prev">전일 ${ydMoney(prev)}</span>${chg}</span>`;
+}
+function ydRoasDelta(cur,prev,hasPrev){
+  if(!hasPrev)return'<span class="yd-d yd-flat">전일 —</span>';
+  const d=cur-prev;
+  const chg=Math.abs(d)<0.5?'<span class="yd-flat">— 0%p</span>'
+    :`<span class="${d>0?'yd-up':'yd-dn'}">${d>0?'▲':'▼'} ${Math.abs(Math.round(d)).toLocaleString()}%p</span>`;
+  return`<span class="yd-d"><span class="yd-prev">전일 ${Math.round(prev).toLocaleString()}%</span>${chg}</span>`;
 }
 function ydToggleNaver(){
   ydNaverOpen=!ydNaverOpen;
@@ -976,9 +988,9 @@ function renderYesterday(){
       <td>${label}</td>
       <td>${fmtV(c.spd)}${p?ydDelta(c.spd,p.spd,true):''}</td>
       <td class="dv">${c.mrev==null?'<span class="dash">—</span>':fmtV(c.mrev)+(p?ydDelta(c.mrev,p.mrev):'')}</td>
-      <td>${c.mrev==null?'<span class="dash">—</span>':rc(mR)}</td>
+      <td>${c.mrev==null?'<span class="dash">—</span>':rc(mR)+(p?ydRoasDelta(mR,roas(p.spd,p.mrev),p.spd>0):'')}</td>
       <td class="dv">${has?fmtV(c.crev)+(p?ydDelta(c.crev,p.crev):''):'<span class="dash">—</span>'}</td>
-      <td>${has?rc(cR):'<span class="dash">—</span>'}</td>
+      <td>${has?rc(cR)+(p?ydRoasDelta(cR,roas(p.spd,p.crev),p.spd>0):''):'<span class="dash">—</span>'}</td>
       <td class="dv">${has&&c.mrev!=null?rcRatio(c.crev,c.mrev):'<span class="dash">—</span>'}</td>
       <td class="${has&&c.mrev!=null?(c.crev-c.mrev>=0?'pos':'neg'):'dash'}">${has&&c.mrev!=null?fmtDiff(c.crev-c.mrev):'—'}</td>
     </tr>`;
