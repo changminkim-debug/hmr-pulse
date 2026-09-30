@@ -1298,6 +1298,15 @@ const MM_PUBLISHED={
     custom:[],
   }},
 };
+// 비고(memo)·빈 신규매체 행을 빼고 입력값이 게시본과 같은지
+function mmSameAsPub(a,b){
+  const keys=['total_budget','b_content','note_content'];
+  CALC_CH.forEach(ch=>keys.push('b_'+ch.key,'r_'+ch.key,'note_'+ch.key));
+  const t=v=>String(v==null?'':v).trim();
+  if(keys.some(k=>t(a[k])!==t(b[k])))return false;
+  const cs=d=>JSON.stringify((d.custom||[]).filter(c=>t(c.name)||t(c.bgt)));
+  return cs(a)===cs(b);
+}
 function mmPub(month){const p=MM_PUBLISHED[month||mmMonth];return p&&p.data?p:null;}
 // 예산이 하나라도 들어있는 값인지 (빈 폼이 저장/보관되는 사고를 걸러내는 기준)
 function mmHasBudget(d){
@@ -1334,6 +1343,12 @@ function mmApplyMonth(month){
   const saved=localStorage.getItem(MM_MONTHS[month].storeKey);
   // 예산이 하나도 없는 저장본은 위 사고(빈 폼이 저장된 경우)의 잔해로 보고 무시한다 —
   // 그대로 두면 게시본이 가려진 채 백지가 새로고침 후에도 계속 남는다.
+  // 내 저장본이 그대로 게시된 경우(예산·ROAS·채널 비고가 전부 같음)는 게시본을 보여준다.
+  // 게시할 때 통끼가 전체 비고를 채워 넣는데, 같은 날 저장한 로컬본이 빈 비고로 게시본을 가려
+  // "비고가 안 들어갔다"로 보였음 (2026-09-30 10월). 날짜 비교로는 같은 날이라 🔔도 안 뜬다.
+  if(saved&&mmPub(month)&&mmSameAsPub(JSON.parse(saved),mmPub(month).data)){
+    try{localStorage.removeItem(MM_MONTHS[month].storeKey);}catch(e){}
+  }else
   if(saved&&mmHasBudget(JSON.parse(saved))){
     const sd=JSON.parse(saved),p0=mmPub(month);
     // 내가 저장한 뒤에 새 게시본이 올라왔으면 알려준다 (값은 내 저장본 그대로 유지 — 덮어쓰지 않음)
