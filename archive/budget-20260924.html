@@ -1425,10 +1425,18 @@ function histTable(r){
    반짝이는 CTR/CVR/AOV 를 누르면 최근 며칠이 어떻게 흘러왔는지 보여준다.
    화살표 기호를 지운 대신 "눌러서 확인"으로 바꾼 것. 원지표(노출·클릭·전환)를 같이 보여줘야
    비율이 떨어진 게 분모가 늘어서인지 분자가 줄어서인지 판별된다. */
+function pp(a, b, dec){ var d = a - b; return (d > 0 ? '+' : '') + d.toFixed(dec) + '%p'; }
+function rel(a, b){ var d = (a - b) / b * 100; return (d > 0 ? '+' : '') + d.toFixed(0) + '%'; }
 var MET = {
-  ctr: { name:'CTR', fn:ctrOf, fmt:function(v){ return v.toFixed(2)+'%'; }, sub:function(m){ return won(m.clicks)+' / '+won(m.imp)+' 노출'; }, why:'클릭률 — 소재·타겟이 먹히는 정도' },
-  cvr: { name:'CVR', fn:cvrOf, fmt:function(v){ return v.toFixed(1)+'%'; }, sub:function(m){ return won(m.purchases)+'건 / '+won(m.clicks)+' 클릭'; }, why:'전환율 — 클릭 후 실제 구매로 이어지는 정도' },
-  aov: { name:'AOV', fn:aovOf, fmt:function(v){ return won(v); }, sub:function(m){ return won(m.val)+' / '+won(m.purchases)+'건'; }, why:'객단가 — 한 건당 매출' }
+  ctr: { name:'CTR', fn:ctrOf, fmt:function(v){ return v.toFixed(2)+'%'; },
+         dp:function(a,b){ return pp(a,b,2); },
+         sub:function(m){ return won(m.clicks)+' / '+won(m.imp)+' 노출'; }, why:'클릭률 — 소재·타겟이 먹히는 정도' },
+  cvr: { name:'CVR', fn:cvrOf, fmt:function(v){ return v.toFixed(1)+'%'; },
+         dp:function(a,b){ return pp(a,b,1); },
+         sub:function(m){ return won(m.purchases)+'건 / '+won(m.clicks)+' 클릭'; }, why:'전환율 — 클릭 후 실제 구매로 이어지는 정도' },
+  aov: { name:'AOV', fn:aovOf, fmt:function(v){ return won(v); },
+         dp:function(a,b){ return rel(a,b); },          // 원 단위라 %p 가 성립하지 않는다
+         sub:function(m){ return won(m.val)+' / '+won(m.purchases)+'건'; }, why:'객단가 — 한 건당 매출' }
 };
 function openTrend(ev, key, metric, isItem){
   if (ev) ev.stopPropagation();
@@ -1466,17 +1474,19 @@ function trendModal(){
   var span = (mx - mn) || 1;
   var first = vals[0], last = vals[vals.length-1];
   var tot = first ? (last - first) / first * 100 : 0;
+  var totTxt = pts.length > 1 ? M.dp(last, first) : '';
 
   var rows = pts.map(function(x, i){
     var prev = i ? pts[i-1].v : null;
-    var dv = prev ? (x.v - prev) / prev * 100 : null;
+    var dv = prev ? (x.v - prev) / prev * 100 : null;   // 색 판정은 상대 변화폭으로
+    var dtxt = prev ? M.dp(x.v, prev) : null;           // 표기는 %p (AOV 만 %)
     var w = 6 + (x.v - mn) / span * 94;
     var cls = dv == null ? '' : dv <= -5 ? ' dn' : dv >= 5 ? ' up' : '';
     return '<tr' + (x.today ? ' class="tr-today"' : '') + '>' +
       '<td class="left">' + (x.today ? '<b>오늘</b> <span class="muted">' + D.pollTime + ' 기준</span>'
         : '<b>' + x.d.slice(5) + '</b> <span class="dow' + (dowOfStr(x.d) === '토' ? ' dow-sat' : dowOfStr(x.d) === '일' ? ' dow-sun' : '') + '">(' + dowOfStr(x.d) + ')</span>') + '</td>' +
       '<td class="tv">' + M.fmt(x.v) + '</td>' +
-      '<td class="tc' + cls + '">' + (dv == null ? '<span class="muted">기준</span>' : (dv > 0 ? '+' : '') + dv.toFixed(0) + '%') + '</td>' +
+      '<td class="tc' + cls + '">' + (dtxt == null ? '<span class="muted">기준</span>' : dtxt) + '</td>' +
       '<td class="tbar"><span style="width:' + w.toFixed(1) + '%"></span></td>' +
       '<td class="left muted small">' + M.sub(x.m) + '</td></tr>';
   }).join('');
@@ -1486,9 +1496,9 @@ function trendModal(){
     '<div class="tt">' + esc(label) + '</div>' +
     '<div class="ts">' + M.name + ' 추이 · ' + M.why + '</div>' +
     '<div class="tsum ' + (tot < 0 ? 'dn' : 'up') + '">' + (pts.length > 1 ? M.fmt(first) + ' → ' + M.fmt(last) +
-      '  <b>' + (tot > 0 ? '+' : '') + tot.toFixed(0) + '%</b>' : M.fmt(last)) + '</div>' +
+      '  <b>' + totTxt + '</b>' : M.fmt(last)) + '</div>' +
     '<table class="ttbl"><colgroup><col style="width:22%"><col style="width:15%"><col style="width:13%"><col style="width:26%"><col style="width:24%"></colgroup>' +
-    '<thead><tr><th class="left">날짜</th><th>' + M.name + '</th><th>전일비</th><th></th><th class="left">근거</th></tr></thead>' +
+    '<thead><tr><th class="left">날짜</th><th>' + M.name + '</th><th>전일 대비</th><th></th><th class="left">근거</th></tr></thead>' +
     '<tbody>' + rows + '</tbody></table>' +
     '<div class="tnote">확정일은 하루 전체, 오늘은 ' + D.pollTime + ' 시점까지의 누적입니다. 오전에는 표본이 얇아 낮게 보일 수 있습니다.</div>' +
     '</div></div>';
