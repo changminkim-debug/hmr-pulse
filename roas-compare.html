@@ -166,9 +166,11 @@ tr.top5-hi td{background:#fff8e1!important}
 /* 미디어믹스 계획 대비 페이싱 (매체별 비교 박스 하단) */
 /* 매체별 비교 · 전일자 성과 · 페이싱을 각각 테두리 카드로 구분 (색 띠로 한눈에) */
 .sec-card{border:1.5px solid #e3e7f1;border-top-width:5px}
-.sec-main{border-top-color:#4466cc}
-.sec-yd{border-top-color:#2e9d6a}
-.sec-pace{border-top-color:#f0a020}
+/* 박스 안쪽은 띠 색의 옅은 톤 — 전체 배경(#f0f2f7 회청색)과 겹치지 않게 색상 계열을 달리함. 표 행은 흰색 유지 */
+.sec-main{border-top-color:#4466cc;background:#f6f8ff;border-color:#dbe3fb}
+.sec-yd{border-top-color:#2e9d6a;background:#f2fbf6;border-color:#cfeadb}
+.sec-pace{border-top-color:#f0a020;background:#fffaf0;border-color:#f3e2bf}
+.sec-card .tbl-wrap{border-radius:10px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.04)}
 #pacing-table tbody td{font-size:15px;line-height:1.35}
 #pacing-table small{display:block;font-size:11px;font-weight:700;color:#98a0b5;margin-top:3px;letter-spacing:.1px}
 /* 페이싱 셀 — 앵커 2개(현재 달성률 = 큰 숫자, 예상 마감 = pill)에 근거줄 하나를 사이에 둔다.
