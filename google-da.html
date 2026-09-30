@@ -195,7 +195,7 @@ tbody tr:hover td{background:#edf2ff!important}
     <div class="sb-label">품목</div>
     <div class="filter-list" id="product-filter"></div>
   </div>
-  <div class="sb-bottom">RAW ROAS = 주문금액(수수료 차감 전) ÷ 비용<br>순ROAS = 순매출(주문금액×86%) ÷ 비용<br>매체 ROAS = 매체 전환가치 ÷ 비용</div>
+  <div class="sb-bottom">RAW ROAS = 주문금액(수수료 차감 전) ÷ 비용<br>순ROAS = 순매출(주문금액×86%) ÷ 비용<br>매체 ROAS = 매체 전환가치 ÷ 비용<br>CTR = 클릭수 ÷ 노출수<br>CVR = 매체 전환수 ÷ 클릭수<br>구매CVR = Cafe24 구매건 ÷ 클릭수</div>
 </div>
 
 <div class="main-wrap">
@@ -206,7 +206,7 @@ tbody tr:hover td{background:#edf2ff!important}
     </div>
     <div class="hd-right">
       <button class="xls-btn" onclick="exportExcel()">⬇ 엑셀 다운로드</button>
-      <div class="hd-gen">생성: 2026. 9. 30. 오전 8:29:54</div>
+      <div class="hd-gen">생성: 2026. 9. 30. 오전 9:50:05</div>
     </div>
   </div>
 
@@ -227,7 +227,7 @@ tbody tr:hover td{background:#edf2ff!important}
           <thead>
             <tr>
               <th class="left">품목 / 캠페인 / 소재</th>
-              <th>비용</th><th>전환수</th>
+              <th>비용</th><th>노출수</th><th>클릭수</th><th>CTR</th><th>CVR</th><th>구매CVR</th><th>전환수</th>
               <th>전환가치</th><th>매체ROAS</th>
               <th>Cafe24RAW매출</th><th>RAW ROAS</th><th>Cafe24순매출</th><th>순ROAS</th>
             </tr>
@@ -244,7 +244,7 @@ tbody tr:hover td{background:#edf2ff!important}
           <thead>
             <tr>
               <th class="left">캠페인</th>
-              <th>비용</th><th>전환수</th><th>전환가치</th><th>매체ROAS</th><th>Cafe24RAW매출</th><th>RAW ROAS</th><th>Cafe24순매출</th><th>순ROAS</th>
+              <th>비용</th><th>노출수</th><th>클릭수</th><th>CTR</th><th>CVR</th><th>구매CVR</th><th>전환수</th><th>전환가치</th><th>매체ROAS</th><th>Cafe24RAW매출</th><th>RAW ROAS</th><th>Cafe24순매출</th><th>순ROAS</th>
             </tr>
           </thead>
           <tbody id="camp-daily-tbody"></tbody>
@@ -259,7 +259,7 @@ tbody tr:hover td{background:#edf2ff!important}
           <thead>
             <tr>
               <th class="left">날짜</th>
-              <th>비용</th><th>전환수</th><th>전환가치</th><th>매체ROAS</th><th>Cafe24RAW매출</th><th>RAW ROAS</th><th>Cafe24순매출</th><th>순ROAS</th>
+              <th>비용</th><th>노출수</th><th>클릭수</th><th>CTR</th><th>CVR</th><th>구매CVR</th><th>전환수</th><th>전환가치</th><th>매체ROAS</th><th>Cafe24RAW매출</th><th>RAW ROAS</th><th>Cafe24순매출</th><th>순ROAS</th>
             </tr>
           </thead>
           <tbody id="daily-camp-tbody"></tbody>
@@ -284,7 +284,7 @@ tbody tr:hover td{background:#edf2ff!important}
           <thead>
             <tr>
               <th class="left">날짜</th>
-              <th>비용</th><th>전환수</th><th>전환가치</th><th>매체ROAS</th><th>Cafe24RAW매출</th><th>RAW ROAS</th><th>Cafe24순매출</th><th>순ROAS</th>
+              <th>비용</th><th>노출수</th><th>클릭수</th><th>CTR</th><th>CVR</th><th>구매CVR</th><th>전환수</th><th>전환가치</th><th>매체ROAS</th><th>Cafe24RAW매출</th><th>RAW ROAS</th><th>Cafe24순매출</th><th>순ROAS</th>
             </tr>
           </thead>
           <tbody id="modal-tbody"></tbody>
@@ -363,6 +363,9 @@ function sumRange(byDate, start, end) {
   for (const d in byDate) { if (d>=start && d<=end) addTotals(t, byDate[d]); }
   return t;
 }
+// CTR/구매CVR 은 값이 작아 정수 퍼센트로는 변화가 안 보인다 — 소수 2자리로 표시
+function fmtPct2(v) { return (v || 0).toFixed(2) + '%'; }
+
 function metrics(t) {
   const netRevenue = t.orderAmount * CAFE24_NET_RATE;
   return {
@@ -374,6 +377,11 @@ function metrics(t) {
     roasCafe: t.cost>0 ? netRevenue/t.cost*100 : 0,
     ctr: t.impr>0 ? t.clicks/t.impr*100 : 0,
     cvr: t.clicks>0 ? t.conv/t.clicks*100 : 0,
+    // 구매CVR = Cafe24 실구매 ÷ 클릭. 매체 CVR(위 cvr, 구글 전환수 기준)과 달리
+    // "클릭 뒤에 실제로 산 비율"이라 ROAS 하락 원인 분해에 쓰는 건 이쪽이다.
+    // ROAS(RAW) = 구매CVR × AOV ÷ CPC 가 항등식으로 성립한다 (CTR·노출수는 상쇄됨).
+    cvrOrder: t.clicks>0 ? t.orderCount/t.clicks*100 : 0,
+    aov: t.orderCount>0 ? t.orderAmount/t.orderCount : 0,
     cpc: t.clicks>0 ? t.cost/t.clicks : 0,
     cpm: t.impr>0 ? t.cost/t.impr*1000 : 0,
   };
@@ -642,7 +650,7 @@ function renderPerfTable() {
       }
     }
   }
-  document.getElementById('perf-tbody').innerHTML = rows.join('') || '<tr><td colspan="9" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
+  document.getElementById('perf-tbody').innerHTML = rows.join('') || '<tr><td colspan="15" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
 }
 
 function rowHTML(cls, key, open, label, m, badge) {
@@ -651,6 +659,11 @@ function rowHTML(cls, key, open, label, m, badge) {
   return `<tr class="${cls}">
     <td class="left name" ${onclick}>${caret}${esc(label)}${badge}</td>
     <td>${fmtW(m.cost)}</td>
+    <td>${fmtW(m.impr)}</td>
+    <td>${fmtW(m.clicks)}</td>
+    <td>${fmtPct2(m.ctr)}</td>
+    <td>${fmtPct2(m.cvr)}</td>
+    <td>${fmtPct2(m.cvrOrder)}</td>
     <td>${fmtK(m.conv)}</td>
     <td>${fmtW(m.convValue)}</td>
     <td><span class="${roasCls(m.roasGoogle)}">${fmtPct(m.roasGoogle)}</span></td>
@@ -669,6 +682,11 @@ function campRowHTML(campaignId, name, m, badge) {
   return `<tr class="camp-row">
     <td class="left name" onclick="openCampaignModal('${esc(campaignId)}')">${esc(name)}${badge}</td>
     <td>${fmtW(m.cost)}</td>
+    <td>${fmtW(m.impr)}</td>
+    <td>${fmtW(m.clicks)}</td>
+    <td>${fmtPct2(m.ctr)}</td>
+    <td>${fmtPct2(m.cvr)}</td>
+    <td>${fmtPct2(m.cvrOrder)}</td>
     <td>${fmtK(m.conv)}</td>
     <td>${fmtW(m.convValue)}</td>
     <td><span class="${roasCls(m.roasGoogle)}">${fmtPct(m.roasGoogle)}</span></td>
@@ -682,6 +700,11 @@ function dayRowHTML(date, m) {
   return `<tr class="lvl-ad">
     <td class="left name" style="cursor:default">${dateColorSpan(date)}</td>
     <td>${fmtW(m.cost)}</td>
+    <td>${fmtW(m.impr)}</td>
+    <td>${fmtW(m.clicks)}</td>
+    <td>${fmtPct2(m.ctr)}</td>
+    <td>${fmtPct2(m.cvr)}</td>
+    <td>${fmtPct2(m.cvrOrder)}</td>
     <td>${fmtK(m.conv)}</td>
     <td>${fmtW(m.convValue)}</td>
     <td><span class="${roasCls(m.roasGoogle)}">${fmtPct(m.roasGoogle)}</span></td>
@@ -707,13 +730,18 @@ function renderCampaignDaily() {
     if (m.cost === 0 && m.orderAmount === 0 && m.impr === 0) continue;
     rows.push(campRowHTML(c.campaignId, campDisplayName(c.product, c.type, c.name, c.subtype), m, typeBadge(c.type, c.subtype)));
   }
-  document.getElementById('camp-daily-tbody').innerHTML = rows.join('') || '<tr><td colspan="9" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
+  document.getElementById('camp-daily-tbody').innerHTML = rows.join('') || '<tr><td colspan="15" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
 }
 
 function dailyTotalRowHTML(date, m) {
   return `<tr>
     <td class="left">${dateColorSpan(date)}</td>
     <td>${fmtW(m.cost)}</td>
+    <td>${fmtW(m.impr)}</td>
+    <td>${fmtW(m.clicks)}</td>
+    <td>${fmtPct2(m.ctr)}</td>
+    <td>${fmtPct2(m.cvr)}</td>
+    <td>${fmtPct2(m.cvrOrder)}</td>
     <td>${fmtK(m.conv)}</td>
     <td>${fmtW(m.convValue)}</td>
     <td><span class="${roasCls(m.roasGoogle)}">${fmtPct(m.roasGoogle)}</span></td>
@@ -740,7 +768,7 @@ function renderDailyCampaignTable() {
     if (m.cost === 0 && m.orderAmount === 0 && m.impr === 0) continue;
     rows.push(dailyTotalRowHTML(d, m));
   }
-  document.getElementById('daily-camp-tbody').innerHTML = rows.join('') || '<tr><td colspan="9" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
+  document.getElementById('daily-camp-tbody').innerHTML = rows.join('') || '<tr><td colspan="15" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
 }
 
 function findCampaign(campaignId) {
@@ -772,7 +800,7 @@ function openCampaignModal(campaignId) {
     if (m.cost === 0 && m.orderAmount === 0 && m.impr === 0) continue;
     rows.push(dayRowHTML(d, m));
   }
-  document.getElementById('modal-tbody').innerHTML = rows.join('') || '<tr><td colspan="9" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
+  document.getElementById('modal-tbody').innerHTML = rows.join('') || '<tr><td colspan="15" style="text-align:center;color:#b0b8cc;padding:24px">데이터 없음</td></tr>';
 
   const ctx = document.getElementById('modal-chart').getContext('2d');
   if (modalChart) modalChart.destroy();
