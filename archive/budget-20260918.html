@@ -82,15 +82,15 @@ body{
 .sel:hover{border-color:var(--ink-4)}
 
 /* ── 레이아웃 ── */
-.page-body{max-width:1860px;margin:0 auto;padding:8px 14px 2px;display:flex;flex-direction:column;gap:7px}
+.page-body{max-width:1860px;margin:0 auto;padding:10px 14px 4px;display:flex;flex-direction:column;gap:9px}
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 /* 히어로 KPI — 가장 먼저 보는 곳이라 마우스에 반응하게 둔다 */
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:8px 15px;transition:border-color .15s,box-shadow .15s,transform .15s;cursor:default}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 16px;transition:border-color .15s,box-shadow .15s,transform .15s;cursor:default}
 .card:hover{border-color:var(--ac);box-shadow:0 4px 14px rgba(76,99,230,.10);transform:translateY(-2px)}
 .card:hover .cv{color:var(--ac)}
 .card .cv{transition:color .15s}
 .card:hover .bar>i{filter:saturate(1.15)}
-.cl{font-size:11.5px;color:var(--ink-3);margin-bottom:4px;font-weight:600}
+.cl{font-size:12px;color:var(--ink-3);margin-bottom:6px;font-weight:600}
 .cv{font-size:22px;font-weight:700;line-height:1.1;letter-spacing:-.7px;color:var(--ink)}
 .cs{font-size:12px;color:var(--ink-4);margin-top:7px;white-space:normal;word-break:keep-all;line-height:1.5;font-weight:400}
 .cs b{color:var(--ink-2);font-weight:600}
@@ -107,7 +107,7 @@ body{
 .panel-main .sec-title{font-size:15px}
 .hint{font-size:12px;color:var(--ink-4);font-weight:400;margin-left:4px}
 
-.fold>summary{cursor:pointer;list-style:none;font-size:15px;font-weight:600;color:var(--ink-2);display:flex;align-items:center;gap:8px;user-select:none}
+.fold>summary{padding-top:8px;padding-bottom:8px;cursor:pointer;list-style:none;font-size:15px;font-weight:600;color:var(--ink-2);display:flex;align-items:center;gap:8px;user-select:none}
 .fold>summary::-webkit-details-marker{display:none}
 .fold>summary::before{content:'';width:0;height:0;border-left:5px solid var(--ink-4);border-top:4px solid transparent;border-bottom:4px solid transparent;transition:transform .15s}
 .fold[open]>summary::before{transform:rotate(90deg)}
@@ -156,7 +156,7 @@ th.key.k1{box-shadow:inset 1px 0 0 #E4EAF6}
 th.key.k2{box-shadow:inset -1px 0 0 #E4EAF6}
 /* 메인 품목 표 — 7줄뿐이라 넉넉하게 */
 /* 예상 두 칸이 들어오면서 좌우 여백을 줄였다 — 숫자를 살리는 쪽이 우선이다 */
-table.itemgrid th{padding:6px 5px;letter-spacing:-.4px}
+table.itemgrid th{padding:8px 5px;letter-spacing:-.4px}
 /* 지표명은 칸 가운데에 둔다 — 숫자에 붙여 오른쪽으로 몰면 어느 칸 제목인지 눈이 헷갈린다 */
 .split table.grid th{text-align:center}
 .split table.grid th.left{text-align:left}
@@ -184,11 +184,11 @@ table.itemgrid td.itemname{padding-left:18px}
   .split .pbox,.split .pbox:first-child{flex:1 1 auto;width:100%}
 }
 .split .pbox:first-child{flex:0 0 67%}
-.pbt{font-size:11px;font-weight:700;letter-spacing:.2px;padding:6px 14px}
+.pbt{font-size:11px;font-weight:700;letter-spacing:.2px;padding:7px 14px}
 .pbt-money{background:#EEF2FA;color:#2F4C86}
 .pbt-fnl{background:#EAF4EE;color:#2A6B4B}
 /* 좌우 행이 같은 줄에 오려면 높이가 같아야 한다 — 내용 길이와 무관하게 고정 */
-.split tr.lv1 td,.split tfoot td{height:36px;padding-top:3px;padding-bottom:3px;vertical-align:middle}
+.split tr.lv1 td,.split tfoot td{height:43px;padding-top:5px;padding-bottom:5px;vertical-align:middle}
 tr.rowhi td{background:#F5F8FD!important}
 tr.rowhi td.est{background:#F1F5FB!important}
 .fnlgrid td.fnl,.fnlgrid th.fnl{background:transparent}
@@ -429,6 +429,11 @@ tr.tr-today td.tbar span{background:linear-gradient(90deg,#9FBEE8,#1D3A6E)}
 .wt-a{flex:0 0 auto;color:var(--ink-2);font-size:12.5px;font-weight:600}
 @media(max-width:1200px){.wt-i{flex-wrap:wrap}.wt-nm,.wt-w{flex:1 1 100%}}
 
+.folds{display:flex;gap:9px}
+.folds>.panel{flex:1 1 50%;min-width:0}
+.ft-more{color:var(--ink-3);border-bottom:1px dotted var(--ink-4);cursor:help;margin-left:4px}
+@media(max-width:1100px){.folds{flex-direction:column}}
+
 #toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(14px);background:var(--ink);color:#fff;font-size:13px;font-weight:600;padding:10px 20px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .16s,transform .16s;z-index:9999}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -507,6 +512,7 @@ tr.tr-today td.tbar span{background:linear-gradient(90deg,#9FBEE8,#1D3A6E)}
 <div class="page-body">
   <div class="cards" id="kpi"></div>
 
+  <div class="folds">
   <div class="panel">
     <details class="fold" id="fold-proj">
       <summary>그날 결과 · 시간대별</summary>
@@ -524,6 +530,7 @@ tr.tr-today td.tbar span{background:linear-gradient(90deg,#9FBEE8,#1D3A6E)}
       <div class="fold-body" id="chg-panel"></div>
     </details>
   </div>
+  </div>
 
   <div class="panel panel-main">
     <div class="sec-title">품목별 현황<span class="hint">행을 누르면 캠페인 → 광고세트로 펼쳐집니다 · 📊 기준선 · 📋 이름 복사</span></div>
@@ -538,10 +545,8 @@ tr.tr-today td.tbar span{background:linear-gradient(90deg,#9FBEE8,#1D3A6E)}
 
 <div id="toast"></div>
 
-<div class="ft">
-  C1 = 1일 클릭 기여(1d_click) · 일예산은 활성(ACTIVE) 기준, CBO는 캠페인 예산 / ABO는 광고세트 예산 합<br>
-  입찰 캡값은 광고세트 설정 실값 — tROAS = bid_constraints.roas_average_floor, tCPA = bid_amount · 캠페인명의 숫자가 아니라 API 값입니다<br>
-  기준선은 메타 일별 insights(완결일 기준) · 읽기 전용 수집, 예산을 바꾸지 않습니다
+<div class="ft" title="C1 = 1일 클릭 기여(1d_click) · 일예산은 활성(ACTIVE) 기준, CBO는 캠페인 예산 / ABO는 광고세트 예산 합&#10;입찰 캡값은 광고세트 설정 실값 — tROAS = bid_constraints.roas_average_floor, tCPA = bid_amount · 캠페인명의 숫자가 아니라 API 값입니다&#10;기준선은 메타 일별 insights(완결일 기준) · 읽기 전용 수집, 예산을 바꾸지 않습니다">
+  C1 = 1일 클릭 기여 · 일예산은 활성 기준 · 입찰 캡값은 광고세트 실값 · 읽기 전용 수집 <span class="ft-more">자세히</span>
 </div>
 
 <script>
@@ -1170,23 +1175,23 @@ function itemCode(it){
    서로 다른 자리에 떨어져 "합계와 항목이 안 맞는" 것처럼 보였다(2026-09-21 피드백).
    같은 colgroup 을 공유하면 어느 깊이든 같은 세로선 위에 놓인다. */
 var COLS = [
-  { k:'name',      h:'캠페인',     left:true,  w:'19.5%' },
+  { k:'name',      h:'캠페인',     left:true,  w:'16%' },
   { k:'mode',      h:'체계',       left:true,  w:'4%' },
   { k:'attr',      h:'기여',       left:true,  w:'3.5%' },
-  { k:'strategy',  h:'입찰 · 캡값', left:true,  w:'6.5%' },
-  { k:'daily',     h:'일예산',                 w:'6.5%'  },
+  { k:'strategy',  h:'입찰 · 캡값', left:true,  w:'7%' },
+  { k:'daily',     h:'일예산',                 w:'7%'  },
   { k:'spend',     h:'소진',                   w:'5.5%' },
-  { k:'remain',    h:'잔여',                   w:'4.5%' },
-  { k:'pace',      h:'페이스',                 w:'4.5%'  },
+  { k:'remain',    h:'잔여',                   w:'5.5%' },
+  { k:'pace',      h:'페이스',                 w:'5.5%'  },
   { k:'imp',       h:'노출수',     fnl:true,   w:'5.5%'  },
   { k:'clicks',    h:'클릭수',     fnl:true,   w:'4.5%'  },
   { k:'ctr',       h:'CTR',        fnl:true,   w:'5%'  },
-  { k:'purchases', h:'전환수',                 w:'5%' },
+  { k:'purchases', h:'전환수',                 w:'4%' },
   { k:'cvr',       h:'CVR',        fnl:true,   w:'4.5%' },
   { k:'val',       h:'전환값',                 w:'6%'  },
   { k:'aov',       h:'AOV',        fnl:true,   w:'5.5%'  },
   { k:'roas',      h:'ROAS',                   w:'4.5%'  },
-  { k:'cpa',       h:'CPA',                    w:'6%'  }
+  { k:'cpa',       h:'CPA',                    w:'6.5%'  }
 ];
 var NCOL = COLS.length;
 
@@ -1215,8 +1220,8 @@ var ITEM_COLS = [
 
 // 오른쪽 박스 — 퍼널
 var FNL_COLS = [
-  { k:'item',   h:'품목',   left:true, w:'32%' },
-  { k:'imp',    h:'노출수', fnl:true,  w:'15%' },
+  { k:'item',   h:'품목',   left:true, w:'30%' },
+  { k:'imp',    h:'노출수', fnl:true,  w:'17%' },
   { k:'clicks', h:'클릭수', fnl:true,  w:'12%' },
   { k:'ctr',    h:'CTR',    fnl:true,  w:'14%' },
   { k:'cvr',    h:'CVR',    fnl:true,  w:'12%' },
@@ -1473,13 +1478,15 @@ function histTable(r){
       '<td>' + (cvr == null ? '<span class="na">—</span>' : cvr.toFixed(1) + '%') + '</td>' +
       '<td>' + won(x.val) + '</td>' +
       '<td>' + (aov == null ? '<span class="na">—</span>' : won(aov)) + '</td>' +
-      '<td class="roas ' + roasCls(x.roas, x.spend) + '">' + (x.spend ? pct(x.roas) : '<span class="na">—</span>') + '</td></tr>';
+      '<td class="roas ' + roasCls(x.roas, x.spend) + '">' + (x.spend ? pct(x.roas) : '<span class="na">—</span>') + '</td>' +
+      '<td>' + (x.purchases ? won(x.spend / x.purchases) : '<span class="na">—</span>') + '</td></tr>';
   }
   return '<div class="sub-wrap"><div class="sub-title">기준선 — 최근 3일 + 동요일 (완결일 기준, C1)</div>' +
-    '<table class="histtbl"><colgroup><col style="width:17%"><col style="width:10%"><col style="width:10%"><col style="width:8%">' +
-    '<col style="width:8%"><col style="width:8%"><col style="width:8%"><col style="width:11%"><col style="width:10%"><col style="width:10%"></colgroup>' +
+    '<table class="histtbl"><colgroup><col style="width:15%"><col style="width:9.5%"><col style="width:9.5%"><col style="width:7.5%">' +
+    '<col style="width:7.5%"><col style="width:7.5%"><col style="width:7.5%"><col style="width:10%"><col style="width:9%">' +
+    '<col style="width:8%"><col style="width:9%"></colgroup>' +
     '<thead><tr><th class="left">날짜</th><th>광고비</th><th>노출수</th><th>클릭수</th><th>CTR</th>' +
-    '<th>C1 전환수</th><th>CVR</th><th>C1 매출</th><th>AOV</th><th>C1 ROAS</th></tr></thead><tbody>' +
+    '<th>C1 전환수</th><th>CVR</th><th>C1 매출</th><th>AOV</th><th>C1 ROAS</th><th>CPA</th></tr></thead><tbody>' +
     line(tdy, true) +
     r.history.map(function(x){ return line(x, false); }).join('') + '</tbody></table></div>';
 }
