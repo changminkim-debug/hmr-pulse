@@ -164,7 +164,11 @@ tr.top5-hi td{background:#fff8e1!important}
 .top5-legend{font-size:12px;color:#aaa;margin-bottom:10px}
 
 /* 미디어믹스 계획 대비 페이싱 (매체별 비교 박스 하단) */
-#pace-wrap{margin-top:26px;padding-top:22px;border-top:2px solid #f0f2f7}
+/* 매체별 비교 · 전일자 성과 · 페이싱을 각각 테두리 카드로 구분 (색 띠로 한눈에) */
+.sec-card{border:1.5px solid #e3e7f1;border-top-width:5px}
+.sec-main{border-top-color:#4466cc}
+.sec-yd{border-top-color:#2e9d6a}
+.sec-pace{border-top-color:#f0a020}
 #pacing-table tbody td{font-size:15px;line-height:1.35}
 #pacing-table small{display:block;font-size:11px;font-weight:700;color:#98a0b5;margin-top:3px;letter-spacing:.1px}
 /* 페이싱 셀 — 앵커 2개(현재 달성률 = 큰 숫자, 예상 마감 = pill)에 근거줄 하나를 사이에 둔다.
@@ -437,7 +441,7 @@ input.mm-gap-in:focus{border-color:#4466cc}
   </div>
 
   <!-- 매체별 비교 테이블 -->
-  <div class="section">
+  <div class="section sec-card sec-main">
     <div class="sec-title mb">
       매체별 비교
       <span class="sec-badge" id="tbl-badge">3~6월 합계</span>
@@ -450,9 +454,10 @@ input.mm-gap-in:focus{border-color:#4466cc}
     <div class="tbl-wrap" id="main-table">
       <div class="loader"><div class="spin"></div>집계중...</div>
     </div>
+  </div>
 
-    <!-- 전일자 성과 (월·기간 필터와 무관하게 항상 하루 단위, 기본 = 데이터 마지막 날 = 어제) -->
-    <div id="yd-wrap" style="display:none;margin-top:28px">
+  <!-- 전일자 성과 (월·기간 필터와 무관하게 항상 하루 단위, 기본 = 데이터 마지막 날 = 어제) -->
+  <div class="section sec-card sec-yd" id="yd-wrap" style="display:none">
       <div class="sec-title mb">
         전일자 성과
         <span class="yd-nav">
@@ -466,8 +471,8 @@ input.mm-gap-in:focus{border-color:#4466cc}
       <div class="tbl-wrap" id="yd-table"></div>
     </div>
 
-    <!-- 미디어믹스 계획 대비 페이싱 -->
-    <div id="pace-wrap" style="display:none">
+  <!-- 미디어믹스 계획 대비 페이싱 -->
+  <div class="section sec-card sec-pace" id="pace-wrap" style="display:none">
       <div class="sec-title mb">
         미디어믹스 대비 페이싱
         <select id="pace-month"></select>
@@ -478,7 +483,6 @@ input.mm-gap-in:focus{border-color:#4466cc}
       <div class="sec-body" id="pace-body" style="margin-top:0">
         <div class="tbl-wrap" id="pacing-table"></div>
       </div>
-    </div>
   </div>
 
   <!-- 월별 성과 비교 (접기 가능) -->
