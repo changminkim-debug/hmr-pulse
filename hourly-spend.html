@@ -70,6 +70,9 @@ button,select{font-family:inherit}
 .slot.empty .slot-ratio{font-size:15px;font-weight:600;color:var(--ink-4);padding:8px 0}
 .pill{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
 .slot:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.fat{font-size:11.5px;font-weight:500;color:var(--ink-3);margin-left:8px}
+.warn{font-size:12px;font-weight:600;color:#b4231a;background:#fdecea;border-radius:8px;padding:6px 9px;margin-bottom:8px}
+.est{display:inline-block;font-size:11.5px;font-weight:600;color:#8a6d00;background:#fff6d6;border-radius:6px;padding:2px 8px;margin-bottom:6px}
 .hint{font-size:12.5px;color:var(--ink-3);margin:10px 4px 0}
 
 /* 매체 구성: 도넛 + 매체별 시간대 막대 */
@@ -178,7 +181,7 @@ tr.sel td.sl{box-shadow:inset 3px 0 0 var(--accent)}
 <div class="topbar">
   <div class="topbar-logo">한끼통살 · 시간대별 광고비중</div>
   <div class="topbar-sub">11 · 15 · 16 · 17시 매체 소진액 / 순매출</div>
-  <div class="topbar-right">생성 2026. 10. 7. 오후 4:09:33</div>
+  <div class="topbar-right">생성 2026. 10. 7. 오후 5:07:17</div>
 </div>
 <div class="wrap">
   <div class="head">
@@ -218,7 +221,7 @@ tr.sel td.sl{box-shadow:inset 3px 0 0 var(--accent)}
 <script>
 // 비밀번호 → 키 유도 → 데이터 복호화 → 본문 스크립트 실행
 (function () {
-  const ENC = {"salt":"ggoXmC59Yi22gIpU5RLZ8g==","iv":"9/c89H0sj7+JOv8+","iter":200000,"ct":"F0siXA0Y1Wp1kp5YF6ea4keHk6rBUQ+7fkIjS4tiAXYSp+uEouUB1G7or6mExV5Q53SkhqvYaF1VHlnGHaqOIRkzc9ScgBgY7R36758BQPXk9/+Z+BcjXVCyzAdQQjz+eoyroqKHmQ90Wwul30BqKn5OEzo6dqN+C5a0d+yvGIOK06CAepQ2yF3cRUN0yGFgnbNmwULGoBp5qGCQwQnakGBmLv/6SSFsinQubX9O4nFtTZzosMBFKTZ9GbG1TxsWhMcfprPubNwgQJBHfu1eduCtfmTjxxpICwKL3xcB8d7+sgFdVtqbnTl+7dQikRhZ7Gcr0gMbAIPO8USsaiRmkj6a6JWdLjREXs/RXWYpTgSTJ1nVgNdCt0phhvWvgbYmcZj/kDhPF9DGt9Qzor1/HuK/HMfpMtbUGHMgbTeIMdcN4isvbBSv13xJgwEQRgf6Hr+YUy8LH0xW9aglJAo0Vl9x3D1vP92BhSSAA2PwnbNHXFYYR2XYoB/zVP0CHCOMXWcoeugQ6UksxKA4W0Apr+rQjHV8/5FFvQrzMdczDVqgeoObwYm382Adl830p3oy8QhGlliMCMLn0UCbpOljJhjuYem/pvMQ8x4c2VAlJ4PILi7K4ALPwUrvM2w9NEIQc/eeZXqhj/Ty1EU3U5MQ3lFK6UdWSuB3SXmefbmL++gKGxh5/V3B4DSGpJhqlzEOThaqb+CYPXddMzlrVml4fu9oqnEmD+GH6/PlQZ5x/IHQkp59R8WT9/qlMCr00pmZQm0iGy767SdgZaCWxMc4HexCFMd/IDJZRtZ6/HdcUCVz+BGO5i/N/Za2WZ6DjGOd7IHRGuCt/fz7Lkd7WdeKSse0mrgx9skvu/Kt5hKKEJzz0tRqdBM2kMJmH/Og4mIBVrKJeXqpLZEh3zb9aQccaMmuNB6YX20r5E5TzYUAD+1Oh1sgZ41k9farlLBRWAuo2vPuKQLELTeS6KzkulAOuxZB+FK4zPFD7qm0ztfcyb6T4wBJcAWgXfWY+9p+a1N8g9d51xV1B12ygi17hPtn1QyUKc3DgpLJG3cSwaWO2Uxwkj3GKYf3ja44WF+alN36s5mDZx7YCYMQpA6oM2Mly8uRTWY59QmZs/EBALyCMK3sIYoi9fD9WLIbRiQkIOHX0kObmVTt1YjPXnK8p5ALY3ZzLphzYORgQZ7uZBsS3roNnhj8hAzJdv8OlXe8GsR/SL7k3mloxKo4VhqF4SD132b5bZxKUMujsCtBcrGghblkCl8wfaB8a+klgms4b/75AJIuzIfnmSp178R1JLDOEr/7NYjetqYDOPDJxwnfG4Hb0LBjJ8b2G2ffiHCsCZ4zf3sjA75CWj6YrzKs7OD1DqMcoypXucIBwQpKotrhPIgzX1EnDC51mn012l60esgTpD03NwcJ6uLhq53Kwpj1MitKpambCBdBw/BoH9s/h5N4g9SKVqmPKvTg6sPTJdK3MrX+IiWAUBjxQ4MxXtq1QHIFoU7W4QnksbOTJtLq1152aZUxuVbQYa83I4T5kJL3LunWLHMcsevjzcfFlbjOi9J3aj1YBpbfSbi6MER/kXunKicHAKtDxRTkoZf/Y4z95RuroVcFpm+HwK1Ef8jTsPKuUjT0Wt/BuCndAgPeEVfDk/KR6Kd3MNQvXEEiqyKCcnSI3A7TXu/KuTuGWjqGLETlYTjkAUq94U70GaXShEBtquNZUBhJo0DIZJYF67XribUkT3i/f0k5bQfWIi3GVJ0iu01nb9nn5vfdcv8+5xhsgOronLy877NjBMsmohlcNWKs0qgg0wBKNXvIDUCfnsFmGEoDoWt5y0HKrHMWMjE4jx9LfeDxG0/VIW8fYrjHdMBkWOxy4fRWKqxntuvUVQLg4YNP8fY0"};
+  const ENC = {"salt":"BKcY3Gze2uXw2Prng172NQ==","iv":"imLpjIDXbKCR1J2z","iter":200000,"ct":"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"};
   const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
   async function unlock(pw) {
     const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']);
@@ -270,7 +273,8 @@ const el = id => document.getElementById(id);
 // 한 시점 계산
 const FIXED = Object.fromEntries(Object.entries(D.fixedDaily || {}).filter(([k]) => !k.startsWith('_')));
 function calc(rec, slot) {
-  if (!rec || !rec.spend) return null;
+  // 매출이 아직 없는 시간대는 매체 수치만 일부 들어온 상태라 미입력으로 취급 (TOTAL 오표시 방지)
+  if (!rec || !rec.spend || (rec.gross == null && rec.sales == null)) return null;
   const spend = {}; let total = 0;
   for (const m of MEDIA) {
     let v = rec.spend[m];
@@ -284,7 +288,7 @@ function calc(rec, slot) {
   const gross = rec.gross == null ? null : +rec.gross;
   const groupBuy = rec.groupBuy == null ? null : +rec.groupBuy;
   const sales = gross != null ? (gross - (groupBuy || 0)) * NET_RATE : (rec.sales == null ? null : +rec.sales);
-  return { spend, total, nonMeta, nonMetaExC, gross, groupBuy, sales, ratio: sales ? total / sales : null };
+  return { spend, total, nonMeta, nonMetaExC, gross, groupBuy, sales, ratio: sales ? total / sales : null, fetchedAt: rec.fetchedAt, missing: rec.missing, estimated: rec.estimated };
 }
 function dayCalc(d) { const o = {}; for (const s of SLOTS) o[s] = calc((D.dates[d] || {})[s], s); return o; }
 const latestSlot = c => [...SLOTS].reverse().find(s => c[s]);
@@ -319,7 +323,9 @@ function renderSlots(c) {
     }
     prev = { ...x, s };
     return `<div class="card slot${s===sel?' sel':''}" data-slot="${s}" role="button" tabindex="0">
-      <div class="slot-h"><span class="slot-time">${s}:00</span>${s===latestSlot(c)?'<span class="pill">최신</span>':''}</div>
+      <div class="slot-h"><span class="slot-time">${s}:00${x.fetchedAt ? `<span class="fat">${x.fetchedAt} 수집</span>` : ''}</span>${s===latestSlot(c)?'<span class="pill">최신</span>':''}</div>
+      ${x.estimated && x.estimated.length ? `<div class="est">${x.estimated.map(m => m.replace('페이','')).join(', ')} 직전값</div>` : ''}
+      ${x.missing ? `<div class="warn">⚠ ${x.missing.join(', ')} 미수집 — TOTAL·광고비중이 작게 잡혀 있어요</div>` : ''}
       <div class="slot-ratio num">${pct(x.ratio)}<small>광고비중</small>${chg}</div>
       <div class="slot-gap"></div>
       <div class="slot-row num"><span>총 광고비</span><b>${man(x.total)}</b></div>
