@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>시간대별 광고비중</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f3f5f9;--card:#ffffff;--line:#edf0f5;--soft:#f6f8fb;
+  --ink:#1e2333;--ink-2:#4a5478;--ink-3:#8a91a8;--ink-4:#b4bacb;
+  --top:#1e2333;--accent:#4466cc;--accent-2:#6b88e0;--accent-soft:#eef2ff;--accent-tint:#f7f9ff;
+  --shadow:0 1px 2px rgba(30,35,51,.04),0 4px 16px rgba(30,35,51,.05);
+  /* 매체 브랜드색 — roas-compare 등 기존 대시보드와 동일 */
+  --c-meta:#1877f2;--c-naver:#03c75a;--c-google:#ea4335;--c-etc:#9c27b0;--c-content:#607d8b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard Variable',Pretendard,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--ink);font-size:14.5px;line-height:1.55;letter-spacing:-.01em;-webkit-font-smoothing:antialiased}
+.num{font-variant-numeric:tabular-nums}
+button,select{font-family:inherit}
+
+.topbar{background:var(--top);padding:0 28px;height:58px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50}
+.topbar-logo{font-size:17px;font-weight:700;color:#fff}
+.topbar-sub{font-size:13px;color:rgba(255,255,255,.45)}
+.topbar-right{margin-left:auto;font-size:12px;color:rgba(255,255,255,.45)}
+.wrap{max-width:1360px;margin:0 auto;padding:28px 28px 64px}
+
+/* 헤더: 날짜 */
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.head-eyebrow{font-size:13px;font-weight:600;color:var(--ink-3);margin-bottom:2px}
+.head-date{font-size:28px;font-weight:800;letter-spacing:-.03em}
+.dnav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.nav{width:32px;height:32px;border-radius:10px;border:none;background:var(--card);color:var(--ink-2);cursor:pointer;font-size:12px;box-shadow:var(--shadow)}
+.nav:disabled{opacity:.35;cursor:default}
+.nav:not(:disabled):hover{color:var(--accent)}
+.chip{padding:6px 13px;border:none;border-radius:10px;background:transparent;color:var(--ink-3);font-size:13px;font-weight:600;cursor:pointer}
+.chip:hover{color:var(--ink)}
+.chip.on{background:var(--card);color:var(--accent);box-shadow:var(--shadow)}
+.dsel{padding:6px 10px;border:none;border-radius:10px;background:var(--card);color:var(--ink-2);font-size:13px;font-weight:600;cursor:pointer;box-shadow:var(--shadow);outline:none}
+
+.card{background:var(--card);border-radius:20px;box-shadow:var(--shadow)}
+.sec{margin-bottom:20px}
+.sec-h{display:flex;align-items:baseline;gap:4px 10px;flex-wrap:wrap;margin:30px 4px 12px}
+.sec-t{font-size:17px;font-weight:700;white-space:nowrap}
+.sec-d{font-size:12.5px;color:var(--ink-3)}
+
+/* 시간대 카드 (클릭 → 선택 시간대) */
+.slots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.slot{padding:20px 22px;cursor:pointer;transition:transform .15s,box-shadow .15s;position:relative;text-align:left;border:none;font:inherit;color:inherit;width:100%}
+.slot:not(.empty):hover{transform:translateY(-3px);box-shadow:0 2px 4px rgba(30,35,51,.05),0 12px 28px rgba(30,35,51,.10)}
+.slot.sel{box-shadow:var(--shadow),inset 0 0 0 2px var(--accent)}
+.slot.sel::after{content:'';position:absolute;left:50%;bottom:-9px;margin-left:-8px;border:8px solid transparent;border-bottom:none;border-top-color:var(--accent)}
+.slot-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:6px}
+.slot-time{font-size:14px;font-weight:700;color:var(--ink-2)}
+.slot.sel .slot-time{color:var(--accent)}
+.slot-ratio{font-size:32px;font-weight:800;letter-spacing:-.03em;line-height:1.2}
+.slot.sel .slot-ratio{color:var(--accent)}
+.slot-ratio small{font-size:13px;font-weight:600;color:var(--ink-3);margin-left:4px;letter-spacing:0}
+.chg{font-size:12.5px;font-weight:700;margin-left:6px;letter-spacing:0}
+.chg{font-weight:800}
+.chg.up{color:#c4161c}.chg.dn{color:#0b4fc4}
+.slot-row{display:flex;justify-content:space-between;font-size:13.5px;margin-top:4px}
+.slot-row span{color:var(--ink-3)}
+.slot-row b{font-weight:600}
+.slot-gap{height:10px}
+.delta{margin-top:14px;padding:10px 12px;border-radius:12px;background:var(--soft);font-size:12.5px;color:var(--ink-3);line-height:1.6}
+.delta b{color:var(--ink-2);font-weight:700}
+.slot.empty{background:transparent;box-shadow:none;border:1.5px solid #e3e7ef;cursor:default}
+.slot.empty .slot-ratio{font-size:15px;font-weight:600;color:var(--ink-4);padding:8px 0}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.slot:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hint{font-size:12.5px;color:var(--ink-3);margin:10px 4px 0}
+
+/* 매체 구성: 도넛 + 매체별 시간대 막대 */
+.mix{display:grid;grid-template-columns:300px minmax(0,1fr);gap:28px;padding:26px 28px}
+.donut-wrap{display:flex;flex-direction:column;align-items:center}
+.donut-t{font-size:14px;font-weight:700;color:var(--ink-2);margin-bottom:10px;align-self:flex-start}
+.donut-t span{color:var(--accent)}
+.donut{width:220px;height:220px}
+.donut path{transition:opacity .12s;cursor:default}
+.donut:hover path{opacity:.45}.donut path:hover{opacity:1}
+.dleg{width:100%;margin-top:16px;display:grid;gap:6px}
+.dleg div{display:flex;align-items:center;font-size:13.5px}
+.dleg i{width:9px;height:9px;border-radius:50%;margin-right:8px;flex:none}
+.dleg span{color:var(--ink-2)}
+.dleg b{margin-left:auto;font-weight:700}
+.dleg em{font-style:normal;color:var(--ink-3);font-size:12.5px;width:62px;text-align:right}
+.mm-t{font-size:14px;font-weight:700;color:var(--ink-2);margin-bottom:10px}
+.mm-t small{font-weight:400;color:var(--ink-3);margin-left:6px;font-size:12px}
+.mm{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.mmc{background:var(--soft);border-radius:14px;padding:12px 12px 10px}
+.mmc-h{display:flex;align-items:center;font-size:13px;font-weight:600;color:var(--ink-2);white-space:nowrap;overflow:hidden}
+.mmc-h i{width:8px;height:8px;border-radius:50%;margin-right:6px;flex:none}
+.mmc-v{font-size:20px;font-weight:800;letter-spacing:-.02em;margin:2px 0 6px}
+.bars{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;align-items:end;height:74px}
+.bar{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;cursor:default}
+.bar b{font-size:10.5px;font-weight:600;color:var(--ink-3);margin-bottom:3px;white-space:nowrap}
+.bar span{width:100%;max-width:22px;border-radius:5px 5px 0 0;background:#cdd5e6;min-height:2px}
+.bar.on span{background:var(--accent)}
+.bar.on b{color:var(--accent)}
+.bar.na span{background:transparent;border:1px dashed #d5dbe7;border-bottom:none;height:8px}
+.bx{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:4px;border-top:1px solid #e3e7ef;padding-top:3px}
+.bx span{font-size:10.5px;color:var(--ink-3);text-align:center}
+
+/* 상세 표 */
+.tbl-wrap{overflow-x:auto;padding:8px 14px 12px}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:15.5px}
+th,td{padding:12px 16px;white-space:nowrap}
+thead th{font-size:13px;color:var(--ink-3);font-weight:600;text-align:right}
+th.sl,td.sl{text-align:left;position:sticky;left:0;background:var(--card);z-index:1}
+tbody td{text-align:right;border-top:1px solid var(--line)}
+tbody tr:first-child td{border-top:none}
+td.na{color:var(--ink-4)}
+td.lt,th.lt{background:var(--accent-tint)}
+thead tr.g th{text-align:center;padding-bottom:0}
+.th-pill{display:inline-block;font-size:14px;font-weight:700;color:var(--ink-2);padding:5px 14px;border-radius:999px;background:var(--soft)}
+th.lt .th-pill{background:var(--accent);color:#fff}
+.share{color:var(--ink-3);font-size:14.5px}
+.dch{display:inline-block;min-width:60px;text-align:right;font-size:13px;font-weight:800;margin-left:4px}
+.dch.up{color:#c4161c}.dch.dn{color:#0b4fc4}.dch.eq{color:var(--ink-4);font-weight:500}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:10px;vertical-align:1px}
+td.sl{font-weight:500}
+tr.sub td{color:var(--ink-2)}
+tr.sub td.sl,tr.rev td.sl{color:var(--ink-3);padding-left:36px;font-weight:400}
+tr.rev td{color:var(--ink-2)}
+.f{font-size:12px;color:var(--ink-3);font-weight:400;margin-left:6px}
+tr.spacer td{border:none;padding:5px}
+/* 핵심 행: TOTAL · 순매출 · 광고비중 */
+tr.key td{font-weight:800;color:var(--accent);background:var(--accent-soft);border-top:none;font-size:16.5px}
+tr.key td.share{font-size:14.5px;font-weight:600}
+tr.key td.sl{color:var(--ink);border-radius:12px 0 0 12px}
+tr.key td:last-child{border-radius:0 12px 12px 0}
+tr.key td.lt{background:#e3eaff}
+tr.key + tr td{border-top:none}
+/* 메타 행: 가장 중요한 지표라 핵심 행과 같은 띠, 색만 앰버로 구분 */
+tr.meta td{font-weight:800;color:#c2570c;background:#fff4e6;border-top:none;font-size:16.5px}
+tr.meta td.share{font-size:14.5px;font-weight:700;color:#c2570c}
+tr.meta td.sl{color:var(--ink);border-radius:12px 0 0 12px}
+tr.meta td:last-child{border-radius:0 12px 12px 0}
+tr.meta td.lt{background:#ffe8cc}
+tr.meta + tr td{border-top:none}
+.slot-row.meta span{color:#c2570c;font-weight:600}.slot-row.meta b{color:#c2570c;font-weight:800}
+
+/* 일자별 추이 */
+tr.click{cursor:pointer}
+tr.click:hover td{background:var(--soft)}
+tr.sel td{background:var(--accent-tint)}
+tr.sel td.sl{box-shadow:inset 3px 0 0 var(--accent)}
+.tr-r{font-weight:700}
+.tr-s{display:block;font-size:11.5px;color:var(--ink-3);font-weight:400}
+
+#pw-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
+.pw-box{background:#fff;border-radius:20px;padding:44px 44px 36px;text-align:center;width:340px;max-width:100%;box-shadow:0 8px 40px rgba(30,35,51,.12)}
+.pw-logo{font-size:20px;font-weight:800;color:var(--ink);margin-bottom:4px}
+.pw-sub{font-size:14px;color:var(--ink-3);margin-bottom:26px}
+.pw-input{width:100%;padding:13px 16px;border:1.5px solid #d8dce8;border-radius:12px;font-size:16px;font-family:inherit;outline:none;text-align:center;letter-spacing:4px}
+.pw-input:focus{border-color:var(--accent)}
+.pw-btn{margin-top:12px;width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+.pw-btn:hover{background:#3355bb}
+.pw-err{margin-top:10px;font-size:13px;color:#c62828;min-height:18px}
+#tip{position:fixed;pointer-events:none;background:#fff;color:var(--ink);font-size:12.5px;padding:9px 12px;border-radius:12px;box-shadow:0 6px 24px rgba(30,35,51,.16);opacity:0;transition:opacity .1s;z-index:100;line-height:1.55;white-space:nowrap}
+#tip b{font-weight:700}
+
+@media (max-width:1000px){.slots{grid-template-columns:repeat(2,minmax(0,1fr))}.mix{grid-template-columns:1fr}.mm{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:560px){
+  .topbar{padding:0 16px}.topbar-sub,.topbar-right{display:none}
+  .wrap{padding:20px 16px 40px}
+  .head-date{font-size:23px}
+  .slots{grid-template-columns:1fr}
+  .mix{padding:18px;gap:20px}
+  .mm{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tbl-wrap{padding:4px 4px 8px}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-logo">한끼통살 · 시간대별 광고비중</div>
+  <div class="topbar-sub">11 · 15 · 16 · 17시 매체 소진액 / 순매출</div>
+  <div class="topbar-right">생성 2026. 10. 7. 오후 4:09:33</div>
+</div>
+<div class="wrap">
+  <div class="head">
+    <div><div class="head-eyebrow">일자별 시간대 리포트</div><div class="head-date" id="hdate"></div></div>
+    <div class="dnav">
+      <button class="nav" id="prev" title="이전 일자">◀</button>
+      <div id="chips" style="display:flex;gap:2px;flex-wrap:wrap"></div>
+      <button class="nav" id="next" title="다음 일자">▶</button>
+      <select class="dsel" id="dsel" title="전체 일자"></select>
+    </div>
+  </div>
+
+  <div class="sec-h" style="margin-top:8px"><div class="sec-t">시간대별</div><div class="sec-d">광고비중 = 총 광고비 ÷ 순매출 (누적 기준)</div></div>
+  <div class="slots" id="slots"></div>
+
+  <div class="sec-h"><div class="sec-t">매체 구성</div><div class="sec-d">비중 = 매체 광고비 ÷ 총 광고비</div></div>
+  <div class="card mix" id="mix"></div>
+
+  <div class="sec-h"><div class="sec-t">매체별 상세</div><div class="sec-d">비중 = 매체 광고비 ÷ 총 광고비</div></div>
+  <div class="card tbl-wrap"><table id="detail"></table></div>
+
+  <div class="sec-h"><div class="sec-t">일자별 추이</div><div class="sec-d">행을 누르면 해당 일자로 이동</div></div>
+  <div class="card tbl-wrap"><table id="trend"></table></div>
+</div>
+<div id="tip"></div>
+
+<div id="pw-overlay">
+  <form class="pw-box" id="pw-form">
+    <div class="pw-logo">한끼통살</div>
+    <div class="pw-sub">시간대별 광고비중 대시보드</div>
+    <input id="pw-input" class="pw-input" type="password" placeholder="비밀번호" autocomplete="current-password" autofocus>
+    <button class="pw-btn" type="submit">확인</button>
+    <div class="pw-err" id="pw-err"></div>
+  </form>
+</div>
+
+<script>
+// 비밀번호 → 키 유도 → 데이터 복호화 → 본문 스크립트 실행
+(function () {
+  const ENC = {"salt":"ggoXmC59Yi22gIpU5RLZ8g==","iv":"9/c89H0sj7+JOv8+","iter":200000,"ct":"F0siXA0Y1Wp1kp5YF6ea4keHk6rBUQ+7fkIjS4tiAXYSp+uEouUB1G7or6mExV5Q53SkhqvYaF1VHlnGHaqOIRkzc9ScgBgY7R36758BQPXk9/+Z+BcjXVCyzAdQQjz+eoyroqKHmQ90Wwul30BqKn5OEzo6dqN+C5a0d+yvGIOK06CAepQ2yF3cRUN0yGFgnbNmwULGoBp5qGCQwQnakGBmLv/6SSFsinQubX9O4nFtTZzosMBFKTZ9GbG1TxsWhMcfprPubNwgQJBHfu1eduCtfmTjxxpICwKL3xcB8d7+sgFdVtqbnTl+7dQikRhZ7Gcr0gMbAIPO8USsaiRmkj6a6JWdLjREXs/RXWYpTgSTJ1nVgNdCt0phhvWvgbYmcZj/kDhPF9DGt9Qzor1/HuK/HMfpMtbUGHMgbTeIMdcN4isvbBSv13xJgwEQRgf6Hr+YUy8LH0xW9aglJAo0Vl9x3D1vP92BhSSAA2PwnbNHXFYYR2XYoB/zVP0CHCOMXWcoeugQ6UksxKA4W0Apr+rQjHV8/5FFvQrzMdczDVqgeoObwYm382Adl830p3oy8QhGlliMCMLn0UCbpOljJhjuYem/pvMQ8x4c2VAlJ4PILi7K4ALPwUrvM2w9NEIQc/eeZXqhj/Ty1EU3U5MQ3lFK6UdWSuB3SXmefbmL++gKGxh5/V3B4DSGpJhqlzEOThaqb+CYPXddMzlrVml4fu9oqnEmD+GH6/PlQZ5x/IHQkp59R8WT9/qlMCr00pmZQm0iGy767SdgZaCWxMc4HexCFMd/IDJZRtZ6/HdcUCVz+BGO5i/N/Za2WZ6DjGOd7IHRGuCt/fz7Lkd7WdeKSse0mrgx9skvu/Kt5hKKEJzz0tRqdBM2kMJmH/Og4mIBVrKJeXqpLZEh3zb9aQccaMmuNB6YX20r5E5TzYUAD+1Oh1sgZ41k9farlLBRWAuo2vPuKQLELTeS6KzkulAOuxZB+FK4zPFD7qm0ztfcyb6T4wBJcAWgXfWY+9p+a1N8g9d51xV1B12ygi17hPtn1QyUKc3DgpLJG3cSwaWO2Uxwkj3GKYf3ja44WF+alN36s5mDZx7YCYMQpA6oM2Mly8uRTWY59QmZs/EBALyCMK3sIYoi9fD9WLIbRiQkIOHX0kObmVTt1YjPXnK8p5ALY3ZzLphzYORgQZ7uZBsS3roNnhj8hAzJdv8OlXe8GsR/SL7k3mloxKo4VhqF4SD132b5bZxKUMujsCtBcrGghblkCl8wfaB8a+klgms4b/75AJIuzIfnmSp178R1JLDOEr/7NYjetqYDOPDJxwnfG4Hb0LBjJ8b2G2ffiHCsCZ4zf3sjA75CWj6YrzKs7OD1DqMcoypXucIBwQpKotrhPIgzX1EnDC51mn012l60esgTpD03NwcJ6uLhq53Kwpj1MitKpambCBdBw/BoH9s/h5N4g9SKVqmPKvTg6sPTJdK3MrX+IiWAUBjxQ4MxXtq1QHIFoU7W4QnksbOTJtLq1152aZUxuVbQYa83I4T5kJL3LunWLHMcsevjzcfFlbjOi9J3aj1YBpbfSbi6MER/kXunKicHAKtDxRTkoZf/Y4z95RuroVcFpm+HwK1Ef8jTsPKuUjT0Wt/BuCndAgPeEVfDk/KR6Kd3MNQvXEEiqyKCcnSI3A7TXu/KuTuGWjqGLETlYTjkAUq94U70GaXShEBtquNZUBhJo0DIZJYF67XribUkT3i/f0k5bQfWIi3GVJ0iu01nb9nn5vfdcv8+5xhsgOronLy877NjBMsmohlcNWKs0qgg0wBKNXvIDUCfnsFmGEoDoWt5y0HKrHMWMjE4jx9LfeDxG0/VIW8fYrjHdMBkWOxy4fRWKqxntuvUVQLg4YNP8fY0"};
+  const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  async function unlock(pw) {
+    const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: b64(ENC.salt), iterations: ENC.iter, hash: 'SHA-256' },
+      base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+    const buf = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64(ENC.iv) }, key, b64(ENC.ct));
+    window.__HS_DATA = JSON.parse(new TextDecoder().decode(buf));
+    try { sessionStorage.setItem('hs-pw', pw); } catch (e) {}
+    document.getElementById('pw-overlay').style.display = 'none';
+    const sc = document.createElement('script');
+    sc.textContent = document.getElementById('main-js').textContent;
+    document.body.appendChild(sc);
+  }
+  const form = document.getElementById('pw-form'), inp = document.getElementById('pw-input'), err = document.getElementById('pw-err');
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    err.textContent = '';
+    try { await unlock(inp.value); }
+    catch (x) { err.textContent = '비밀번호가 틀렸습니다.'; inp.value = ''; inp.focus(); }
+  });
+  let saved = null;
+  try { saved = sessionStorage.getItem('hs-pw'); } catch (e) {}
+  if (saved) unlock(saved).catch(() => { try { sessionStorage.removeItem('hs-pw'); } catch (e) {} });
+})();
+</script>
+<script type="text/plain" id="main-js">
+const D = window.__HS_DATA;
+const NET_RATE = D.netRate ?? 0.83;
+const SLOTS = D.slots, MEDIA = D.media, META = D.metaKey, CONTENT = D.contentKey;
+const DATES = Object.keys(D.dates).sort().reverse();   // 최신 먼저
+const WD = ['일','월','화','수','목','금','토'];
+
+const GROUPS = [
+  { key:'메타',      color:'var(--c-meta)',    test:m => m === META },
+  { key:'네이버',    color:'var(--c-naver)',   test:m => m.startsWith('네이버') },
+  { key:'구글',      color:'var(--c-google)',  test:m => m.startsWith('구글') },
+  { key:'기타 매체', color:'var(--c-etc)',     test:m => m !== META && m !== CONTENT && !m.startsWith('네이버') && !m.startsWith('구글') },
+  { key:'콘텐츠비용', color:'var(--c-content)', test:m => m === CONTENT },
+];
+const groupOf = m => GROUPS.find(g => g.test(m));
+
+const won = v => v == null ? '–' : Math.round(v).toLocaleString('ko-KR');
+const pct = (v, d = 1) => v == null || !isFinite(v) ? '–' : (v * 100).toFixed(d) + '%';
+const man = v => v == null ? '–' : (Math.abs(v) >= 1e8 ? (v / 1e8).toFixed(2) + '억' : Math.round(v / 1e4).toLocaleString('ko-KR') + '만');
+const dLabel = d => { const t = new Date(d + 'T00:00:00'); return `${t.getMonth()+1}/${String(t.getDate()).padStart(2,'0')} (${WD[t.getDay()]})`; };
+const dLong = d => { const t = new Date(d + 'T00:00:00'); return `${t.getMonth()+1}월 ${t.getDate()}일 ${WD[t.getDay()]}요일`; };
+const el = id => document.getElementById(id);
+
+// 한 시점 계산
+const FIXED = Object.fromEntries(Object.entries(D.fixedDaily || {}).filter(([k]) => !k.startsWith('_')));
+function calc(rec, slot) {
+  if (!rec || !rec.spend) return null;
+  const spend = {}; let total = 0;
+  for (const m of MEDIA) {
+    let v = rec.spend[m];
+    // 일 고정 광고비 매체는 입력이 없으면 일예산 ÷ 24 × 시각으로 자동 채움
+    if (v == null && FIXED[m] != null) v = Math.round(FIXED[m] / 24 * +slot);   // 시트와 동일하게 원 단위 반올림 후 합산
+    spend[m] = v == null ? null : +v; total += +(v || 0);
+  }
+  const nonMeta = total - (spend[META] || 0);
+  const nonMetaExC = nonMeta - (spend[CONTENT] || 0);
+  // 순매출 = (전체 매출 − 공구 매출) × netRate. 전체 매출이 없으면 직접 입력된 sales 사용
+  const gross = rec.gross == null ? null : +rec.gross;
+  const groupBuy = rec.groupBuy == null ? null : +rec.groupBuy;
+  const sales = gross != null ? (gross - (groupBuy || 0)) * NET_RATE : (rec.sales == null ? null : +rec.sales);
+  return { spend, total, nonMeta, nonMetaExC, gross, groupBuy, sales, ratio: sales ? total / sales : null };
+}
+function dayCalc(d) { const o = {}; for (const s of SLOTS) o[s] = calc((D.dates[d] || {})[s], s); return o; }
+const latestSlot = c => [...SLOTS].reverse().find(s => c[s]);
+
+let cur = DATES[0];
+
+function renderHead() {
+  el('hdate').textContent = dLong(cur);
+  el('dsel').innerHTML = DATES.map(d => `<option value="${d}"${d===cur?' selected':''}>${d}</option>`).join('');
+  el('chips').innerHTML = DATES.slice(0, 5).reverse().map(d => `<button class="chip${d===cur?' on':''}" data-d="${d}">${dLabel(d)}</button>`).join('');
+  const i = DATES.indexOf(cur);
+  el('prev').disabled = i >= DATES.length - 1;
+  el('next').disabled = i <= 0;
+  el('dsel').style.display = DATES.length > 5 ? '' : 'none';
+}
+
+let sel = null;   // 선택된 시간대 (카드 클릭). 없으면 최신 시간대
+
+function renderSlots(c) {
+  let prev = null;
+  el('slots').innerHTML = SLOTS.map(s => {
+    const x = c[s];
+    if (!x) return `<div class="card slot empty"><div class="slot-h"><span class="slot-time">${s}:00</span></div><div class="slot-ratio">아직 입력 전</div></div>`;
+    let delta = '', chg = '';
+    if (prev) {
+      const ds = x.total - prev.total, dr = x.sales != null && prev.sales != null ? x.sales - prev.sales : null;
+      delta = `<div class="delta">${prev.s}→${s}시 사이 광고비 <b class="num">+${man(ds)}</b>, 매출 <b class="num">${dr==null?'–':(dr>=0?'+':'')+man(dr)}</b></div>`;
+      if (x.ratio != null && prev.ratio != null) {
+        const p = (x.ratio - prev.ratio) * 100;
+        chg = `<span class="chg ${p > 0 ? 'up' : 'dn'}">${p > 0 ? '▲' : '▼'}${Math.abs(p).toFixed(1)}%p</span>`;
+      }
+    }
+    prev = { ...x, s };
+    return `<div class="card slot${s===sel?' sel':''}" data-slot="${s}" role="button" tabindex="0">
+      <div class="slot-h"><span class="slot-time">${s}:00</span>${s===latestSlot(c)?'<span class="pill">최신</span>':''}</div>
+      <div class="slot-ratio num">${pct(x.ratio)}<small>광고비중</small>${chg}</div>
+      <div class="slot-gap"></div>
+      <div class="slot-row num"><span>총 광고비</span><b>${man(x.total)}</b></div>
+      <div class="slot-row num"><span>순매출</span><b>${man(x.sales)}</b></div>
+      <div class="slot-row num meta"><span>메타 비중</span><b>${pct((x.spend[META]||0)/x.total)}</b></div>
+      ${delta}</div>`;
+  }).join('');
+}
+
+function donut(segs, total) {
+  const R = 100, r = 66, C = 110, GAP = 0.012;
+  let a0 = -Math.PI / 2, paths = '';
+  const pt = (rad, a) => `${(C + rad * Math.cos(a)).toFixed(2)},${(C + rad * Math.sin(a)).toFixed(2)}`;
+  for (const o of segs) {
+    const sweep = 2 * Math.PI * o.v / total;
+    const g = segs.length > 1 ? GAP : 0;
+    const s0 = a0 + g, s1 = Math.min(a0 + sweep - g, a0 + 2 * Math.PI - 0.0001);
+    a0 += sweep;
+    if (s1 <= s0) continue;
+    const large = s1 - s0 > Math.PI ? 1 : 0;
+    paths += `<path d="M${pt(R,s0)}A${R},${R} 0 ${large} 1 ${pt(R,s1)}L${pt(r,s1)}A${r},${r} 0 ${large} 0 ${pt(r,s0)}Z" fill="${o.g.color}" data-tip="<b>${o.g.key}</b> ${pct(o.v/total)}<br>${won(o.v)}원"/>`;
+  }
+  return `<svg class="donut" viewBox="0 0 220 220">${paths}
+    <text x="110" y="102" text-anchor="middle" font-size="12.5" fill="#8a91a8">총 광고비</text>
+    <text x="110" y="128" text-anchor="middle" font-size="22" font-weight="800" fill="#1e2333">${man(total)}</text></svg>`;
+}
+
+function renderMix(c) {
+  const x = c[sel];
+  if (!x) { el('mix').innerHTML = `<div class="hint">입력된 시간대가 없어요.</div>`; return; }
+  const segs = GROUPS.map(g => ({ g, v: MEDIA.filter(g.test).reduce((a, m) => a + (x.spend[m] || 0), 0) })).filter(o => o.v > 0);
+  const leg = segs.map(o => `<div><i style="background:${o.g.color}"></i><span>${o.g.key}</span><b class="num">${pct(o.v/x.total)}</b><em class="num">${man(o.v)}</em></div>`).join('');
+  const cards = MEDIA.map(m => {
+    const sh = s => c[s] && c[s].total ? (c[s].spend[m] || 0) / c[s].total : null;
+    const max = Math.max(...SLOTS.map(sh).filter(v => v != null), 0) || 1;
+    const bars = SLOTS.map(s => {
+      const v = sh(s);
+      if (v == null) return `<div class="bar na"><b>&nbsp;</b><span></span></div>`;
+      return `<div class="bar${s===sel?' on':''}" data-tip="<b>${m} · ${s}시</b><br>비중 ${pct(v)} · ${won(c[s].spend[m])}원"><b class="num">${(v*100).toFixed(1)}</b><span style="height:${Math.max(3, v/max*52).toFixed(1)}px"></span></div>`;
+    }).join('');
+    return `<div class="mmc"><div class="mmc-h"><i style="background:${groupOf(m).color}"></i>${m}</div>
+      <div class="mmc-v num">${pct(sh(sel))}</div>
+      <div class="bars">${bars}</div><div class="bx">${SLOTS.map(s => `<span>${s}시</span>`).join('')}</div></div>`;
+  }).join('');
+  el('mix').innerHTML = `
+    <div class="donut-wrap"><div class="donut-t"><span>${sel}시</span> 매체그룹 구성</div>${donut(segs, x.total)}<div class="dleg">${leg}</div></div>
+    <div><div class="mm-t">매체별 시간대 비중<small>막대 위 숫자 = 비중(%) · 매체마다 각자 눈금</small></div><div class="mm">${cards}</div></div>`;
+}
+
+function renderDetail(c) {
+  const lt = s => s === sel ? ' lt' : '';
+  let h = `<thead><tr class="g"><th class="sl"></th>${SLOTS.map(s => `<th colspan="2" class="${lt(s)}"><span class="th-pill">${s}:00</span></th>`).join('')}</tr>`;
+  h += `<tr><th class="sl">매체</th>${SLOTS.map(s => `<th class="${lt(s)}">광고비</th><th class="${lt(s)}">비중 · 전 시간대 대비</th>`).join('')}</tr></thead><tbody>`;
+  // 직전 입력 시간대 (전 시간대 대비 변화 계산용)
+  const prevOf = s => { const i = SLOTS.indexOf(s); for (let k = i - 1; k >= 0; k--) if (c[SLOTS[k]]) return c[SLOTS[k]]; return null; };
+  const dch = (cur, prv) => {
+    if (cur == null || prv == null) return '';
+    const p = (cur - prv) * 100;
+    if (Math.abs(p) < 0.05) return `<span class="dch eq">–</span>`;
+    return `<span class="dch ${p > 0 ? 'up' : 'dn'}">${p > 0 ? '▲' : '▼'}${Math.abs(p).toFixed(1)}%p</span>`;
+  };
+  // f: 금액 칸, sh: 비중(0~1, 없으면 null), cv: 변화 계산 대상 값(기본 = 비중)
+  const row = (cls, label, f, sh, cv = sh) => `<tr class="${cls}"><td class="sl">${label}</td>${SLOTS.map(s => {
+    const x = c[s];
+    if (!x) return `<td class="na${lt(s)}">–</td><td class="${lt(s).trim()}"></td>`;
+    const p = prevOf(s);
+    const share = sh ? pct(sh(x)) : '';
+    const chg = cv && p ? dch(cv(x), cv(p)) : '';
+    return `<td class="num${lt(s)}">${f(x)}</td><td class="num share${lt(s)}">${share}${chg}</td>`;
+  }).join('')}</tr>`;
+  const spacer = `<tr class="spacer"><td colspan="${SLOTS.length*2+1}"></td></tr>`;
+  for (const m of MEDIA) {
+    if (m === META) h += spacer;
+    h += row(m === META ? 'meta' : '', `<span class="dot" style="background:${groupOf(m).color}"></span>${m}${FIXED[m] != null ? `<span class="f">일 ${man(FIXED[m])} 고정</span>` : ''}`, x => won(x.spend[m]), x => x.total ? (x.spend[m]||0)/x.total : null);
+    if (m === META) h += spacer;
+  }
+  h += spacer;
+  h += row('key', 'TOTAL', x => won(x.total), () => 1, null);
+  h += row('sub', '메타 외 매체 TOTAL', x => won(x.nonMeta), x => x.nonMeta/x.total);
+  h += row('sub', '메타 외 매체 (콘비 제외)', x => won(x.nonMetaExC), x => x.nonMetaExC/x.total);
+  h += row('rev', '전체 매출', x => won(x.gross), null);
+  h += row('rev', '공구 매출', x => won(x.groupBuy), null);
+  h += spacer;
+  h += row('key', `순매출<span class="f">(전체−공구)×${NET_RATE}</span>`, x => won(x.sales), null);
+  h += spacer;
+  h += row('key', '광고비중 <span class="f">광고비 ÷ 순매출</span>', x => pct(x.ratio), null, x => x.ratio);
+  el('detail').innerHTML = h + '</tbody>';
+}
+
+function renderTrend() {
+  let h = `<thead><tr><th class="sl">일자</th>${SLOTS.map(s => `<th>${s}:00</th>`).join('')}<th>메타 비중 (최신)</th></tr></thead><tbody>`;
+  for (const d of DATES) {
+    const c = dayCalc(d), last = latestSlot(c);
+    h += `<tr class="click${d===cur?' sel':''}" data-d="${d}"><td class="sl"><b>${dLabel(d)}</b></td>${SLOTS.map(s => {
+      const x = c[s];
+      return x ? `<td class="num"><span class="tr-r">${pct(x.ratio)}</span><span class="tr-s">${man(x.total)} / ${man(x.sales)}</span></td>` : `<td class="na">–</td>`;
+    }).join('')}<td class="num">${last ? pct((c[last].spend[META]||0)/c[last].total) : '–'}</td></tr>`;
+  }
+  el('trend').innerHTML = h + '</tbody>';
+}
+
+function render() {
+  const c = dayCalc(cur);
+  if (!c[sel]) sel = latestSlot(c) || null;
+  renderHead(); renderSlots(c); renderMix(c); renderDetail(c); renderTrend();
+  try { history.replaceState(null, '', '#' + cur); } catch (e) {}
+}
+function go(d) { if (D.dates[d]) { cur = d; sel = null; render(); } }
+
+el('dsel').onchange = e => go(e.target.value);
+el('prev').onclick = () => go(DATES[DATES.indexOf(cur) + 1]);
+el('next').onclick = () => go(DATES[DATES.indexOf(cur) - 1]);
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-d]'); if (t) return go(t.dataset.d);
+  const k = e.target.closest('[data-slot]'); if (k) { sel = k.dataset.slot; render(); }
+});
+document.addEventListener('keydown', e => {
+  const k = e.target.closest && e.target.closest('[data-slot]');
+  if (k && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); sel = k.dataset.slot; render(); }
+});
+
+const tip = el('tip');
+document.addEventListener('mousemove', e => {
+  const t = e.target.closest('[data-tip]');
+  if (!t) { tip.style.opacity = 0; return; }
+  tip.innerHTML = t.dataset.tip; tip.style.opacity = 1;
+  const r = tip.getBoundingClientRect();
+  tip.style.left = Math.min(e.clientX + 14, innerWidth - r.width - 8) + 'px';
+  tip.style.top = (e.clientY + 16) + 'px';
+});
+
+const h0 = decodeURIComponent(location.hash.slice(1));
+if (D.dates[h0]) cur = h0;
+render();
+</script>
+</body>
+</html>
