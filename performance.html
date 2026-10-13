@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>실적 · 오가닉 vs 페이드</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f3f5f9;--card:#ffffff;--line:#edf0f5;--soft:#f6f8fb;
+  --ink:#1e2333;--ink-2:#4a5478;--ink-3:#8a91a8;--ink-4:#b4bacb;
+  --top:#1e2333;--accent:#4466cc;--accent-soft:#eef2ff;--accent-tint:#f7f9ff;
+  --org:#0f8a5f;--org-soft:#e8f6ef;--paid:#7a3fc8;--paid-soft:#f3ecfd;
+  --up:#c4161c;--dn:#0b4fc4;
+  --shadow:0 1px 2px rgba(30,35,51,.04),0 4px 16px rgba(30,35,51,.05);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard Variable',Pretendard,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--ink);font-size:14.5px;line-height:1.55;letter-spacing:-.01em;-webkit-font-smoothing:antialiased}
+.num{font-variant-numeric:tabular-nums}
+.topbar{background:var(--top);padding:0 28px;height:58px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50}
+.topbar-logo{font-size:17px;font-weight:700;color:#fff}
+.topbar-sub{font-size:13px;color:rgba(255,255,255,.45)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:12px;color:rgba(255,255,255,.45)}
+.navbtn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;background:rgba(255,255,255,.12);color:#fff;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap}
+.navbtn:hover{background:rgba(255,255,255,.22)}
+.wrap{max-width:1500px;margin:0 auto;padding:28px 28px 64px}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+.head-eyebrow{font-size:13px;font-weight:600;color:var(--ink-3);margin-bottom:2px}
+.head-date{font-size:28px;font-weight:800;letter-spacing:-.03em}
+.head-meta{font-size:12.5px;color:var(--ink-3);text-align:right}
+.card{background:var(--card);border-radius:20px;box-shadow:var(--shadow)}
+.sec-h{display:flex;align-items:baseline;gap:4px 10px;flex-wrap:wrap;margin:30px 4px 12px}
+.sec-t{font-size:17px;font-weight:700;white-space:nowrap}
+.sec-d{font-size:12.5px;color:var(--ink-3)}
+.warn{font-size:12.5px;font-weight:600;color:#b4231a;background:#fdecea;border-radius:10px;padding:8px 12px;margin:8px 0}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.kpi{padding:18px 20px}
+.kpi-t{font-size:13px;font-weight:700;color:var(--ink-2);display:flex;align-items:center;gap:6px}
+.kpi-t i{width:9px;height:9px;border-radius:50%}
+.kpi-v{font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1.25;margin-top:4px}
+.kpi-s{font-size:12.5px;color:var(--ink-3);margin-top:2px}
+.kpi-s b{font-weight:700}
+.up{color:var(--up)}.dn{color:var(--dn)}
+
+/* 차트 */
+.charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.chart{padding:18px 20px 12px}
+.chart-t{font-size:14px;font-weight:700;color:var(--ink-2);margin-bottom:6px}
+.chart-t small{font-weight:400;color:var(--ink-3);margin-left:6px;font-size:12px}
+.chart svg{width:100%;height:190px;display:block}
+.chart .grid line{stroke:var(--line)}
+.chart .ax text{font-size:11px;fill:var(--ink-3)}
+.chart .base{stroke-dasharray:4 4;stroke-width:1.5}
+.chart .ln{fill:none;stroke-width:2}
+.chart circle{stroke:#fff;stroke-width:2}
+
+/* 표 */
+.tbl-wrap{overflow-x:auto;padding:6px 10px 12px}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:13.5px}
+th,td{padding:9px 11px;white-space:nowrap}
+thead th{font-size:12px;color:var(--ink-3);font-weight:600;text-align:right;border-bottom:1px solid var(--line)}
+thead tr.grp th{text-align:center;font-size:12.5px;font-weight:800;border-bottom:none;padding-bottom:4px}
+th.g-org{color:var(--org)}th.g-paid{color:var(--paid)}th.g-tot{color:var(--ink-2)}
+th.sl,td.sl{text-align:left;position:sticky;left:0;background:var(--card);z-index:1}
+tbody td{text-align:right;border-top:1px solid var(--line)}
+tbody tr:first-child td{border-top:none}
+td.na{color:var(--ink-4)}
+td.k{font-weight:800}
+td.org{background:var(--org-soft)}td.paid{background:var(--paid-soft)}
+td.org.k{color:var(--org)}td.paid.k{color:var(--paid)}
+tr.live td{background:#fff9e8}tr.live td.sl{box-shadow:inset 3px 0 0 #e0a100}
+tr.wkend td.sl{color:var(--up)}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px;margin-left:6px}
+.tag.live{background:#ffe9a8;color:#7a5600}.tag.unf{background:#fdecea;color:#b4231a}.tag.rec{background:var(--accent-soft);color:var(--accent)}
+.best{color:#0f8a5f;font-weight:800}.worst{color:var(--up);font-weight:800}.hold{color:var(--ink-4)}
+.legend{font-size:12.5px;color:var(--ink-3);padding:4px 16px 14px;line-height:1.8}
+.legend b{color:var(--ink-2)}
+
+#pw-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
+.pw-box{background:#fff;border-radius:20px;padding:44px 44px 36px;text-align:center;width:340px;max-width:100%;box-shadow:0 8px 40px rgba(30,35,51,.12)}
+.pw-logo{font-size:20px;font-weight:800;margin-bottom:4px}
+.pw-sub{font-size:14px;color:var(--ink-3);margin-bottom:26px}
+.pw-input{width:100%;padding:13px 16px;border:1.5px solid #d8dce8;border-radius:12px;font-size:16px;font-family:inherit;outline:none;text-align:center;letter-spacing:4px}
+.pw-input:focus{border-color:var(--accent)}
+.pw-btn{margin-top:12px;width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+.pw-err{margin-top:10px;font-size:13px;color:#c62828;min-height:18px}
+#tip{position:fixed;pointer-events:none;background:#fff;color:var(--ink);font-size:12.5px;padding:8px 11px;border-radius:10px;box-shadow:0 6px 24px rgba(30,35,51,.16);opacity:0;transition:opacity .1s;z-index:100;white-space:nowrap}
+
+@media (max-width:1000px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.charts{grid-template-columns:1fr}}
+@media (max-width:560px){.topbar{padding:0 16px}.topbar-sub{display:none}.wrap{padding:20px 16px 40px}.kpis{grid-template-columns:1fr}.head-date{font-size:23px}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-logo">한끼통살 · 실적</div>
+  <div class="topbar-sub">광고매출 분리 효율 (오가닉 vs 페이드)</div>
+  <div class="topbar-right"><span>생성 2026-10-13 15:30</span><a class="navbtn" href="hourly-spend.html">← 시간대별 광고비중</a></div>
+</div>
+<div class="wrap">
+  <div class="head">
+    <div><div class="head-eyebrow">광고매출 분리 효율 TREND</div><div class="head-date" id="hdate">오가닉 vs 페이드</div></div>
+    <div class="head-meta" id="hmeta"></div>
+  </div>
+  <div id="warns"></div>
+
+  <div class="sec-h"><div class="sec-t" id="kpi-t">오늘 실시간</div><div class="sec-d">5~8월(월 40억+) 일평균 대비 · 페이드 = 시크릿 상품, 오가닉 = 나머지(공구 제외)</div></div>
+  <div class="kpis" id="kpis"></div>
+
+  <div class="sec-h"><div class="sec-t">일별 ROAS 추이</div><div class="sec-d">점선 = 5~8월 평균 · 노란 점 = 오늘(진행 중)</div></div>
+  <div class="charts"><div class="card chart"><div class="chart-t">오가닉 ROAS <small>오가닉 매출 ÷ 일반 광고비</small></div><div id="ch-org"></div></div><div class="card chart"><div class="chart-t">페이드 ROAS <small>페이드 매출 ÷ 히든 광고비</small></div><div id="ch-paid"></div></div></div>
+
+  <div class="sec-h"><div class="sec-t">월별</div><div class="sec-d">일평균 = 월 합계 ÷ 일수 · 이번 달 = 마감일 + 오늘 실시간 합</div></div>
+  <div class="card tbl-wrap"><table id="tm"></table></div>
+
+  <div class="sec-h"><div class="sec-t">일별</div><div class="sec-d">마감일 = TREND 시트 (오가닉·페이드 수기) · 오늘 = 실시간 수집 (순매출 ×0.83 × 시크릿 비중, 대략) · WoW = 전주 같은 요일 대비</div></div>
+  <div class="card tbl-wrap"><table id="td"></table></div>
+    <div class="legend">
+      <b>증분 ROAS(광고)</b> = 페이드 WoW ÷ 광고비 WoW · <b>증분 ROAS(전체)</b> = (오가닉+페이드) WoW ÷ 광고비 WoW —
+      <span class="best">최상</span> 광고비↓ 매출↑ · <span class="worst">최악</span> 광고비↑ 매출↓ ·
+      <span class="hold">보류</span> 광고비 변화가 최근 7일 평균의 5% 미만이라 판단 보류
+      <br><b>ROAS(페이드÷광고비)</b>는 시트 Y열과 같은 정의, <b>전체 ROAS</b> = 전체 매출 ÷ 광고비 (참고용 추가)
+    </div>
+</div>
+<div id="tip"></div>
+
+<div id="pw-overlay">
+  <form class="pw-box" id="pw-form">
+    <div class="pw-logo">한끼통살</div>
+    <div class="pw-sub">실적 대시보드</div>
+    <input id="pw-input" class="pw-input" type="password" placeholder="비밀번호" autocomplete="current-password" autofocus>
+    <button class="pw-btn" type="submit">확인</button>
+    <div class="pw-err" id="pw-err"></div>
+  </form>
+</div>
+
+<script>
+(function () {
+  const ENC = {"salt":"awpqB97/Zg7JVL1BA/Geww==","iv":"hvnYTm9dD+rY1g/J","iter":200000,"ct":"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"};
+  const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  async function unlock(pw) {
+    const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: b64(ENC.salt), iterations: ENC.iter, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+    const buf = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64(ENC.iv) }, key, b64(ENC.ct));
+    window.__PERF = JSON.parse(new TextDecoder().decode(buf));
+    try { sessionStorage.setItem('hs-pw', pw); } catch (e) {}
+    document.getElementById('pw-overlay').style.display = 'none';
+    const sc = document.createElement('script'); sc.textContent = document.getElementById('main-js').textContent; document.body.appendChild(sc);
+  }
+  const form = document.getElementById('pw-form'), inp = document.getElementById('pw-input'), err = document.getElementById('pw-err');
+  form.addEventListener('submit', async e => { e.preventDefault(); err.textContent = ''; try { await unlock(inp.value); } catch (x) { err.textContent = '비밀번호가 틀렸습니다.'; inp.value = ''; inp.focus(); } });
+  let saved = null; try { saved = sessionStorage.getItem('hs-pw'); } catch (e) {}
+  if (saved) unlock(saved).catch(() => { try { sessionStorage.removeItem('hs-pw'); } catch (e) {} });
+})();
+</script>
+<script type="text/plain" id="main-js">
+// 실적 대시보드 계산 — TREND 시트 수식을 그대로 옮김. 대시보드 페이지가 이 함수 소스를 그대로 심어 쓴다(perf-build) → 검증(perf-verify)과 화면이 같은 코드.
+//   입력: E 오가닉 · Q 페이드 · H~O 일반 매체 광고비 · T 메타 · U 구글DA · TT 틱톡(시트엔 없음, 2026-10-13~ 히든에 포함)
+//   opts.holdPct: 증분 ROAS 판단 보류 기준 — |광고비 WoW 변화| < 최근 7일 평균 광고비 × holdPct 면 "보류" (시트는 AE5 빈칸 = 0 → 보류 없음)
+function computeTrend(months, days, opts) {
+  const o = opts || {};
+  const GEN = ["H", "I", "J", "K", "L", "M", "N", "O"];
+  const sum = (r, ks) => ks.reduce((a, k) => a + (r[k] || 0), 0);
+  const base = (r) => {
+    const F = sum(r, GEN), R = (r.T || 0) + (r.U || 0) + (r.TT || 0), W = R + F, E = r.E || 0, Q = r.Q || 0;
+    return { ...r, D: E + Q, F, G: F ? (E / F) * 100 : null, R, S: R ? (Q / R) * 100 : null, W, Y: W ? (Q / W) * 100 : null, total: W ? ((E + Q) / W) * 100 : null };
+  };
+  const M = months.map((m) => { const x = base(m), n = Number(m.B) || 1; return { ...x, P: x.E / n, V: x.Q / n, X: x.W / n }; });
+  const Dd = days.map(base);
+  const inc = (dS, dW) => (dW < 0 && dS >= 0 ? "최상" : dW > 0 && dS <= 0 ? "최악" : (dS / dW) * 100);
+  Dd.forEach((x, i) => {
+    const w = i >= 7 ? Dd[i - 7] : null;
+    x.P = w ? x.E - w.E : null; x.V = w ? x.Q - w.Q : null; x.X = w ? x.W - w.W : null;
+    if (w) {
+      const avgW = Dd.slice(Math.max(0, i - 7), i).reduce((a, y) => a + y.W, 0) / Math.min(7, i);
+      const hold = Math.abs(x.X) < (o.holdPct ? avgW * o.holdPct : 0);
+      x.Z = hold ? "보류" : inc(x.V, x.X);
+      x.AA = hold ? "보류" : inc(x.P + x.V, x.X);
+    } else { x.Z = null; x.AA = null; }
+    if (i >= 2) {
+      const l3 = Dd.slice(i - 2, i + 1);
+      x.AB = l3.reduce((a, y) => a + y.Q, 0) / 3;
+      x.AC = (x.AB / (l3.reduce((a, y) => a + y.W, 0) / 3)) * 100;
+    } else { x.AB = null; x.AC = null; }
+  });
+  return { months: M, days: Dd };
+}
+
+const P = window.__PERF, B = P.base || {};
+const el = id => document.getElementById(id);
+const WD = ['일','월','화','수','목','금','토'];
+const won = v => v == null || !isFinite(v) ? '–' : Math.round(v).toLocaleString('ko-KR');
+const pc = (v, d = 2) => v == null || !isFinite(v) ? '–' : v.toFixed(d) + '%';
+const man = v => v == null ? '–' : (Math.abs(v) >= 1e8 ? (v / 1e8).toFixed(2) + '억' : Math.round(v / 1e4).toLocaleString('ko-KR') + '만');
+const dlab = d => { const t = new Date(d + 'T00:00:00'); return `${t.getMonth()+1}/${String(t.getDate()).padStart(2,'0')} (${WD[t.getDay()]})`; };
+const GEN = ['H','I','J','K','L','M','N','O'], HID = ['T','U','TT'], SUMK = ['E','Q',...GEN,...HID];
+
+// 이번 달 행 = 마감일 + 오늘 실시간 합 (시트 월 행은 미래 날짜 예상치까지 더해져 있어 다시 합산)
+const curM = P.today.slice(0, 7);
+const mDays = [...P.days.filter(d => d.date.startsWith(curM)), ...(P.live && P.live.E != null ? [P.live] : [])];
+const months = P.months.map(m => {
+  if (m.C !== curM) return m;
+  const o = { C: m.C, B: String(mDays.length), recomputed: true };
+  for (const k of SUMK) o[k] = mDays.reduce((a, d) => a + (d[k] || 0), 0);
+  return o;
+});
+const T = computeTrend(months, P.days, { holdPct: P.holdPct });
+const live = P.live ? computeTrend([], [P.live], {}).days[0] : null;
+if (live) Object.assign(live, { live: true, slot: P.live.slot, fetchedAt: P.live.fetchedAt, noSplit: P.live.noSplit, shareSlot: P.live.shareSlot });
+
+// 헤더·경고
+el('hmeta').innerHTML = `시트 동기화 ${P.syncedAt || '–'} · 오늘 ${live ? `${live.slot}시 수집 (${live.fetchedAt || '?'})` : '수집 전'}`;
+const W = [];
+if (P.unfilled.length) W.push(`TREND 시트 오가닉·페이드 미입력: ${P.unfilled.map(dlab).join(', ')} — 해당 일 ROAS·증분은 비어 보임`);
+if (live && live.noSplit) W.push('오늘 시크릿 상품 매출이 아직 수집되지 않아 오가닉·페이드 실시간 분리 대기 중 (다음 수집부터)');
+if (live && P.live.shareSlot && P.live.shareSlot !== live.slot) W.push(`오늘 오가닉·페이드 비중은 ${P.live.shareSlot}시 기준을 빌려 씀`);
+el('warns').innerHTML = W.map(w => `<div class="warn">${w}</div>`).join('');
+
+// KPI: 오늘 실시간 (없으면 직전 마감일)
+const k0 = live && !live.noSplit ? live : T.days[T.days.length - 1];
+el('kpi-t').textContent = k0 === live ? `오늘 실시간 · ${live.slot}시 기준` : `${dlab(k0.date)} 마감`;
+const vsB = (v, b) => v == null || !b ? '' : `5~8월 ${pc(b, 0)} 대비 <b class="${v >= b ? 'up' : 'dn'}">${v >= b ? '+' : ''}${((v / b - 1) * 100).toFixed(0)}%</b>`;
+const bShare = B.paidNet ? B.paidNet / (B.paidNet + B.organicNet) * 100 : null;
+const share = k0.D ? k0.Q / k0.D * 100 : null;
+el('kpis').innerHTML = [
+  ['var(--org)', '오가닉 ROAS', pc(k0.G, 0), `${man(k0.E)} ÷ 일반 광고비 ${man(k0.F)}<br>${vsB(k0.G, B.organicRoas * 100)}`],
+  ['var(--paid)', '페이드 ROAS', pc(k0.S, 0), `${man(k0.Q)} ÷ 히든 광고비 ${man(k0.R)}<br>${vsB(k0.S, B.paidRoas * 100)}`],
+  ['var(--ink-2)', '페이드 비중', pc(share, 1), `페이드 ÷ 전체 매출<br>${bShare ? `5~8월 ${bShare.toFixed(1)}%` : ''}`],
+  ['var(--accent)', '전체 매출 · 광고비', man(k0.D), `광고비 ${man(k0.W)} · 전체 ROAS ${pc(k0.total, 0)}<br>5~8월 일평균 ${man((B.organicNet || 0) + (B.paidNet || 0))}`],
+].map(([c, t, v, s]) => `<div class="card kpi"><div class="kpi-t"><i style="background:${c}"></i>${t}</div><div class="kpi-v num">${v}</div><div class="kpi-s">${s}</div></div>`).join('');
+
+// 차트 (오가닉 / 페이드 따로 — 축 하나씩)
+function chart(id, key, base, color) {
+  const pts = T.days.map(d => ({ d: d.date, v: d[key] })).filter(p => p.v != null);
+  if (live && live[key] != null) pts.push({ d: live.date, v: live[key], live: true });
+  const w = 640, h = 190, l = 46, r = 12, t = 10, b = 24;
+  const vals = pts.map(p => p.v).concat(base ? [base] : []);
+  const lo = Math.min(...vals) * 0.9, hi = Math.max(...vals) * 1.08;
+  const x = i => l + (pts.length < 2 ? 0 : (i / (pts.length - 1)) * (w - l - r)), y = v => t + (1 - (v - lo) / (hi - lo)) * (h - t - b);
+  let s = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><g class="grid">`;
+  for (let k = 0; k <= 3; k++) { const v = lo + (hi - lo) * k / 3; s += `<line x1="${l}" x2="${w - r}" y1="${y(v)}" y2="${y(v)}"/>`; }
+  s += `</g><g class="ax">`;
+  for (let k = 0; k <= 3; k++) { const v = lo + (hi - lo) * k / 3; s += `<text x="${l - 6}" y="${y(v) + 4}" text-anchor="end">${Math.round(v)}%</text>`; }
+  pts.forEach((p, i) => { if (i % Math.ceil(pts.length / 8) === 0 || i === pts.length - 1) s += `<text x="${x(i)}" y="${h - 6}" text-anchor="middle">${p.d.slice(5).replace('-', '/')}</text>`; });
+  s += `</g>`;
+  if (base) s += `<line class="base" x1="${l}" x2="${w - r}" y1="${y(base)}" y2="${y(base)}" stroke="${color}" opacity=".55"/>`;
+  s += `<polyline class="ln" stroke="${color}" points="${pts.map((p, i) => `${x(i)},${y(p.v)}`).join(' ')}"/>`;
+  pts.forEach((p, i) => s += `<circle cx="${x(i)}" cy="${y(p.v)}" r="${p.live ? 5 : 3.5}" fill="${p.live ? '#e0a100' : color}" data-tip="${dlab(p.d)}${p.live ? ' (진행 중)' : ''} · ${pc(p.v, 0)}"/>`);
+  el(id).innerHTML = s + '</svg>';
+}
+chart('ch-org', 'G', B.organicRoas * 100, '#0f8a5f');
+chart('ch-paid', 'S', B.paidRoas * 100, '#7a3fc8');
+
+// 표 — 시트 열 순서 그대로 (+ 틱톡, 전체 ROAS)
+const COLS = [
+  ['D','전체매출','tot','k'], ['E','오가닉','org','k'], ['F','일반합계','org'], ['G','ROAS','org','k pct'],
+  ['H','네이버(브검)','org'], ['I','네이버(파워링크)','org'], ['J','네이버(쇼핑)','org'], ['K','구글SA','org'], ['L','페이코','org'], ['M','토스페이','org'], ['N','에디AI','org'], ['O','CRM','org'], ['P','일평균/WoW','org'],
+  ['Q','페이드','paid','k'], ['R','히든합계','paid'], ['S','ROAS','paid','k pct'], ['T','메타','paid'], ['U','구글DA','paid'], ['TT','틱톡','paid'], ['V','일평균/WoW','paid'],
+  ['W','광고비','tot'], ['X','일평균/WoW','tot'], ['Y','ROAS(페이드÷광고비)','tot','pct'], ['total','전체 ROAS','tot','pct'], ['Z','증분ROAS(광고)','tot','inc'], ['AA','증분ROAS(전체)','tot','inc'], ['AB','3일평균매출','tot'], ['AC','3일평균ROAS','tot','pct'],
+];
+function head(first) {
+  const span = g => COLS.filter(c => c[2] === g).length;
+  return `<thead><tr class="grp"><th class="sl"></th><th class="g-tot"></th><th colspan="${span('org')}" class="g-org">오가닉 · 일반 매체</th><th colspan="${span('paid')}" class="g-paid">페이드 · 히든 매체</th><th colspan="${span('tot') - 1}" class="g-tot">합계</th></tr>`
+    + `<tr><th class="sl">${first}</th>${COLS.map(c => `<th>${c[1]}</th>`).join('')}</tr></thead>`;
+}
+function cell(r, c) {
+  const [k, , g, f = ''] = c, v = r[k], cls = `${g === 'org' || g === 'paid' ? g : ''} ${f.includes('k') ? 'k' : ''}`.trim();
+  if (f.includes('inc')) {
+    if (v == null) return `<td class="na">–</td>`;
+    if (v === '최상') return `<td class="best">최상</td>`; if (v === '최악') return `<td class="worst">최악</td>`; if (v === '보류') return `<td class="hold">보류</td>`;
+    return `<td class="num">${pc(v)}</td>`;
+  }
+  if (v == null || (typeof v === 'number' && !isFinite(v))) return `<td class="na ${cls}">–</td>`;
+  return `<td class="num ${cls}">${f.includes('pct') ? pc(v) : won(v)}</td>`;
+}
+el('tm').innerHTML = head('월') + '<tbody>' + T.months.map(m => `<tr><td class="sl"><b>${m.C}</b><span class="f" style="color:var(--ink-3);font-size:12px;margin-left:6px">${m.B}일</span>${m.recomputed ? '<span class="tag rec">실시간 포함</span>' : ''}</td>${COLS.map(c => cell(m, c)).join('')}</tr>`).join('') + '</tbody>';
+const rows = [...T.days].reverse();
+el('td').innerHTML = head('일자') + '<tbody>'
+  + (live ? `<tr class="live"><td class="sl"><b>${dlab(live.date)}</b><span class="tag live">실시간 ${live.slot}시</span></td>${COLS.map(c => cell(live, c)).join('')}</tr>` : '')
+  + rows.map(d => { const wd = new Date(d.date + 'T00:00:00').getDay(); const unf = d.E == null || d.Q == null;
+      return `<tr class="${wd === 0 || wd === 6 ? 'wkend' : ''}"><td class="sl"><b>${dlab(d.date)}</b>${unf ? '<span class="tag unf">시트 미입력</span>' : ''}</td>${COLS.map(c => cell(d, c)).join('')}</tr>`; }).join('') + '</tbody>';
+
+// 툴팁
+const tip = el('tip');
+document.addEventListener('mousemove', e => { const t = e.target.closest && e.target.closest('[data-tip]'); if (!t) { tip.style.opacity = 0; return; } tip.textContent = t.dataset.tip; tip.style.left = (e.clientX + 12) + 'px'; tip.style.top = (e.clientY - 30) + 'px'; tip.style.opacity = 1; });
+</script>
+</body>
+</html>
