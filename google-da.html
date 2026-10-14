@@ -292,7 +292,7 @@ td.btncell{width:1%;padding-left:2px}
     </div>
   </section>
 
-  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 14. 오후 12:28:57</div>
+  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 14. 오후 12:30:40</div>
 </main>
 
 <div class="modal-ov" id="modal-ov" onclick="if(event.target===this) closeCampaignModal()">
@@ -635,10 +635,25 @@ var FLOW_COLS = [
 function cells(cols, m) { return cols.map(function (c) { return '<td' + (c.hl ? ' class="hl"' : '') + '>' + c.f(m) + '</td>'; }).join(''); }
 function thPlain(c) { return '<th style="cursor:default"' + (c.hl ? ' class="hl"' : '') + (c.tip ? ' title="' + c.tip + '"' : '') + '>' + c.t + '</th>'; }
 
+var DSORT = { key: 'date', dir: -1 }, LAST_DAILY_SER = [];
 function renderDailyTable(ser) {
+  if (ser) LAST_DAILY_SER = ser;
   var cols = CONV_COLS.concat(FLOW_COLS);
-  var rows = ser.filter(function (x) { return !isEmptyM(x.m); }).slice().reverse().map(function (x) { return '<tr class="noclick"><td class="l">' + mdwHtml(x.d) + '</td>' + cells(cols, x.m) + '</tr>'; }).join('');
-  document.getElementById('daily-box').innerHTML = '<div class="tscroll" style="max-height:440px;border:1px solid var(--line);border-radius:8px"><table><thead><tr><th class="l" style="cursor:default">날짜</th>' + cols.map(thPlain).join('') + '</tr></thead><tbody>' + (rows || '<tr><td class="empty" colspan="13">데이터 없음</td></tr>') + '</tbody></table></div>';
+  var list = LAST_DAILY_SER.filter(function (x) { return !isEmptyM(x.m); }).slice();
+  list.sort(function (a, b) {
+    if (DSORT.key === 'date') return (a.d < b.d ? -1 : a.d > b.d ? 1 : 0) * DSORT.dir;
+    return ((a.m[DSORT.key] || 0) - (b.m[DSORT.key] || 0)) * DSORT.dir || (a.d < b.d ? 1 : -1);
+  });
+  var rows = list.map(function (x) { return '<tr class="noclick"><td class="l">' + mdwHtml(x.d) + '</td>' + cells(cols, x.m) + '</tr>'; }).join('');
+  function th(key, title, cls, tip) {
+    var on = DSORT.key === key;
+    return '<th class="' + (cls || '') + (on ? ' sorted' : '') + '" data-dsort="' + key + '"' + (tip ? ' title="' + tip + '"' : '') + '>' + title + (on ? '<span class="ar">' + (DSORT.dir < 0 ? '▼' : '▲') + '</span>' : '') + '</th>';
+  }
+  var box = document.getElementById('daily-box');
+  box.innerHTML = '<div class="tscroll" style="max-height:440px;border:1px solid var(--line);border-radius:8px"><table><thead><tr>' + th('date', '날짜', 'l') + cols.map(function (c) { return th(c.k, c.t, c.hl ? 'hl' : '', c.tip); }).join('') + '</tr></thead><tbody>' + (rows || '<tr><td class="empty" colspan="13">데이터 없음</td></tr>') + '</tbody></table></div>';
+  box.querySelectorAll('th[data-dsort]').forEach(function (el) {
+    el.onclick = function () { var k = el.dataset.dsort; if (DSORT.key === k) DSORT.dir = -DSORT.dir; else DSORT = { key: k, dir: -1 }; renderDailyTable(); };
+  });
 }
 
 /* ── 성과 표: 보기 단위 탭 + 드릴다운 + 브레드크럼 ── */
