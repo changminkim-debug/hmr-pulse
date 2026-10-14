@@ -80,24 +80,17 @@ body.m-tiktok .band-logo{padding:0;background:#000}
 
 /* KPI 스트립 */
 .kpis{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px}
-.kpi{padding:22px 22px 18px;min-width:0;background:#fff;border:none;border-radius:14px;box-shadow:0 1px 4px rgba(0,0,0,.07);cursor:pointer;transition:transform .15s ease,box-shadow .15s ease;position:relative}
-.kpi:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(30,35,51,.13)}
-.kpi.sel{box-shadow:0 0 0 2px #5662cc,0 8px 20px rgba(30,35,51,.10)}
-.kpi.dark{background:#1e2333}.kpi.acc{background:#5662cc}
-.kpi.dark .l,.kpi.acc .l{color:rgba(255,255,255,.62)}
-.kpi.dark .v,.kpi.acc .v{color:#fff}.kpi.dark .v small,.kpi.acc .v small{color:rgba(255,255,255,.6)}
-.kpi.dark .dl,.kpi.acc .dl{color:rgba(255,255,255,.6)}
-.kpi.dark.sel,.kpi.acc.sel{box-shadow:0 0 0 2px #fff,0 0 0 4px #5662cc,0 8px 20px rgba(30,35,51,.12)}
-.kpi .pick{position:absolute;top:12px;right:14px;font-size:11px;color:#8a91a8;opacity:0;transition:opacity .15s}
-.kpi.dark .pick,.kpi.acc .pick{color:rgba(255,255,255,.7)}
+.kpi{padding:20px 20px 16px;min-width:0;background:#fff;border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;position:relative}
+.kpi:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(30,35,51,.12);border-color:#cfd5e1}
+.kpi.sel{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 6px 16px rgba(30,35,51,.08)}
+.kpi.sel .l{color:var(--ac)}
+.kpi .pick{position:absolute;top:12px;right:14px;font-size:11px;color:var(--ac);opacity:0;transition:opacity .15s}
 .kpi:hover .pick,.kpi.sel .pick{opacity:1}
 .kpi .l{font-size:13px;font-weight:700;color:#8a91a8;letter-spacing:.6px;white-space:nowrap}
-.kpi .v{font-size:27px;font-weight:800;letter-spacing:-.5px;line-height:1.2;margin-top:9px;white-space:nowrap;color:#1e2333;font-feature-settings:normal}
+.kpi .v{font-size:27px;font-weight:800;letter-spacing:-.5px;line-height:1.2;margin-top:8px;white-space:nowrap;color:#1e2333;font-feature-settings:normal}
 .kpi .v small{font-size:12px;font-weight:400;color:#9aa1b5;margin-left:2px;letter-spacing:0}
-.kpi .dl{font-size:13px;margin-top:9px;color:#8a91a8;white-space:nowrap}
-.kpi .dl .up,.kpi .dl .dn{display:inline-block;padding:2px 8px;border-radius:6px;font-weight:700;font-size:12.5px}
-.kpi .dl .up{background:#e6f6ec;color:#1a7f4b}.kpi .dl .dn{background:#fdecee;color:#c0304a}
-.kpi.dark .dl .up,.kpi.acc .dl .up{background:rgba(255,255,255,.16);color:#bff0d2}.kpi.dark .dl .dn,.kpi.acc .dl .dn{background:rgba(255,255,255,.16);color:#ffd0d6}
+.kpi .dl{font-size:13px;margin-top:6px;color:var(--faint);white-space:nowrap}
+.kpi .dl .up{color:var(--good)}.kpi .dl .dn{color:var(--bad)}
 
 
 /* 차트 */
@@ -302,7 +295,7 @@ td.btncell{width:1%;padding-left:2px}
     </div>
   </section>
 
-  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 14. 오후 1:48:39</div>
+  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 14. 오후 1:56:48</div>
 </main>
 
 <div class="modal-ov" id="modal-ov" onclick="if(event.target===this) closeCampaignModal()">
@@ -520,7 +513,7 @@ function renderKPI() {
     var isR = c.roas !== undefined;
     var v = isR ? (m.cost > 0 ? Math.round(c.roas) + '<small>%</small>' : '-') : c.v;
     var dl = hasPrev ? deltaHtml(c.c, c.p, isR) : '';
-    return '<div class="kpi' + (c.k === 'cost' ? ' dark' : c.net ? ' acc' : '') + (c.k === CHART_METRIC ? ' sel' : '') + '" data-k="' + c.k + '" title="클릭하면 아래 일자별 차트가 이 지표로 바뀝니다"><span class="pick">차트 ▾</span><div class="l">' + c.l + '</div><div class="v">' + v + '</div><div class="dl">' + (dl || '&nbsp;') + '</div></div>';
+    return '<div class="kpi' + (c.k === CHART_METRIC ? ' sel' : '') + '" data-k="' + c.k + '" title="클릭하면 아래 일자별 차트가 이 지표로 바뀝니다"><span class="pick">차트 ▾</span><div class="l">' + c.l + '</div><div class="v">' + v + '</div><div class="dl">' + (dl || '&nbsp;') + '</div></div>';
   }).join('');
   document.querySelectorAll('#kpis .kpi').forEach(function (el) {
     el.onclick = function () { CHART_METRIC = el.dataset.k; renderKPI(); renderChart(); };
