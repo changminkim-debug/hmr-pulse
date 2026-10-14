@@ -80,18 +80,24 @@ body.m-tiktok .band-logo{padding:0;background:#000}
 
 /* KPI 스트립 */
 .kpis{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px}
-.kpi{padding:17px 18px 15px;min-width:0;background:#fff;border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;position:relative}
-.kpi:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(21,33,59,.10);border-color:#cfd5e1}
-.kpi.sel{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 6px 16px rgba(21,33,59,.08);background:var(--ac-soft)}
-.kpi.sel .l{color:var(--ac);font-weight:600}
-.kpi .pick{position:absolute;top:12px;right:13px;font-size:11px;color:var(--ac);opacity:0;transition:opacity .15s}
+.kpi{padding:22px 22px 18px;min-width:0;background:#fff;border:none;border-radius:14px;box-shadow:0 1px 4px rgba(0,0,0,.07);cursor:pointer;transition:transform .15s ease,box-shadow .15s ease;position:relative}
+.kpi:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(30,35,51,.13)}
+.kpi.sel{box-shadow:0 0 0 2px #5662cc,0 8px 20px rgba(30,35,51,.10)}
+.kpi.dark{background:#1e2333}.kpi.acc{background:#5662cc}
+.kpi.dark .l,.kpi.acc .l{color:rgba(255,255,255,.62)}
+.kpi.dark .v,.kpi.acc .v{color:#fff}.kpi.dark .v small,.kpi.acc .v small{color:rgba(255,255,255,.6)}
+.kpi.dark .dl,.kpi.acc .dl{color:rgba(255,255,255,.6)}
+.kpi.dark.sel,.kpi.acc.sel{box-shadow:0 0 0 2px #fff,0 0 0 4px #5662cc,0 8px 20px rgba(30,35,51,.12)}
+.kpi .pick{position:absolute;top:12px;right:14px;font-size:11px;color:#8a91a8;opacity:0;transition:opacity .15s}
+.kpi.dark .pick,.kpi.acc .pick{color:rgba(255,255,255,.7)}
 .kpi:hover .pick,.kpi.sel .pick{opacity:1}
-.kpi .l{font-size:14px;font-weight:700;color:#8a91a8;letter-spacing:.3px;white-space:nowrap}
-.kpi .v{font-size:28.5px;font-weight:400;letter-spacing:-.2px;font-feature-settings:normal;line-height:1.3;margin-top:4px;white-space:nowrap;color:var(--ink)}
-.kpi .v small{font-size:15px;color:var(--mute);margin-left:2px}
-.kpi .v.good{color:var(--good)}.kpi .v.mid{color:var(--mid)}.kpi .v.bad{color:var(--bad)}
-.kpi .dl{font-size:13px;margin-top:3px;color:var(--faint);white-space:nowrap}
-.kpi .dl .up{color:var(--good)}.kpi .dl .dn{color:var(--bad)}
+.kpi .l{font-size:13px;font-weight:700;color:#8a91a8;letter-spacing:.6px;white-space:nowrap}
+.kpi .v{font-size:27px;font-weight:800;letter-spacing:-.5px;line-height:1.2;margin-top:9px;white-space:nowrap;color:#1e2333;font-feature-settings:normal}
+.kpi .v small{font-size:12px;font-weight:400;color:#9aa1b5;margin-left:2px;letter-spacing:0}
+.kpi .dl{font-size:13px;margin-top:9px;color:#8a91a8;white-space:nowrap}
+.kpi .dl .up,.kpi .dl .dn{display:inline-block;padding:2px 8px;border-radius:6px;font-weight:700;font-size:12.5px}
+.kpi .dl .up{background:#e6f6ec;color:#1a7f4b}.kpi .dl .dn{background:#fdecee;color:#c0304a}
+.kpi.dark .dl .up,.kpi.acc .dl .up{background:rgba(255,255,255,.16);color:#bff0d2}.kpi.dark .dl .dn,.kpi.acc .dl .dn{background:rgba(255,255,255,.16);color:#ffd0d6}
 
 
 /* 차트 */
@@ -117,6 +123,8 @@ body.m-tiktok .band-logo{padding:0;background:#000}
 .box-t{font-size:14px;font-weight:600;color:var(--ink2);padding:10px 14px 0;display:flex;justify-content:space-between}
 .box-t span{color:var(--faint);font-weight:400}
 .tscroll{overflow:auto;max-height:620px}
+/* 성과 상세는 내부 스크롤 없이 한 페이지에 다 펼친다 (사용자 지정 2026-10-14) */
+#left-scroll,#right-scroll{max-height:none;overflow:visible}
 table{width:100%;border-collapse:collapse}
 th{position:sticky;top:0;z-index:2;background:#fff;padding:10px 11px;font-size:13px;font-weight:600;color:var(--mute);text-align:right;white-space:nowrap;border-bottom:1px solid var(--line);cursor:pointer;user-select:none}
 th:hover{color:var(--ink)}
@@ -129,8 +137,9 @@ td.l{text-align:left}
 .tscroll th.l:first-child{left:0;z-index:3}
 .tscroll tr.tot td.l:first-child{background:#fafbfc}
 .tscroll tr.row:hover td.l:first-child,.tscroll tr.hov td.l:first-child{background:#f5f7fb}
-td.nm{max-width:320px;overflow:hidden;text-overflow:ellipsis}
-.twin .right td.nm{max-width:150px}
+td.nm{max-width:240px;white-space:normal;word-break:keep-all;overflow-wrap:anywhere;line-height:1.35;padding-top:7px;padding-bottom:7px}
+.twin .right td.nm{max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#left-scroll td,#left-scroll th,#right-scroll td,#right-scroll th{padding-left:8px;padding-right:8px}
 .twin .right th,.twin .right td{padding-left:8px;padding-right:8px}
 td.nm .up{display:block;font-size:12px;color:var(--faint);line-height:1.1;overflow:hidden;text-overflow:ellipsis}
 td.nm .main{display:block;line-height:1.25;overflow:hidden;text-overflow:ellipsis}
@@ -146,7 +155,7 @@ td.hl .r{font-weight:700}
 tr.tot td.hl{background:rgba(47,79,143,.10)}
 tr.row:hover td.hl,tr.hov td.hl{background:rgba(47,79,143,.11)}
 body.m-tiktok th.hl{background:#f0f0f3}body.m-tiktok td.hl{background:rgba(0,0,0,.04)}
-.badge{font-size:12px;font-weight:500;padding:1px 6px;border-radius:4px;margin-left:5px;vertical-align:1px;border:1px solid}
+.badge{white-space:nowrap;display:inline-block;font-size:12px;font-weight:500;padding:1px 6px;border-radius:4px;margin-left:5px;vertical-align:1px;border:1px solid}
 .b-ret{color:#6b3fb0;border-color:#d9c9f2}.b-new{color:#1f5fa8;border-color:#c5d8f0}.b-smart{color:#2f7a4d;border-color:#c4e3cf}
 .b-man{color:#8a3d9e;border-color:#e3c9ea}.b-orph{color:#b2560e;border-color:#f1d2b5}.b-pause{color:#8b93a5;border-color:#dfe2e8}.b-grp{color:#557;border-color:#dde}
 .dbtn{border:1px solid var(--line);background:#fff;border-radius:6px;padding:3px 9px;font:500 13px inherit;font-family:inherit;color:var(--ac);cursor:pointer;white-space:nowrap}
@@ -182,6 +191,7 @@ td.btncell{width:1%;padding-left:2px}
   .twin{grid-template-columns:minmax(0,1fr)}
 }
 @media(max-width:760px){
+  #left-scroll,#right-scroll{overflow-x:auto}
   .band-in{padding:16px 14px 14px;align-items:flex-start}
   .band-title{font-size:22px}
   .bar{position:static}
@@ -292,7 +302,7 @@ td.btncell{width:1%;padding-left:2px}
     </div>
   </section>
 
-  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 14. 오후 12:30:40</div>
+  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 14. 오후 1:48:39</div>
 </main>
 
 <div class="modal-ov" id="modal-ov" onclick="if(event.target===this) closeCampaignModal()">
@@ -363,8 +373,8 @@ function won(n) { // 표 금액: 1만 이상은 만 단위, 미만은 원
 }
 function kpiWon(n) {
   n = Math.round(n || 0);
-  if (n >= 100000000) { var v = n / 100000000; return (v === Math.round(v) ? v : v.toFixed(2)) + '<small>억원</small>'; }
-  if (n >= 10000) return (Math.round(n / 1000) / 10).toLocaleString() + '<small>만원</small>';
+  if (n >= 100000000) { var v = n / 100000000; return (v === Math.round(v) ? v : v.toFixed(2)) + '억<small>원</small>'; }
+  if (n >= 10000) return (Math.round(n / 1000) / 10).toLocaleString() + '만<small>원</small>';
   return n.toLocaleString() + '<small>원</small>';
 }
 function cnt(n) { n = Math.round(n || 0); return n.toLocaleString(); }
@@ -510,7 +520,7 @@ function renderKPI() {
     var isR = c.roas !== undefined;
     var v = isR ? (m.cost > 0 ? Math.round(c.roas) + '<small>%</small>' : '-') : c.v;
     var dl = hasPrev ? deltaHtml(c.c, c.p, isR) : '';
-    return '<div class="kpi' + (c.k === CHART_METRIC ? ' sel' : '') + '" data-k="' + c.k + '" title="클릭하면 아래 일자별 차트가 이 지표로 바뀝니다"><span class="pick">차트 ▾</span><div class="l">' + c.l + '</div><div class="v' + (c.net && m.cost > 0 ? ' ' + roasTone(c.roas) : '') + '">' + v + '</div><div class="dl">' + (dl || '&nbsp;') + '</div></div>';
+    return '<div class="kpi' + (c.k === 'cost' ? ' dark' : c.net ? ' acc' : '') + (c.k === CHART_METRIC ? ' sel' : '') + '" data-k="' + c.k + '" title="클릭하면 아래 일자별 차트가 이 지표로 바뀝니다"><span class="pick">차트 ▾</span><div class="l">' + c.l + '</div><div class="v">' + v + '</div><div class="dl">' + (dl || '&nbsp;') + '</div></div>';
   }).join('');
   document.querySelectorAll('#kpis .kpi').forEach(function (el) {
     el.onclick = function () { CHART_METRIC = el.dataset.k; renderKPI(); renderChart(); };
@@ -712,6 +722,14 @@ function headHtml(cols, labelTitle, withBtn) {
 function nameCell(x) {
   return '<td class="l nm" title="' + h(x.raw || x.name) + '">' + (x.up ? '<span class="up">' + h(x.up) + '</span>' : '') + '<span class="main">' + h(x.name) + x.badge + '</span></td>';
 }
+// 두 박스(전환·유입)의 같은 행 높이를 맞춘다 — 이름 줄바꿈으로 어긋나는 것 방지
+function syncRowHeights() {
+  var L = document.querySelectorAll('#t-left tbody tr'), R = document.querySelectorAll('#t-right tbody tr');
+  for (var i = 0; i < L.length && i < R.length; i++) { L[i].style.height = R[i].style.height = ''; }
+  if (window.innerWidth <= 1280) return; // 위아래로 쌓이는 폭에선 맞출 필요 없음
+  for (var j = 0; j < L.length && j < R.length; j++) { var hgt = Math.max(L[j].offsetHeight, R[j].offsetHeight); L[j].style.height = R[j].style.height = hgt + 'px'; }
+}
+window.addEventListener('resize', function () { clearTimeout(window.__srh); window.__srh = setTimeout(syncRowHeights, 150); });
 function renderPerf() {
   var tabs = [{ v: 'product', t: '품목' }, { v: 'campaign', t: '캠페인' }, { v: 'ad', t: '소재' }];
   var tEl = document.getElementById('view-tabs');
@@ -757,6 +775,7 @@ function renderPerf() {
   document.getElementById('t-left').innerHTML = headHtml(CONV_COLS, unitT, withBtn) + '<tbody>' + (rows.length ? totL + bodyL : empty) + '</tbody>';
   document.getElementById('t-right').innerHTML = headHtml(FLOW_COLS, unitT, false) + '<tbody>' + (rows.length ? totR + bodyR : empty) + '</tbody>';
 
+  syncRowHeights();
   // 이벤트: 정렬(두 박스 공유) · 드릴다운 · 일자별 버튼 · hover 동기화
   ['t-left', 't-right'].forEach(function (id) {
     var t = document.getElementById(id);
