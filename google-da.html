@@ -132,8 +132,11 @@ td.l{text-align:left}
 .tscroll tr.tot td.l:first-child{background:#fafbfc}
 .tscroll tr.row:hover td.l:first-child,.tscroll tr.hov td.l:first-child{background:#f5f7fb}
 td.nm{max-width:240px;white-space:normal;word-break:keep-all;overflow-wrap:anywhere;line-height:1.35;padding-top:7px;padding-bottom:7px}
-.twin .right td.nm{max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#left-scroll td,#left-scroll th,#right-scroll td,#right-scroll th{padding-left:8px;padding-right:8px}
+.twin .right td.nm{max-width:105px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#left-scroll td,#left-scroll th,#right-scroll td,#right-scroll th{padding-left:7px;padding-right:7px}
+/* 박스 끝에 숫자가 붙지 않게 첫/마지막 칸 여백 */
+#left-scroll td:first-child,#left-scroll th:first-child,#right-scroll td:first-child,#right-scroll th:first-child,#daily-box td:first-child,#daily-box th:first-child{padding-left:18px}
+#left-scroll td:last-child,#left-scroll th:last-child,#right-scroll td:last-child,#right-scroll th:last-child,#daily-box td:last-child,#daily-box th:last-child{padding-right:18px}
 .twin .right th,.twin .right td{padding-left:8px;padding-right:8px}
 td.nm .up{display:block;font-size:12px;color:var(--faint);line-height:1.1;overflow:hidden;text-overflow:ellipsis}
 td.nm .main{display:block;line-height:1.25;overflow:hidden;text-overflow:ellipsis}
@@ -296,7 +299,7 @@ td.btncell{width:1%;padding-left:2px}
     </div>
   </section>
 
-  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 14. 오후 3:23:31</div>
+  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 14. 오후 4:17:12</div>
 </main>
 
 <div class="modal-ov" id="modal-ov" onclick="if(event.target===this) closeCampaignModal()">
