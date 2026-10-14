@@ -91,6 +91,7 @@ body.m-tiktok .band-logo{padding:0;background:#000}
 .kpi .v small{font-size:12px;font-weight:400;color:#9aa1b5;margin-left:2px;letter-spacing:0}
 .kpi .dl{font-size:13px;margin-top:6px;color:var(--faint);white-space:nowrap}
 .kpi .dl .up{color:var(--good)}.kpi .dl .dn{color:var(--bad)}
+.kpi .dl .vs{color:var(--faint);font-size:12px;margin-left:3px}
 
 
 /* 차트 */
@@ -295,7 +296,7 @@ td.btncell{width:1%;padding-left:2px}
     </div>
   </section>
 
-  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 14. 오후 1:56:48</div>
+  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 14. 오후 1:58:23</div>
 </main>
 
 <div class="modal-ov" id="modal-ov" onclick="if(event.target===this) closeCampaignModal()">
@@ -511,8 +512,9 @@ function renderKPI() {
   ];
   document.getElementById('kpis').innerHTML = cards.map(function (c) {
     var isR = c.roas !== undefined;
-    var v = isR ? (m.cost > 0 ? Math.round(c.roas) + '<small>%</small>' : '-') : c.v;
-    var dl = hasPrev ? deltaHtml(c.c, c.p, isR) : '';
+    var vsTxt = pr[2] === 1 ? '전일 대비' : '직전 ' + pr[2] + '일 대비';
+    var vsTxt = pr[2] === 1 ? '전일(' + mdw(pr[0]) + ') 대비' : '직전 ' + pr[2] + '일 대비';
+    var dl = hasPrev ? deltaHtml(c.c, c.p, isR) + (deltaHtml(c.c, c.p, isR) ? ' <span class="vs">' + vsTxt + '</span>' : '') : '';
     return '<div class="kpi' + (c.k === CHART_METRIC ? ' sel' : '') + '" data-k="' + c.k + '" title="클릭하면 아래 일자별 차트가 이 지표로 바뀝니다"><span class="pick">차트 ▾</span><div class="l">' + c.l + '</div><div class="v">' + v + '</div><div class="dl">' + (dl || '&nbsp;') + '</div></div>';
   }).join('');
   document.querySelectorAll('#kpis .kpi').forEach(function (el) {
