@@ -296,7 +296,7 @@ td.btncell{width:1%;padding-left:2px}
     </div>
   </section>
 
-  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 14. 오후 1:58:23</div>
+  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 14. 오후 2:39:06</div>
 </main>
 
 <div class="modal-ov" id="modal-ov" onclick="if(event.target===this) closeCampaignModal()">
@@ -359,21 +359,25 @@ document.getElementById('target-roas-input').addEventListener('input', function 
 
 /* ── 포맷 ── */
 function h(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-function won(n) { // 표 금액: 1만 이상은 만 단위, 미만은 원
-  n = Math.round(n || 0);
-  if (Math.abs(n) >= 100000000) { var v = n / 100000000; return (v === Math.round(v) ? v : v.toFixed(2)) + '억'; }
-  if (Math.abs(n) >= 10000) return (Math.round(n / 1000) / 10).toLocaleString() + '만';
-  return n.toLocaleString() + '원';
+// 숫자 표기 (2026-10-14 사용자 지정): KPI·성과 상세는 소수점 없이 반올림, "일자별 표 펼치기"만 온전한 숫자(FULL_NUM)
+var FULL_NUM = false;
+function manWon(n) { // 1억 이상 "1억 3,526만", 1만 이상 "3,392만", 미만 "8,500원"
+  n = Math.round(n || 0); var a = Math.abs(n), sg = n < 0 ? '-' : '';
+  if (a >= 100000000) { var eok = Math.floor(a / 100000000), man = Math.round((a % 100000000) / 10000); if (man === 10000) { eok++; man = 0; } return sg + eok + '억' + (man ? ' ' + man.toLocaleString() + '만' : ''); }
+  if (a >= 10000) return sg + Math.round(a / 10000).toLocaleString() + '만';
+  return sg + a.toLocaleString() + '원';
+}
+function won(n) { // 표 금액
+  if (FULL_NUM) return Math.round(n || 0).toLocaleString();
+  return manWon(n);
 }
 function kpiWon(n) {
-  n = Math.round(n || 0);
-  if (n >= 100000000) { var v = n / 100000000; return (v === Math.round(v) ? v : v.toFixed(2)) + '억<small>원</small>'; }
-  if (n >= 10000) return (Math.round(n / 1000) / 10).toLocaleString() + '만<small>원</small>';
-  return n.toLocaleString() + '<small>원</small>';
+  var t = manWon(n);
+  return /원$/.test(t) ? t.replace(/원$/, '<small>원</small>') : t + '<small>원</small>';
 }
 function cnt(n) { n = Math.round(n || 0); return n.toLocaleString(); }
-function cnt2(n) { n = n || 0; return (Math.round(n * 10) / 10).toLocaleString(); }
-function pct(n) { return isFinite(n) ? Math.round(n) + '%' : '-'; }
+function cnt2(n) { n = n || 0; return FULL_NUM ? n.toLocaleString(undefined, { maximumFractionDigits: 2 }) : Math.round(n).toLocaleString(); }
+function pct(n) { return isFinite(n) ? (FULL_NUM ? (Math.round(n * 10) / 10).toFixed(1) : Math.round(n)) + '%' : '-'; }
 function pct2(n) { return (n || 0).toFixed(2) + '%'; }
 function roasTone(r) { var t = TARGET_ROAS || 150; if (!isFinite(r) || r <= 0) return 'none'; return r >= t ? 'good' : r >= t * 0.8 ? 'mid' : 'bad'; }
 // 목표 대비 색은 순ROAS에만 — 목표가 순ROAS 기준이라 다른 ROAS에 같은 잣대를 대면 오해를 부른다
@@ -493,7 +497,7 @@ function renderBand() {
 function deltaHtml(cur, prev, isRoas) {
   if (!(prev > 0) || !isFinite(cur)) return '';
   if (isRoas) { var dp = Math.round(cur - prev); return '<span class="' + (dp >= 0 ? 'up' : 'dn') + '">' + (dp >= 0 ? '▲ ' : '▼ ') + Math.abs(dp) + '%p</span>'; }
-  var d = (cur - prev) / prev * 100; return '<span class="' + (d >= 0 ? 'up' : 'dn') + '">' + (d >= 0 ? '▲ ' : '▼ ') + Math.abs(d).toFixed(1) + '%</span>';
+  var d = (cur - prev) / prev * 100; return '<span class="' + (d >= 0 ? 'up' : 'dn') + '">' + (d >= 0 ? '▲ ' : '▼ ') + Math.round(Math.abs(d)) + '%</span>';
 }
 function renderKPI() {
   var r = getRange(CUR_PERIOD), pr = prevRange(r[0], r[1]);
@@ -512,8 +516,8 @@ function renderKPI() {
   ];
   document.getElementById('kpis').innerHTML = cards.map(function (c) {
     var isR = c.roas !== undefined;
+    var v = isR ? (m.cost > 0 ? Math.round(c.roas) + '<small>%</small>' : '-') : c.v;
     var vsTxt = pr[2] === 1 ? '전일 대비' : '직전 ' + pr[2] + '일 대비';
-    var vsTxt = pr[2] === 1 ? '전일(' + mdw(pr[0]) + ') 대비' : '직전 ' + pr[2] + '일 대비';
     var dl = hasPrev ? deltaHtml(c.c, c.p, isR) + (deltaHtml(c.c, c.p, isR) ? ' <span class="vs">' + vsTxt + '</span>' : '') : '';
     return '<div class="kpi' + (c.k === CHART_METRIC ? ' sel' : '') + '" data-k="' + c.k + '" title="클릭하면 아래 일자별 차트가 이 지표로 바뀝니다"><span class="pick">차트 ▾</span><div class="l">' + c.l + '</div><div class="v">' + v + '</div><div class="dl">' + (dl || '&nbsp;') + '</div></div>';
   }).join('');
@@ -649,7 +653,8 @@ function renderDailyTable(ser) {
     if (DSORT.key === 'date') return (a.d < b.d ? -1 : a.d > b.d ? 1 : 0) * DSORT.dir;
     return ((a.m[DSORT.key] || 0) - (b.m[DSORT.key] || 0)) * DSORT.dir || (a.d < b.d ? 1 : -1);
   });
-  var rows = list.map(function (x) { return '<tr class="noclick"><td class="l">' + mdwHtml(x.d) + '</td>' + cells(cols, x.m) + '</tr>'; }).join('');
+  FULL_NUM = true;
+  var rows; try { rows = list.map(function (x) { return '<tr class="noclick"><td class="l">' + mdwHtml(x.d) + '</td>' + cells(cols, x.m) + '</tr>'; }).join(''); } finally { FULL_NUM = false; }
   function th(key, title, cls, tip) {
     var on = DSORT.key === key;
     return '<th class="' + (cls || '') + (on ? ' sorted' : '') + '" data-dsort="' + key + '"' + (tip ? ' title="' + tip + '"' : '') + '>' + title + (on ? '<span class="ar">' + (DSORT.dir < 0 ? '▼' : '▲') + '</span>' : '') + '</th>';
