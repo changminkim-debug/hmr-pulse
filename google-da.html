@@ -19,7 +19,7 @@
 }
 body.m-tiktok{--band:#0c0c10;--band2:#17171d;--band-mute:#9a9aa8;--ac:#111;--ac-soft:#efeff2}
 html{scroll-padding-top:120px}
-body{font-family:'Pretendard Variable','Pretendard','Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;font-feature-settings:'tnum'}
+body{font-family:'Pretendard Variable','Pretendard','Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;font-feature-settings:'tnum'}
 .num{font-variant-numeric:tabular-nums}
 
 /* ── 헤더 밴드 ── */
@@ -27,168 +27,176 @@ body{font-family:'Pretendard Variable','Pretendard','Segoe UI','Malgun Gothic','
 body.m-tiktok .band::after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,#25f4ee,#fe2c55)}
 .band-in{max-width:1480px;margin:0 auto;padding:22px 28px 20px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
 .band-l{display:flex;align-items:center;gap:14px;min-width:0}
-.band-logo{width:44px;height:44px;border-radius:11px;background:#fff;object-fit:contain;padding:5px;flex-shrink:0}
+.band-logo{width:50px;height:50px;border-radius:12px;background:#fff;object-fit:contain;padding:5px;flex-shrink:0}
 body.m-tiktok .band-logo{padding:0;background:#000}
-.band-kicker{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--band-mute);font-weight:600}
-.band-title{font-size:23px;font-weight:700;letter-spacing:-.4px;line-height:1.25}
-.band-meta{font-size:12.5px;color:var(--band-mute);margin-top:3px}
+.band-kicker{font-size:12.5px;letter-spacing:1.6px;text-transform:uppercase;color:var(--band-mute);font-weight:600}
+.band-title{font-size:26.5px;font-weight:700;letter-spacing:-.4px;line-height:1.25}
+.band-meta{font-size:14.5px;color:var(--band-mute);margin-top:3px}
 .band-meta b{color:var(--band-ink);font-weight:600}
 .band-r{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .media-tog{display:inline-flex;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:3px;gap:2px}
-.media-tog button{border:none;background:transparent;color:var(--band-mute);padding:6px 13px 6px 7px;border-radius:7px;font:600 13px/1 inherit;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.media-tog button{border:none;background:transparent;color:var(--band-mute);padding:6px 13px 6px 7px;border-radius:7px;font:600 15px/1 inherit;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
 .media-tog button:hover{color:#fff}
 .media-tog button.active{background:#fff;color:#15213b}
-.media-tog img{width:20px;height:20px;border-radius:5px;object-fit:contain}
+.media-tog img{width:22px;height:22px;border-radius:5px;object-fit:contain}
 .media-tog button:not(.active) img{opacity:.6}
-.xls-btn{background:transparent;color:var(--band-ink);border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:7px 13px;font:600 12.5px inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
+.xls-btn{background:transparent;color:var(--band-ink);border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:7px 13px;font:600 14.5px inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
 .xls-btn:hover{background:rgba(255,255,255,.1)}
 
 /* ── 고정 툴바 ── */
 .bar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
 .bar-in{max-width:1480px;margin:0 auto;padding:9px 28px;display:flex;flex-direction:column;gap:7px}
 .bar-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.bar-lbl{font-size:11px;font-weight:600;color:var(--mute);letter-spacing:.4px;width:30px;flex-shrink:0}
+.bar-lbl{font-size:12.5px;font-weight:600;color:var(--mute);letter-spacing:.4px;width:36px;flex-shrink:0}
 .seg{display:inline-flex;flex-wrap:wrap;gap:4px}
-.seg button{border:1px solid var(--line);background:#fff;color:var(--ink2);border-radius:7px;padding:5px 10px;font:500 12.5px inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
-.seg button .d{color:var(--mute);font-size:11.5px;margin-left:4px}
+.seg button{border:1px solid var(--line);background:#fff;color:var(--ink2);border-radius:7px;padding:6px 12px;font:500 14.5px inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
+.seg button .d{color:var(--mute);font-size:13px;margin-left:4px}
 .seg button:hover{border-color:var(--ac);color:var(--ac)}
 .seg button.active{background:var(--ac);border-color:var(--ac);color:#fff}
 .seg button.active .d{color:rgba(255,255,255,.75)}
 .custom{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:7px;padding:2px 3px 2px 8px;background:#fff}
-.custom input{border:none;font:12.5px inherit;font-family:inherit;color:var(--ink);outline:none;width:118px;background:transparent}
+.custom input{border:none;font:14.5px inherit;font-family:inherit;color:var(--ink);outline:none;width:136px;background:transparent}
 .custom span{color:var(--faint)}
-.custom button{border:none;background:var(--ac-soft);color:var(--ac);border-radius:5px;padding:4px 9px;font:600 12px inherit;font-family:inherit;cursor:pointer}
+.custom button{border:none;background:var(--ac-soft);color:var(--ac);border-radius:5px;padding:4px 9px;font:600 14px inherit;font-family:inherit;cursor:pointer}
 .custom button.active{background:var(--ac);color:#fff}
 .spacer{flex:1}
-.goal{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink2)}
-.goal input{width:54px;border:1px solid var(--line);border-radius:6px;padding:3px 6px;font:600 13px inherit;font-family:inherit;text-align:right;color:var(--ink)}
+.goal{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--ink2)}
+.goal input{width:64px;border:1px solid var(--line);border-radius:6px;padding:3px 6px;font:600 15px inherit;font-family:inherit;text-align:right;color:var(--ink)}
 .chips{display:flex;gap:4px;flex-wrap:wrap}
-.chip{border:1px solid var(--line);background:#fff;border-radius:20px;padding:3px 11px;font-size:12.5px;color:var(--ink2);cursor:pointer;white-space:nowrap}
+.chip{border:1px solid var(--line);background:#fff;border-radius:20px;padding:4px 13px;font-size:14.5px;color:var(--ink2);cursor:pointer;white-space:nowrap}
 .chip:hover{border-color:var(--ac);color:var(--ac)}
 .chip.active{background:var(--ink);border-color:var(--ink);color:#fff}
+.chip.dim{opacity:.38;border-style:dashed}
+.chip.dim.active{opacity:.7}
+.chip.on:not(.active){border-color:#c9cfdb;color:var(--ink);font-weight:600}
 
 /* ── 본문 ── */
 .wrap{max-width:1480px;margin:0 auto;padding:18px 28px 28px;display:flex;flex-direction:column;gap:18px}
-.notice{background:#fff8e1;border:1px solid #f3dc9a;color:#7a5a00;border-radius:8px;padding:9px 14px;font-size:12.5px;display:none}
+.notice{background:#fff8e1;border:1px solid #f3dc9a;color:#7a5a00;border-radius:8px;padding:9px 14px;font-size:14.5px;display:none}
 .notice.show{display:block}
 .h2{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:9px}
-.h2 .t{font-size:15px;font-weight:700;letter-spacing:-.2px}
-.h2 .s{font-size:12px;color:var(--mute)}
+.h2 .t{font-size:17.5px;font-weight:700;letter-spacing:-.2px}
+.h2 .s{font-size:14px;color:var(--mute)}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px}
 
 /* KPI 스트립 */
-.kpis{display:grid;grid-template-columns:repeat(7,1fr)}
-.kpi{padding:15px 16px 14px;border-left:1px solid var(--line2);min-width:0}
-.kpi:first-child{border-left:none}
-.kpi .l{font-size:12px;color:var(--mute);white-space:nowrap}
-.kpi .v{font-size:25px;font-weight:400;letter-spacing:-.5px;line-height:1.3;margin-top:4px;white-space:nowrap;color:var(--ink)}
-.kpi .v small{font-size:13px;color:var(--mute);margin-left:2px}
+.kpis{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px}
+.kpi{padding:17px 18px 15px;min-width:0;background:#fff;border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;position:relative}
+.kpi:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(21,33,59,.10);border-color:#cfd5e1}
+.kpi.sel{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 6px 16px rgba(21,33,59,.08);background:var(--ac-soft)}
+.kpi.sel .l{color:var(--ac);font-weight:600}
+.kpi .pick{position:absolute;top:12px;right:13px;font-size:11px;color:var(--ac);opacity:0;transition:opacity .15s}
+.kpi:hover .pick,.kpi.sel .pick{opacity:1}
+.kpi .l{font-size:14px;color:var(--mute);white-space:nowrap}
+.kpi .v{font-size:28.5px;font-weight:400;letter-spacing:-.5px;line-height:1.3;margin-top:4px;white-space:nowrap;color:var(--ink)}
+.kpi .v small{font-size:15px;color:var(--mute);margin-left:2px}
 .kpi .v.good{color:var(--good)}.kpi .v.mid{color:var(--mid)}.kpi .v.bad{color:var(--bad)}
-.kpi .dl{font-size:11.5px;margin-top:3px;color:var(--faint);white-space:nowrap}
+.kpi .dl{font-size:13px;margin-top:3px;color:var(--faint);white-space:nowrap}
 .kpi .dl .up{color:var(--good)}.kpi .dl .dn{color:var(--bad)}
-.kpi.roas{background:linear-gradient(180deg,#fafbfd,#fff)}
+
 
 /* 차트 */
 .chart-panel{padding:16px 18px 12px}
-.chart-wrap{position:relative;height:270px}
-.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px;padding-top:9px;border-top:1px dashed var(--line);font-size:12px;color:var(--ink2)}
+.chart-wrap{position:relative;height:310px}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px;padding-top:9px;border-top:1px dashed var(--line);font-size:14px;color:var(--ink2)}
 .foot b{font-weight:600;color:var(--ink)}
-.lnk{border:none;background:none;color:var(--ac);font:600 12px inherit;font-family:inherit;cursor:pointer;padding:2px 0}
+.lnk{border:none;background:none;color:var(--ac);font:600 14px inherit;font-family:inherit;cursor:pointer;padding:2px 0}
 .daily-box{display:none;margin-top:10px}
 .daily-box.show{display:block}
 
 /* 성과 표 */
 .tbl-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:9px}
 .tabs{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
-.tabs button{border:none;border-left:1px solid var(--line);background:#fff;padding:6px 15px;font:500 13px inherit;font-family:inherit;color:var(--ink2);cursor:pointer}
+.tabs button{border:none;border-left:1px solid var(--line);background:#fff;padding:7px 17px;font:500 15px inherit;font-family:inherit;color:var(--ink2);cursor:pointer}
 .tabs button:first-child{border-left:none}
 .tabs button.active{background:var(--ink);color:#fff}
-.crumb{font-size:13px;color:var(--mute);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.crumb{font-size:15px;color:var(--mute);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .crumb a{color:var(--ac);cursor:pointer;text-decoration:none}
 .crumb a:hover{text-decoration:underline}
 .crumb .cur{color:var(--ink);font-weight:600}
 .twin{display:grid;grid-template-columns:minmax(0,2.3fr) minmax(0,1fr);gap:12px;align-items:start}
-.box-t{font-size:12px;font-weight:600;color:var(--ink2);padding:10px 14px 0;display:flex;justify-content:space-between}
+.box-t{font-size:14px;font-weight:600;color:var(--ink2);padding:10px 14px 0;display:flex;justify-content:space-between}
 .box-t span{color:var(--faint);font-weight:400}
 .tscroll{overflow:auto;max-height:620px}
 table{width:100%;border-collapse:collapse}
-th{position:sticky;top:0;z-index:2;background:#fff;padding:9px 10px;font-size:11.5px;font-weight:600;color:var(--mute);text-align:right;white-space:nowrap;border-bottom:1px solid var(--line);cursor:pointer;user-select:none}
+th{position:sticky;top:0;z-index:2;background:#fff;padding:10px 11px;font-size:13px;font-weight:600;color:var(--mute);text-align:right;white-space:nowrap;border-bottom:1px solid var(--line);cursor:pointer;user-select:none}
 th:hover{color:var(--ink)}
 th.l{text-align:left}
 th.sorted{color:var(--ink)}
-th .ar{font-size:9px;margin-left:3px}
-td{height:38px;padding:0 10px;font-size:13px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line2);font-variant-numeric:tabular-nums;color:var(--ink)}
+th .ar{font-size:10.5px;margin-left:3px}
+td{height:44px;padding:0 11px;font-size:15px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line2);font-variant-numeric:tabular-nums;color:var(--ink)}
 td.l{text-align:left}
 .tscroll td.l:first-child{position:sticky;left:0;z-index:1;background:#fff}
 .tscroll th.l:first-child{left:0;z-index:3}
 .tscroll tr.tot td.l:first-child{background:#fafbfc}
 .tscroll tr.row:hover td.l:first-child,.tscroll tr.hov td.l:first-child{background:#f5f7fb}
 td.nm{max-width:320px;overflow:hidden;text-overflow:ellipsis}
-.twin .right td.nm{max-width:128px}
+.twin .right td.nm{max-width:150px}
 .twin .right th,.twin .right td{padding-left:8px;padding-right:8px}
-td.nm .up{display:block;font-size:10.5px;color:var(--faint);line-height:1.1;overflow:hidden;text-overflow:ellipsis}
+td.nm .up{display:block;font-size:12px;color:var(--faint);line-height:1.1;overflow:hidden;text-overflow:ellipsis}
 td.nm .main{display:block;line-height:1.25;overflow:hidden;text-overflow:ellipsis}
 tr.row{cursor:pointer}
 tr.row:hover td,tr.hov td{background:#f5f7fb}
 tr.tot td{background:#fafbfc;font-weight:600;border-bottom:1px solid var(--line)}
 tr.noclick{cursor:default}
 .r{font-weight:600}
-.r.good{color:var(--good)}.r.mid{color:var(--mid)}.r.bad{color:var(--bad)}.r.none{color:var(--faint);font-weight:400}
-.badge{font-size:10.5px;font-weight:500;padding:1px 6px;border-radius:4px;margin-left:5px;vertical-align:1px;border:1px solid}
+.r.good{color:var(--good)}.r.mid{color:var(--mid)}.r.bad{color:var(--bad)}.r.none{color:var(--faint);font-weight:400}.r.plain{font-weight:400;color:var(--ink)}
+th.hl{color:var(--ac);background:#eef2fa;box-shadow:inset 0 -2px 0 var(--ac)}
+td.hl{background:rgba(47,79,143,.055);font-size:1.07em}
+td.hl .r{font-weight:700}
+tr.tot td.hl{background:rgba(47,79,143,.10)}
+tr.row:hover td.hl,tr.hov td.hl{background:rgba(47,79,143,.11)}
+body.m-tiktok th.hl{background:#f0f0f3}body.m-tiktok td.hl{background:rgba(0,0,0,.04)}
+.badge{font-size:12px;font-weight:500;padding:1px 6px;border-radius:4px;margin-left:5px;vertical-align:1px;border:1px solid}
 .b-ret{color:#6b3fb0;border-color:#d9c9f2}.b-new{color:#1f5fa8;border-color:#c5d8f0}.b-smart{color:#2f7a4d;border-color:#c4e3cf}
 .b-man{color:#8a3d9e;border-color:#e3c9ea}.b-orph{color:#b2560e;border-color:#f1d2b5}.b-pause{color:#8b93a5;border-color:#dfe2e8}.b-grp{color:#557;border-color:#dde}
-.dbtn{border:1px solid var(--line);background:#fff;border-radius:6px;padding:2px 8px;font:500 11.5px inherit;font-family:inherit;color:var(--ac);cursor:pointer;white-space:nowrap}
+.dbtn{border:1px solid var(--line);background:#fff;border-radius:6px;padding:3px 9px;font:500 13px inherit;font-family:inherit;color:var(--ac);cursor:pointer;white-space:nowrap}
 .dbtn:hover{background:var(--ac);color:#fff;border-color:var(--ac)}
 td.btncell{width:1%;padding-left:2px}
 .wk-sat{color:var(--sat)}.wk-sun{color:var(--sun)}
 .empty{text-align:center!important;color:var(--faint);padding:24px!important;height:auto}
 
-.defs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:4px 18px;font-size:11.5px;color:var(--mute);padding:4px 2px 0}
-.defs b{color:var(--ink2);font-weight:600}
-.ft{text-align:center;font-size:11px;color:var(--faint);padding:4px 0 20px}
+.ft{text-align:center;font-size:12.5px;color:var(--faint);padding:4px 0 20px}
 
 /* 모달 */
 .modal-ov{display:none;position:fixed;inset:0;background:rgba(15,20,35,.5);z-index:50;align-items:center;justify-content:center;padding:20px}
 .modal-ov.show{display:flex}
 .modal{background:#fff;border-radius:12px;width:100%;max-width:1180px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden}
 .modal-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:15px 20px;border-bottom:1px solid var(--line)}
-.modal-t{font-size:15px;font-weight:700}
-.modal-s{font-size:12px;color:var(--mute);margin-top:2px}
+.modal-t{font-size:17.5px;font-weight:700}
+.modal-s{font-size:14px;color:var(--mute);margin-top:2px}
 .modal-x{border:1px solid var(--line);background:#fff;border-radius:7px;padding:4px 10px;cursor:pointer;color:var(--ink2)}
 .modal-b{padding:14px 20px 18px;overflow:auto}
 
 /* 비밀번호 */
 #pw-overlay{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:99999}
 #pw-box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:40px 36px;display:flex;flex-direction:column;align-items:center;gap:16px;min-width:300px}
-#pw-logo{font-size:19px;font-weight:700}
-#pw-sub{font-size:13px;color:var(--mute);margin-top:-8px}
-#pw-input{width:100%;padding:11px 14px;border-radius:8px;border:1px solid var(--line);font-size:15px;outline:none;text-align:center;letter-spacing:3px}
+#pw-logo{font-size:22px;font-weight:700}
+#pw-sub{font-size:15px;color:var(--mute);margin-top:-8px}
+#pw-input{width:100%;padding:11px 14px;border-radius:8px;border:1px solid var(--line);font-size:17.5px;outline:none;text-align:center;letter-spacing:3px}
 #pw-input:focus{border-color:var(--ac)}
-#pw-btn{width:100%;padding:11px;border-radius:8px;background:#15213b;color:#fff;font-size:14px;font-weight:600;border:none;cursor:pointer}
-#pw-err{font-size:12px;color:var(--bad);height:16px}
+#pw-btn{width:100%;padding:11px;border-radius:8px;background:#15213b;color:#fff;font-size:16px;font-weight:600;border:none;cursor:pointer}
+#pw-err{font-size:14px;color:var(--bad);height:16px}
 
 @media(max-width:1280px){
-  .kpis{grid-template-columns:repeat(4,1fr)}
-  .kpi:nth-child(5){border-left:none}
-  .kpi:nth-child(n+5){border-top:1px solid var(--line2)}
+  .kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
   .twin{grid-template-columns:minmax(0,1fr)}
 }
 @media(max-width:760px){
   .band-in{padding:16px 14px 14px;align-items:flex-start}
-  .band-title{font-size:19px}
+  .band-title{font-size:22px}
   .bar{position:static}
   .bar-in{padding:8px 12px}
   .bar-lbl{display:none}
-  .seg button{padding:4px 8px;font-size:12px}
+  .seg button{padding:4px 8px;font-size:14px}
   .custom input{width:auto;flex:1;min-width:0}
   .custom{width:100%}
   .wrap{padding:12px 10px 20px;gap:14px}
-  .kpis{grid-template-columns:repeat(2,1fr)}
-  .kpi{border-left:none!important;border-top:1px solid var(--line2)}
-  .kpi:nth-child(-n+2){border-top:none}
-  .kpi:nth-child(even){border-left:1px solid var(--line2)!important}
-  .kpi .v{font-size:21px}
-  .chart-wrap{height:230px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .kpi{padding:13px 13px 12px;border-radius:12px}
+  .kpi:hover{transform:none}
+  .kpi .v{font-size:24px}
+  .chart-wrap{height:250px}
   .chart-panel{padding:12px 10px 10px}
   td.nm{max-width:170px}
   .modal-ov{padding:6px}
@@ -251,7 +259,7 @@ td.btncell{width:1%;padding-left:2px}
       <span class="bar-lbl">품목</span>
       <div class="chips" id="product-chips"></div>
       <div class="spacer"></div>
-      <label class="goal">목표 ROAS <input type="number" id="target-roas-input" value="150" min="0" step="10">%</label>
+      <label class="goal" title="Cafe24 순ROAS 기준 · 매체별로 따로 저장">목표 순ROAS <input type="number" id="target-roas-input" value="150" min="0" step="10">%</label>
     </div>
   </div>
 </div>
@@ -261,11 +269,11 @@ td.btncell{width:1%;padding-left:2px}
 
   <section>
     <div class="h2"><span class="t">핵심 지표</span><span class="s" id="kpi-sub"></span></div>
-    <div class="panel kpis" id="kpis"></div>
+    <div class="kpis" id="kpis"></div>
   </section>
 
   <section>
-    <div class="h2"><span class="t">일자별 Cafe24 ROAS</span><span class="s" id="chart-sub"></span></div>
+    <div class="h2"><span class="t" id="chart-title">일자별 순ROAS</span><span class="s" id="chart-sub"></span></div>
     <div class="panel chart-panel">
       <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
       <div class="foot"><div id="chart-insight"></div><button class="lnk" id="daily-toggle" onclick="toggleDailyTable()">일자별 표 펼치기 ▾</button></div>
@@ -281,26 +289,18 @@ td.btncell{width:1%;padding-left:2px}
     </div>
     <div class="twin">
       <div class="panel left"><div class="box-t">전환 지표 <span id="left-sub"></span></div><div class="tscroll" id="left-scroll"><table id="t-left"></table></div></div>
-      <div class="panel right"><div class="box-t">유입 지표 <span>CVR = 매체 전환수 ÷ 클릭수</span></div><div class="tscroll" id="right-scroll"><table id="t-right"></table></div></div>
+      <div class="panel right"><div class="box-t">유입 지표</div><div class="tscroll" id="right-scroll"><table id="t-right"></table></div></div>
     </div>
   </section>
 
-  <div class="defs">
-    <div><b>매체 ROAS</b> 매체 전환가치 ÷ 비용</div>
-    <div><b>Cafe24 ROAS</b> Cafe24 RAW 매출 ÷ 비용</div>
-    <div><b>순ROAS</b> Cafe24 순매출(RAW × 86%) ÷ 비용</div>
-    <div><b>CTR</b> 클릭수 ÷ 노출수</div>
-    <div><b>CVR</b> 매체 전환수 ÷ 클릭수</div>
-    <div><b>당일</b> 집계 중인 오늘 날짜는 표시하지 않음</div>
-  </div>
-  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 14. 오전 11:25:36</div>
+  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 14. 오전 11:39:02</div>
 </main>
 
 <div class="modal-ov" id="modal-ov" onclick="if(event.target===this) closeCampaignModal()">
   <div class="modal">
     <div class="modal-hd"><div><div class="modal-t" id="modal-t"></div><div class="modal-s" id="modal-s"></div></div><button class="modal-x" onclick="closeCampaignModal()">닫기</button></div>
     <div class="modal-b">
-      <div class="chart-wrap" style="height:220px"><canvas id="modal-chart"></canvas></div>
+      <div class="chart-wrap" style="height:250px"><canvas id="modal-chart"></canvas></div>
       <div class="tscroll" style="max-height:380px;margin-top:12px;border:1px solid var(--line);border-radius:8px"><table id="modal-table"></table></div>
     </div>
   </div>
@@ -334,7 +334,11 @@ function iso(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padSta
 stripToday(DATA_GOOGLE);
 stripToday(DATA_TIKTOK);
 
-var TARGET_ROAS = parseInt(localStorage.getItem('gda_target_roas')) || 150;
+// 목표 ROAS — Cafe24 순ROAS 기준, 매체별로 따로 저장 (2026-10-14 사용자 지정)
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+function loadTarget(m) { var v = parseInt(lsGet('gda_target_roas_' + m)); if (isNaN(v) && m === 'google') v = parseInt(lsGet('gda_target_roas')); return isNaN(v) ? 150 : v; }
+var TARGET_ROAS = loadTarget('google');
 var CUR_PERIOD = 'yesterday';
 var CUSTOM_RANGE = null;
 var SELECTED_PRODUCT = '전체';
@@ -347,7 +351,7 @@ var DAILY_OPEN = false;
 document.getElementById('target-roas-input').value = TARGET_ROAS;
 document.getElementById('target-roas-input').addEventListener('input', function (e) {
   var v = parseInt(e.target.value);
-  if (!isNaN(v) && v >= 0) { TARGET_ROAS = v; localStorage.setItem('gda_target_roas', v); renderAll(); }
+  if (!isNaN(v) && v >= 0) { TARGET_ROAS = v; lsSet('gda_target_roas_' + CUR_MEDIA, v); renderAll(); }
 });
 
 /* ── 포맷 ── */
@@ -369,7 +373,9 @@ function cnt2(n) { n = n || 0; return (Math.round(n * 10) / 10).toLocaleString()
 function pct(n) { return isFinite(n) ? Math.round(n) + '%' : '-'; }
 function pct2(n) { return (n || 0).toFixed(2) + '%'; }
 function roasTone(r) { var t = TARGET_ROAS || 150; if (!isFinite(r) || r <= 0) return 'none'; return r >= t ? 'good' : r >= t * 0.8 ? 'mid' : 'bad'; }
-function roasCell(r, hasCost) { if (!hasCost) return '<span class="r none">-</span>'; return '<span class="r ' + roasTone(r) + '">' + pct(r) + '</span>'; }
+// 목표 대비 색은 순ROAS에만 — 목표가 순ROAS 기준이라 다른 ROAS에 같은 잣대를 대면 오해를 부른다
+function roasCell(r, hasCost) { if (!hasCost) return '<span class="r none">-</span>'; return '<span class="r plain">' + pct(r) + '</span>'; }
+function netRoasCell(r, hasCost) { if (!hasCost) return '<span class="r none">-</span>'; return '<span class="r ' + roasTone(r) + '">' + pct(r) + '</span>'; }
 // 날짜 + 요일 한 글자 — "10/13 월"
 function md(s) { var a = s.split('-').map(Number); return a[1] + '/' + a[2]; }
 function mdw(s) { return md(s) + ' ' + WD[parseISO(s).getDay()]; }
@@ -454,8 +460,14 @@ function initCustomDateInputs() {
 /* ── 품목 칩 ── */
 function renderChips() {
   var items = ['전체'].concat(DATA.byProduct.map(function (p) { return p.product; }));
+  // 선택 기간에 실적(비용 또는 Cafe24 매출)이 있는 품목만 진하게, 없는 품목은 흐리게 (클릭은 가능)
+  var r = getRange(CUR_PERIOD), live = {};
+  DATA.byProduct.forEach(function (p) { var t = sumRange(p.byDate, r[0], r[1]); live[p.product] = t.cost > 0 || t.orderAmount > 0; });
   var el = document.getElementById('product-chips');
-  el.innerHTML = items.map(function (n, i) { return '<span class="chip ' + (SELECTED_PRODUCT === n ? 'active' : '') + '" data-i="' + i + '">' + h(n) + '</span>'; }).join('');
+  el.innerHTML = items.map(function (n, i) {
+    var cls = (SELECTED_PRODUCT === n ? ' active' : '') + (i === 0 ? '' : live[n] ? ' on' : ' dim');
+    return '<span class="chip' + cls + '" data-i="' + i + '"' + (i > 0 && !live[n] ? ' title="이 기간 실적 없음"' : '') + '>' + h(n) + '</span>';
+  }).join('');
   el.querySelectorAll('.chip').forEach(function (c) {
     c.onclick = function () { SELECTED_PRODUCT = items[+c.dataset.i]; DRILL = { product: null, campaignId: null }; if (SELECTED_PRODUCT !== '전체' && VIEW === 'product') VIEW = 'campaign'; renderAll(); };
   });
@@ -487,37 +499,55 @@ function renderKPI() {
   document.getElementById('kpi-sub').textContent = rangeTxt(r[0], r[1]) + (SELECTED_PRODUCT !== '전체' ? ' · ' + SELECTED_PRODUCT : '') + (hasPrev ? ' · 증감은 직전 ' + pr[2] + '일(' + rangeTxt(pr[0], pr[1]) + ') 대비' : '');
   // 순서(2026-10-14 사용자 지정): 비용 > 매체 전환가치 > Cafe24 RAW 매출 > Cafe24 순매출 > 매체 ROAS > Cafe24 ROAS > Cafe24 순ROAS
   var cards = [
-    { l: '비용', v: kpiWon(m.cost), c: m.cost, p: pm.cost },
-    { l: '매체 전환가치', v: kpiWon(m.convValue), c: m.convValue, p: pm.convValue },
-    { l: 'Cafe24 RAW 매출', v: kpiWon(m.orderAmount), c: m.orderAmount, p: pm.orderAmount },
-    { l: 'Cafe24 순매출', v: kpiWon(m.netRevenue), c: m.netRevenue, p: pm.netRevenue },
-    { l: '매체 ROAS', roas: m.roasGoogle, c: m.roasGoogle, p: pm.roasGoogle },
-    { l: 'Cafe24 ROAS', roas: m.roasCafeRaw, c: m.roasCafeRaw, p: pm.roasCafeRaw },
-    { l: 'Cafe24 순ROAS', roas: m.roasCafe, c: m.roasCafe, p: pm.roasCafe }
+    { k: 'cost', l: '비용', v: kpiWon(m.cost), c: m.cost, p: pm.cost },
+    { k: 'convValue', l: '매체 전환가치', v: kpiWon(m.convValue), c: m.convValue, p: pm.convValue },
+    { k: 'orderAmount', l: 'Cafe24 RAW 매출', v: kpiWon(m.orderAmount), c: m.orderAmount, p: pm.orderAmount },
+    { k: 'netRevenue', l: 'Cafe24 순매출', v: kpiWon(m.netRevenue), c: m.netRevenue, p: pm.netRevenue },
+    { k: 'roasGoogle', l: '매체 ROAS', roas: m.roasGoogle, c: m.roasGoogle, p: pm.roasGoogle },
+    { k: 'roasCafeRaw', l: 'Cafe24 ROAS', roas: m.roasCafeRaw, c: m.roasCafeRaw, p: pm.roasCafeRaw },
+    { k: 'roasCafe', l: 'Cafe24 순ROAS', roas: m.roasCafe, c: m.roasCafe, p: pm.roasCafe, net: true }
   ];
   document.getElementById('kpis').innerHTML = cards.map(function (c) {
     var isR = c.roas !== undefined;
     var v = isR ? (m.cost > 0 ? Math.round(c.roas) + '<small>%</small>' : '-') : c.v;
     var dl = hasPrev ? deltaHtml(c.c, c.p, isR) : '';
-    return '<div class="kpi' + (isR ? ' roas' : '') + '"><div class="l">' + c.l + '</div><div class="v' + (isR && m.cost > 0 ? ' ' + roasTone(c.roas) : '') + '">' + v + '</div><div class="dl">' + (dl || '&nbsp;') + '</div></div>';
+    return '<div class="kpi' + (c.k === CHART_METRIC ? ' sel' : '') + '" data-k="' + c.k + '" title="클릭하면 아래 일자별 차트가 이 지표로 바뀝니다"><span class="pick">차트 ▾</span><div class="l">' + c.l + '</div><div class="v' + (c.net && m.cost > 0 ? ' ' + roasTone(c.roas) : '') + '">' + v + '</div><div class="dl">' + (dl || '&nbsp;') + '</div></div>';
   }).join('');
+  document.querySelectorAll('#kpis .kpi').forEach(function (el) {
+    el.onclick = function () { CHART_METRIC = el.dataset.k; renderKPI(); renderChart(); };
+  });
 }
 
-/* ── 일자별 Cafe24 ROAS 막대 ── */
-function roasBarConfig(dates, ms) {
-  var vals = ms.map(function (m) { return m.cost > 0 ? Math.round(m.roasCafeRaw) : null; });
+/* ── 일자별 막대 — KPI 카드에서 고른 지표 (기본 순ROAS) ── */
+var CHART_METRIC = 'roasCafe';
+var METRIC_DEF = {
+  cost: { t: '비용', money: true }, convValue: { t: '매체 전환가치', money: true },
+  orderAmount: { t: 'Cafe24 RAW 매출', money: true }, netRevenue: { t: 'Cafe24 순매출', money: true },
+  roasGoogle: { t: '매체 ROAS', desc: '매체 전환가치 ÷ 비용' }, roasCafeRaw: { t: 'Cafe24 ROAS', desc: 'Cafe24 RAW 매출 ÷ 비용' },
+  roasCafe: { t: '순ROAS', desc: 'Cafe24 순매출 ÷ 비용', target: true }
+};
+function metricVal(m, key) { var d = METRIC_DEF[key]; if (d.money) return Math.round(m[key] || 0); return m.cost > 0 ? Math.round(m[key]) : null; }
+function metricFmt(v, key) { if (v == null) return '-'; return METRIC_DEF[key].money ? won(v) : v + '%'; }
+function shortWon(v) { var a = Math.abs(v); return a >= 100000000 ? (v / 100000000) + '억' : a >= 10000 ? Math.round(v / 10000) + '만' : v; }
+function roasBarConfig(dates, ms, key) {
+  key = key || 'roasCafe';
+  var def = METRIC_DEF[key];
+  var vals = ms.map(function (m) { return metricVal(m, key); });
   var t = TARGET_ROAS || 150;
-  var col = function (v, a) { return v == null ? '#e4e6ec' : v >= t ? 'rgba(47,133,90,' + a + ')' : v >= t * 0.8 ? 'rgba(183,121,31,' + a + ')' : 'rgba(192,71,63,' + a + ')'; };
+  // 목표 대비 색은 순ROAS일 때만. 다른 지표는 단색.
+  var col = function (v, a) {
+    if (v == null) return '#e4e6ec';
+    if (!def.target) return CUR_MEDIA === 'tiktok' ? 'rgba(40,40,48,' + a + ')' : 'rgba(47,79,143,' + a + ')';
+    return v >= t ? 'rgba(47,133,90,' + a + ')' : v >= t * 0.8 ? 'rgba(183,121,31,' + a + ')' : 'rgba(192,71,63,' + a + ')';
+  };
+  var ds = [
+    { type: 'bar', label: def.t, data: vals, backgroundColor: vals.map(function (v) { return col(v, .78); }), hoverBackgroundColor: vals.map(function (v) { return col(v, 1); }),
+      borderRadius: 3, maxBarThickness: 34, order: 2,
+      datalabels: { display: function (c) { return (dates.length <= 12 || (window.innerWidth >= 760 && dates.length <= 35)) && c.dataset.data[c.dataIndex] != null; }, anchor: 'end', align: 'end', offset: 1, font: { size: 11.5 }, color: '#465064', formatter: function (v) { return def.money ? shortWon(v) : v + '%'; } } }
+  ];
+  if (def.target) ds.push({ type: 'line', label: '목표', data: dates.map(function () { return t; }), borderColor: 'rgba(21,33,59,.45)', borderDash: [4, 4], borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 0, order: 1 });
   return {
-    data: {
-      labels: dates.map(function (d) { return [md(d), WD[parseISO(d).getDay()]]; }),
-      datasets: [
-        { type: 'bar', label: 'Cafe24 ROAS', data: vals, backgroundColor: vals.map(function (v) { return col(v, .78); }), hoverBackgroundColor: vals.map(function (v) { return col(v, 1); }),
-          borderRadius: 3, maxBarThickness: 34, order: 2,
-          datalabels: { display: function (c) { return (dates.length <= 12 || (window.innerWidth >= 760 && dates.length <= 35)) && c.dataset.data[c.dataIndex] != null; }, anchor: 'end', align: 'end', offset: 1, font: { size: 10 }, color: '#465064', formatter: function (v) { return v + '%'; } } },
-        { type: 'line', label: '목표', data: dates.map(function () { return t; }), borderColor: 'rgba(21,33,59,.45)', borderDash: [4, 4], borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 0, order: 1 }
-      ]
-    },
+    data: { labels: dates.map(function (d) { return [md(d), WD[parseISO(d).getDay()]]; }), datasets: ds },
     options: {
       responsive: true, maintainAspectRatio: false, layout: { padding: { top: 20 } },
       interaction: { mode: 'index', intersect: false },
@@ -525,20 +555,24 @@ function roasBarConfig(dates, ms) {
         legend: { display: false },
         tooltip: {
           backgroundColor: '#15213b', padding: 10, cornerRadius: 6, displayColors: false,
-          titleFont: { size: 12.5, weight: '600' }, bodyFont: { size: 12 },
+          titleFont: { size: 14, weight: '600' }, bodyFont: { size: 13.5 },
           filter: function (it) { return it.datasetIndex === 0; },
           callbacks: {
             title: function (items) { var d = dates[items[0].dataIndex]; return d + ' (' + WD[parseISO(d).getDay()] + ')'; },
             label: function (it) {
-              var m = ms[it.dataIndex];
-              return ['Cafe24 ROAS  ' + (m.cost > 0 ? Math.round(m.roasCafeRaw) + '%' : '-'), '비용  ' + Math.round(m.cost).toLocaleString() + '원', 'Cafe24 매출  ' + Math.round(m.orderAmount).toLocaleString() + '원'];
+              var m = ms[it.dataIndex], v = metricVal(m, key);
+              var lines = [def.t + '  ' + (def.money ? Math.round(v).toLocaleString() + '원' : (v == null ? '-' : v + '%'))];
+              if (key !== 'cost') lines.push('비용  ' + Math.round(m.cost).toLocaleString() + '원');
+              if (key !== 'orderAmount') lines.push('Cafe24 RAW 매출  ' + Math.round(m.orderAmount).toLocaleString() + '원');
+              if (key !== 'netRevenue') lines.push('Cafe24 순매출  ' + Math.round(m.netRevenue).toLocaleString() + '원');
+              return lines;
             }
           }
         }
       },
       scales: {
-        x: { grid: { display: false }, ticks: { autoSkip: window.innerWidth < 760, maxRotation: 0, font: { size: 10.5 }, color: function (c) { var d = dates[c.index]; var w = d ? parseISO(d).getDay() : 1; return w === 6 ? '#2a58b0' : w === 0 ? '#c0304a' : '#8b93a5'; } } },
-        y: { beginAtZero: true, grid: { color: '#eef0f4' }, border: { display: false }, ticks: { color: '#b7bdca', font: { size: 10.5 }, callback: function (v) { return v + '%'; } } }
+        x: { grid: { display: false }, ticks: { autoSkip: window.innerWidth < 760, maxRotation: 0, font: { size: 12 }, color: function (c) { var d = dates[c.index]; var w = d ? parseISO(d).getDay() : 1; return w === 6 ? '#2a58b0' : w === 0 ? '#c0304a' : '#8b93a5'; } } },
+        y: { beginAtZero: true, grid: { color: '#eef0f4' }, border: { display: false }, ticks: { color: '#b7bdca', font: { size: 12 }, callback: function (v) { return def.money ? shortWon(v) : v + '%'; } } }
       }
     }
   };
@@ -551,21 +585,27 @@ function dailySeries(s, e) {
   });
 }
 function renderChart() {
-  var r = monthRange(), ser = dailySeries(r[0], r[1]);
+  var r = monthRange(), ser = dailySeries(r[0], r[1]), key = CHART_METRIC, def = METRIC_DEF[key];
   var dates = ser.map(function (x) { return x.d; }), ms = ser.map(function (x) { return x.m; });
-  document.getElementById('chart-sub').textContent = (CUR_PERIOD === 'lastMonth' ? '지난달 ' : '이번달 ') + rangeTxt(r[0], r[1]) + (SELECTED_PRODUCT !== '전체' ? ' · ' + SELECTED_PRODUCT : '') + ' · 막대 = RAW 매출 ÷ 비용, 점선 = 목표';
+  document.getElementById('chart-title').textContent = '일자별 ' + def.t;
+  document.getElementById('chart-sub').textContent = (CUR_PERIOD === 'lastMonth' ? '지난달 ' : '이번달 ') + rangeTxt(r[0], r[1]) + (SELECTED_PRODUCT !== '전체' ? ' · ' + SELECTED_PRODUCT : '') + (def.desc ? ' · ' + def.desc : '') + (def.target ? ', 점선 = 목표' : '') + ' · 위 카드를 누르면 지표 변경';
   if (trendChart) trendChart.destroy();
-  trendChart = new Chart(document.getElementById('trend-chart').getContext('2d'), roasBarConfig(dates, ms));
+  trendChart = new Chart(document.getElementById('trend-chart').getContext('2d'), roasBarConfig(dates, ms, key));
   // 한 줄 요약 (레퍼런스의 차트 하단 코멘트 형식)
-  var withCost = ser.filter(function (x) { return x.m.cost > 0; });
+  var withCost = ser.filter(function (x) { return def.money ? (x.m[key] || 0) > 0 : x.m.cost > 0; });
   var ins = '데이터 없음';
   if (withCost.length) {
     var tot = emptyTotals(); withCost.forEach(function (x) { addTotals(tot, x.m); });
     var tm = metrics(tot), t = TARGET_ROAS || 150;
-    var hit = withCost.filter(function (x) { return x.m.roasCafeRaw >= t; }).length;
-    var best = withCost.reduce(function (a, b) { return b.m.roasCafeRaw > a.m.roasCafeRaw ? b : a; });
-    var worst = withCost.reduce(function (a, b) { return b.m.roasCafeRaw < a.m.roasCafeRaw ? b : a; });
-    ins = '기간 평균 <b>' + pct(tm.roasCafeRaw) + '</b> · 목표(' + t + '%) 이상 <b>' + hit + '</b>/' + withCost.length + '일 · 최고 ' + mdw(best.d) + ' ' + pct(best.m.roasCafeRaw) + ' · 최저 ' + mdw(worst.d) + ' ' + pct(worst.m.roasCafeRaw);
+    var best = withCost.reduce(function (a, b) { return (b.m[key] || 0) > (a.m[key] || 0) ? b : a; });
+    var worst = withCost.reduce(function (a, b) { return (b.m[key] || 0) < (a.m[key] || 0) ? b : a; });
+    var bw = ' · 최고 ' + mdw(best.d) + ' ' + metricFmt(metricVal(best.m, key), key) + ' · 최저 ' + mdw(worst.d) + ' ' + metricFmt(metricVal(worst.m, key), key);
+    if (def.money) ins = '합계 <b>' + won(tm[key]) + '</b> · 일평균 <b>' + won(tm[key] / withCost.length) + '</b>' + bw;
+    else {
+      ins = '기간 평균 ' + def.t + ' <b>' + pct(tm[key]) + '</b>';
+      if (def.target) ins += ' · 목표(' + t + '%) 이상 <b>' + withCost.filter(function (x) { return x.m.roasCafe >= t; }).length + '</b>/' + withCost.length + '일';
+      ins += bw;
+    }
   }
   document.getElementById('chart-insight').innerHTML = ins;
   renderDailyTable(ser);
@@ -585,7 +625,7 @@ var CONV_COLS = [
   { k: 'orderAmount', t: 'Cafe24 RAW매출', f: function (m) { return won(m.orderAmount); } },
   { k: 'roasCafeRaw', t: 'Cafe24 ROAS', f: function (m) { return roasCell(m.roasCafeRaw, m.cost > 0); } },
   { k: 'netRevenue', t: 'Cafe24 순매출', f: function (m) { return won(m.netRevenue); } },
-  { k: 'roasCafe', t: '순ROAS', f: function (m) { return roasCell(m.roasCafe, m.cost > 0); } }
+  { k: 'roasCafe', t: '순ROAS', hl: true, f: function (m) { return netRoasCell(m.roasCafe, m.cost > 0); } }
 ];
 var FLOW_COLS = [
   { k: 'impr', t: '노출수', f: function (m) { return cnt(m.impr); } },
@@ -593,12 +633,13 @@ var FLOW_COLS = [
   { k: 'ctr', t: 'CTR', f: function (m) { return pct2(m.ctr); } },
   { k: 'cvr', t: 'CVR', f: function (m) { return pct2(m.cvr); }, tip: 'CVR = 매체 전환수 ÷ 클릭수' }
 ];
-function cells(cols, m) { return cols.map(function (c) { return '<td>' + c.f(m) + '</td>'; }).join(''); }
+function cells(cols, m) { return cols.map(function (c) { return '<td' + (c.hl ? ' class="hl"' : '') + '>' + c.f(m) + '</td>'; }).join(''); }
+function thPlain(c) { return '<th style="cursor:default"' + (c.hl ? ' class="hl"' : '') + (c.tip ? ' title="' + c.tip + '"' : '') + '>' + c.t + '</th>'; }
 
 function renderDailyTable(ser) {
   var cols = CONV_COLS.concat(FLOW_COLS);
   var rows = ser.filter(function (x) { return !isEmptyM(x.m); }).slice().reverse().map(function (x) { return '<tr class="noclick"><td class="l">' + mdwHtml(x.d) + '</td>' + cells(cols, x.m) + '</tr>'; }).join('');
-  document.getElementById('daily-box').innerHTML = '<div class="tscroll" style="max-height:440px;border:1px solid var(--line);border-radius:8px"><table><thead><tr><th class="l">날짜</th>' + cols.map(function (c) { return '<th' + (c.tip ? ' title="' + c.tip + '"' : '') + '>' + c.t + '</th>'; }).join('') + '</tr></thead><tbody>' + (rows || '<tr><td class="empty" colspan="13">데이터 없음</td></tr>') + '</tbody></table></div>';
+  document.getElementById('daily-box').innerHTML = '<div class="tscroll" style="max-height:440px;border:1px solid var(--line);border-radius:8px"><table><thead><tr><th class="l" style="cursor:default">날짜</th>' + cols.map(thPlain).join('') + '</tr></thead><tbody>' + (rows || '<tr><td class="empty" colspan="13">데이터 없음</td></tr>') + '</tbody></table></div>';
 }
 
 /* ── 성과 표: 보기 단위 탭 + 드릴다운 + 브레드크럼 ── */
@@ -649,6 +690,7 @@ function buildRows() {
 function headHtml(cols, labelTitle, withBtn) {
   var th = function (key, title, cls, tip) {
     var on = SORT.key === key;
+    if (key === 'roasCafe') cls = (cls ? cls + ' ' : '') + 'hl';
     return '<th class="' + (cls || '') + (on ? ' sorted' : '') + '" data-sort="' + key + '"' + (tip ? ' title="' + tip + '"' : '') + '>' + title + (on ? '<span class="ar">' + (SORT.dir < 0 ? '▼' : '▲') + '</span>' : '') + '</th>';
   };
   return '<thead><tr>' + th('name', labelTitle, 'l') + cols.map(function (c) { return th(c.k, c.t, '', c.tip); }).join('') + (withBtn ? '<th class="noclick" style="cursor:default"></th>' : '') + '</tr></thead>';
@@ -733,7 +775,7 @@ function openCampaignModal(campaignId) {
   var rows = [];
   for (var i = dates.length - 1; i >= 0; i--) { if (isEmptyM(ms[i])) continue; rows.push('<tr class="noclick"><td class="l">' + mdwHtml(dates[i]) + '</td>' + cells(cols, ms[i]) + '</tr>'); }
   var tot = emptyTotals(); ms.forEach(function (m) { addTotals(tot, m); });
-  document.getElementById('modal-table').innerHTML = '<thead><tr><th class="l" style="cursor:default">날짜</th>' + cols.map(function (x) { return '<th style="cursor:default"' + (x.tip ? ' title="' + x.tip + '"' : '') + '>' + x.t + '</th>'; }).join('') + '</tr></thead><tbody>' +
+  document.getElementById('modal-table').innerHTML = '<thead><tr><th class="l" style="cursor:default">날짜</th>' + cols.map(thPlain).join('') + '</tr></thead><tbody>' +
     (rows.length ? '<tr class="tot noclick"><td class="l">합계</td>' + cells(cols, metrics(tot)) + '</tr>' + rows.join('') : '<tr><td class="empty" colspan="13">데이터 없음</td></tr>') + '</tbody>';
   document.getElementById('modal-ov').classList.add('show');
   if (modalChart) modalChart.destroy();
@@ -902,6 +944,8 @@ function setMedia(m) {
   CUR_MEDIA = m;
   DATA = m === 'tiktok' ? DATA_TIKTOK : DATA_GOOGLE;
   try { localStorage.setItem('gda_media', m); } catch (e) {}
+  TARGET_ROAS = loadTarget(m);
+  document.getElementById('target-roas-input').value = TARGET_ROAS;
   SELECTED_PRODUCT = '전체';
   VIEW = 'product'; DRILL = { product: null, campaignId: null };
   if (CUR_PERIOD === 'custom') { CUR_PERIOD = 'yesterday'; CUSTOM_RANGE = null; }
