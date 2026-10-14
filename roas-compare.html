@@ -691,14 +691,15 @@ async function loadMedia(){
     const [t1,t2,metaC1]=await Promise.all([
       fetchGviz(['C','J','K','L','O','Q','T','V','Y','AA']),
       // 열 매핑(01.DATA 시트 5행 라벨 기준): AY 구글SA SPD / BA 구글SA REV / BJ 구글DA SPD / BL 구글DA REV
-      // BX 페이코 SPD / BZ 페이코 REV / CH 에디ai SPD / CI 에디ai REV / CC 토스 SPD / CE 토스 REV / CO 콘텐츠비용 SPD
+      // BX 페이코 SPD / BZ 페이코 REV / CH 에디ai SPD / CI 에디ai REV / CC 토스 SPD / CE 토스 REV / CQ 콘텐츠비용(+브검 누락) SPD
       // CK 크리테오 SPD / CL 크리테오 REV (2026-09-07 집행 시작)
       // CN 틱톡 SPD / CO 틱톡 REV / CT 기타(GFA 등) SPD / CU 기타 REV — 2026-10 시트에 추가
       // ※ 2026-10 틱톡 그룹(CN~CP)·콘텐츠 TARGET(CQ)이 끼면서 콘텐츠비용 SPENDING이 CO→CR로 밀렸다.
       //   그동안 CO를 콘텐츠비용으로 읽어 10월 틱톡 매출이 콘텐츠비용으로 잡혔었다.
+      // 콘텐츠비용은 CQ로 읽는다 = 콘텐츠비용(CR) + 브랜드검색 누락 비용(CW) 합계 (행4 라벨은 TARGET SPD지만 실제 합계 열).
       // ※ 2026-08 크리테오 그룹(CK~CM)이 새로 끼면서 콘텐츠비용이 CL→CO로 3칸 밀렸다.
       //   시트에 채널 열이 추가되면 여기 letter가 조용히 어긋나 값이 0으로 사라진다 — 아래 검증 로그 확인.
-      fetchGviz(['C','AY','BA','BJ','BL','BX','BZ','CH','CI','CC','CE','CR','CK','CL','CN','CO','CT','CU']),
+      fetchGviz(['C','AY','BA','BJ','BL','BX','BZ','CH','CI','CC','CE','CQ','CK','CL','CN','CO','CT','CU']),
       fetchMetaC1Rev(),
     ]);
     // 에디ai: 시트를 못 읽으면 예전 방식(01.DATA CI ÷ 0.9)으로 물러난다 — 값이 통째로
