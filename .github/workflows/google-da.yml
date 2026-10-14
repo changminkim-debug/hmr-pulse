@@ -1,0 +1,77 @@
+name: 구글 DA 대시보드 자동 갱신
+
+# PC가 꺼져 있어도 매일 google-da.html을 갱신한다.
+# 코드·원본 데이터는 비공개 리포(do-better-workspace-v2)의 google-da-cloud 브랜치에 있고,
+# 이 공개 리포에서는 실행만 한다 (공개 리포라 Actions 사용 시간 무료).
+# 로그에는 실적 숫자를 남기지 않는다 — 상세 로그는 비공개 브랜치의 logs/google-da-cloud.log.
+on:
+  schedule:
+    - cron: '0 1 * * *'   # 10:00 KST
+    - cron: '0 4 * * *'   # 13:00 KST — 앞 실행이 성공했으면 바로 종료, 실패/누락이면 재시도
+  workflow_dispatch:
+    inputs:
+      force:
+        description: '오늘 이미 갱신됐어도 다시 실행'
+        type: boolean
+        default: false
+
+concurrency:
+  group: google-da
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: src/20-operations/21-media-report
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: changminkim-debug/do-better-workspace-v2
+          ref: google-da-cloud
+          token: ${{ secrets.PULSE_TOKEN }}
+          path: src
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 의존성 설치
+        run: |
+          npm ci --no-audit --no-fund --loglevel=error
+          npx playwright install --with-deps chrome > /dev/null
+          pip install -q openpyxl
+
+      - name: 수집 → 검증 → 배포
+        run: node scripts/google-da-cloud.js ${{ github.event.inputs.force == 'true' && '--force' || '' }}
+        env:
+          TZ: Asia/Seoul
+          GADS_SHEET_CSV_URL: ${{ secrets.GADS_SHEET_CSV_URL }}
+          CAFE24_ID: ${{ secrets.CAFE24_ID }}
+          CAFE24_PW: ${{ secrets.CAFE24_PW }}
+          CAFE24_HEADLESS: 'true'
+          GITHUB_TOKEN: ${{ secrets.PULSE_TOKEN }}
+          GITHUB_PAGES_REPO: changminkim-debug/hmr-pulse
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+
+      - name: 새 원본·로그를 비공개 브랜치에 저장
+        if: always()
+        run: |
+          git config user.name "google-da-bot"
+          git config user.email "noreply@users.noreply.github.com"
+          git add data/google-da/raw logs/google-da-cloud.log 2>/dev/null || true
+          if git diff --cached --quiet; then echo "변경 없음"; exit 0; fi
+          git commit -q -m "google-da: 자동 수집 $(TZ=Asia/Seoul date +%F)"
+          for i in 1 2 3; do
+            git push -q origin HEAD:google-da-cloud && exit 0
+            git pull -q --rebase origin google-da-cloud
+          done
+          exit 1
