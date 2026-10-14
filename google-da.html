@@ -53,7 +53,11 @@ body.m-tiktok .band-logo{padding:0;background:#000}
 .seg button:hover{border-color:var(--ac);color:var(--ac)}
 .seg button.active{background:var(--ac);border-color:var(--ac);color:#fff}
 .seg button.active .d{color:rgba(255,255,255,.75)}
-.custom{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:7px;padding:2px 3px 2px 8px;background:#fff}
+.custom-wrap{position:relative}
+.custom-tog{border:1px solid var(--line);background:#fff;color:var(--ink2);border-radius:7px;padding:6px 12px;font:500 14.5px inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
+.custom-tog:hover{border-color:#cfd5e1}
+.custom{display:none;position:absolute;top:calc(100% + 6px);right:0;z-index:30;align-items:center;gap:6px;border:1px solid var(--line);border-radius:10px;padding:8px 8px 8px 12px;background:#fff;box-shadow:0 10px 24px rgba(30,35,51,.12);white-space:nowrap}
+.custom.show{display:inline-flex}
 .custom input{border:none;font:14.5px inherit;font-family:inherit;color:var(--ink);outline:none;width:136px;background:transparent}
 .custom span{color:var(--faint)}
 .custom button{border:none;background:var(--ac-soft);color:var(--ac);border-radius:5px;padding:4px 9px;font:600 14px inherit;font-family:inherit;cursor:pointer}
@@ -73,10 +77,10 @@ body.m-tiktok .band-logo{padding:0;background:#000}
 .wrap{max-width:1480px;margin:0 auto;padding:18px 28px 28px;display:flex;flex-direction:column;gap:18px}
 .notice{background:#fff8e1;border:1px solid #f3dc9a;color:#7a5a00;border-radius:8px;padding:9px 14px;font-size:14.5px;display:none}
 .notice.show{display:block}
-.h2{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:9px}
+.h2{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 .h2 .t{font-size:17.5px;font-weight:700;letter-spacing:-.2px}
 .h2 .s{font-size:14px;color:var(--mute)}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
 
 /* KPI 스트립 */
 .kpis{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px}
@@ -256,9 +260,12 @@ td.btncell{width:1%;padding-left:2px}
     <div class="bar-row">
       <span class="bar-lbl">기간</span>
       <div class="seg" id="period-seg"></div>
-      <div class="custom">
-        <input type="date" id="custom-start"><span>~</span><input type="date" id="custom-end">
-        <button id="custom-apply" onclick="applyCustomRange()">적용</button>
+      <div class="custom-wrap">
+        <button class="custom-tog" id="custom-tog" onclick="document.getElementById('custom-pop').classList.toggle('show')">직접 지정 ▾</button>
+        <div class="custom" id="custom-pop">
+          <input type="date" id="custom-start"><span>~</span><input type="date" id="custom-end">
+          <button id="custom-apply" onclick="applyCustomRange();document.getElementById('custom-pop').classList.remove('show')">적용</button>
+        </div>
       </div>
     </div>
     <div class="bar-row">
@@ -288,7 +295,7 @@ td.btncell{width:1%;padding-left:2px}
   </section>
 
   <section>
-    <div class="h2"><span class="t">성과 상세</span><span class="s">탭으로 보기 단위 선택 · 행 클릭 시 한 단계 아래로 · 헤더 클릭 시 정렬</span></div>
+    <div class="h2"><span class="t">성과 상세</span><span class="s">행을 누르면 한 단계 아래로 · 헤더를 누르면 정렬</span></div>
     <div class="tbl-head">
       <div class="tabs" id="view-tabs"></div>
       <div class="crumb" id="crumb"></div>
@@ -299,7 +306,7 @@ td.btncell{width:1%;padding-left:2px}
     </div>
   </section>
 
-  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 14. 오후 4:17:12</div>
+  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 14. 오후 4:21:26</div>
 </main>
 
 <div class="modal-ov" id="modal-ov" onclick="if(event.target===this) closeCampaignModal()">
@@ -506,7 +513,7 @@ function renderKPI() {
   var r = getRange(CUR_PERIOD), pr = prevRange(r[0], r[1]);
   var m = metrics(totalsFor(null, r[0], r[1])), pm = metrics(totalsFor(null, pr[0], pr[1]));
   var hasPrev = pm.cost > 0 && CUR_PERIOD !== 'all';
-  document.getElementById('kpi-sub').textContent = rangeTxt(r[0], r[1]) + (SELECTED_PRODUCT !== '전체' ? ' · ' + SELECTED_PRODUCT : '') + (hasPrev ? ' · 증감은 직전 ' + pr[2] + '일(' + rangeTxt(pr[0], pr[1]) + ') 대비' : '');
+  document.getElementById('kpi-sub').textContent = rangeTxt(r[0], r[1]) + (SELECTED_PRODUCT !== '전체' ? ' · ' + SELECTED_PRODUCT : '');
   // 순서(2026-10-14 사용자 지정): 비용 > 매체 전환가치 > Cafe24 RAW 매출 > Cafe24 순매출 > 매체 ROAS > Cafe24 ROAS > Cafe24 순ROAS
   var cards = [
     { k: 'cost', l: '비용', v: kpiWon(m.cost), c: m.cost, p: pm.cost },
@@ -599,7 +606,7 @@ function renderChart() {
   var r = monthRange(), ser = dailySeries(r[0], r[1]), key = CHART_METRIC, def = METRIC_DEF[key];
   var dates = ser.map(function (x) { return x.d; }), ms = ser.map(function (x) { return x.m; });
   document.getElementById('chart-title').textContent = '일자별 ' + def.t;
-  document.getElementById('chart-sub').textContent = (CUR_PERIOD === 'lastMonth' ? '지난달 ' : '이번달 ') + rangeTxt(r[0], r[1]) + (SELECTED_PRODUCT !== '전체' ? ' · ' + SELECTED_PRODUCT : '') + (def.desc ? ' · ' + def.desc : '') + (def.target ? ', 점선 = 목표' : '') + ' · 위 카드를 누르면 지표 변경';
+  document.getElementById('chart-sub').textContent = (CUR_PERIOD === 'lastMonth' ? '지난달 ' : '이번달 ') + rangeTxt(r[0], r[1]) + (SELECTED_PRODUCT !== '전체' ? ' · ' + SELECTED_PRODUCT : '') + (def.target ? ' · 점선 = 목표 ' + (TARGET_ROAS || 150) + '%' : '');
   if (trendChart) trendChart.destroy();
   trendChart = new Chart(document.getElementById('trend-chart').getContext('2d'), roasBarConfig(dates, ms, key));
   // 한 줄 요약 (레퍼런스의 차트 하단 코멘트 형식)
