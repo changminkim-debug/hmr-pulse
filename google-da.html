@@ -85,11 +85,11 @@ body.m-tiktok .band-logo{padding:0;background:#000}
 
 /* KPI 스트립 */
 .kpis{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px}
-.kpi{padding:20px 20px 16px;min-width:0;background:#fff;border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;position:relative}
+.kpi{padding:25px 20px 16px;min-width:0;text-align:center;background:#fff;border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;position:relative}
 .kpi:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(30,35,51,.12);border-color:#cfd5e1}
 .kpi.sel{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 6px 16px rgba(30,35,51,.08)}
 .kpi.sel .l{color:var(--ac)}
-.kpi .pick{position:absolute;top:12px;right:14px;font-size:11px;color:var(--ac);opacity:0;transition:opacity .15s}
+.kpi .pick{position:absolute;top:6px;right:12px;font-size:11px;color:var(--ac);opacity:0;transition:opacity .15s}
 .kpi:hover .pick,.kpi.sel .pick{opacity:1}
 .kpi .l{font-size:13px;font-weight:700;color:#8a91a8;letter-spacing:.6px;white-space:nowrap}
 .kpi .v{font-size:27px;font-weight:800;letter-spacing:-.5px;line-height:1.2;margin-top:8px;white-space:nowrap;color:#1e2333;font-feature-settings:normal}
@@ -154,6 +154,8 @@ tr.noclick{cursor:default}
 th.hl{color:var(--ac);background:#eef2fa;box-shadow:inset 0 -2px 0 var(--ac)}
 td.hl{background:rgba(47,79,143,.055);font-size:1.07em}
 td.hl .r{font-weight:700}
+/* ROAS pill 열만 가운데 — 나머지 숫자는 자릿수 비교 위해 오른쪽 유지 */
+td:has(> .r),th[data-sort^="roas"]{text-align:center}
 tr.tot td.hl{background:rgba(47,79,143,.10)}
 tr.row:hover td.hl,tr.hov td.hl{background:rgba(47,79,143,.11)}
 body.m-tiktok th.hl{background:#f0f0f3}body.m-tiktok td.hl{background:rgba(0,0,0,.04)}
@@ -328,7 +330,7 @@ td{border-bottom-color:rgba(20,24,40,.06)}
     </div>
   </section>
 
-  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 15. 오전 9:50:12</div>
+  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 15. 오전 9:55:17</div>
 </main>
 
 <div class="modal-ov" id="modal-ov" onclick="if(event.target===this) closeCampaignModal()">
