@@ -44,15 +44,16 @@ body.m-tiktok .band-logo{padding:0;background:#000}
 
 /* ── 고정 툴바 ── */
 .bar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
-.bar-in{max-width:1480px;margin:0 auto;padding:9px 28px;display:flex;flex-direction:column;gap:7px}
+.bar-in{max-width:1480px;margin:0 auto;padding:10px 28px;display:flex;flex-direction:column;gap:0}
+.bar-row+.bar-row{border-top:1px solid var(--line2);margin-top:9px;padding-top:9px}
 .bar-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .bar-lbl{font-size:12.5px;font-weight:600;color:var(--mute);letter-spacing:.4px;width:36px;flex-shrink:0}
-.seg{display:inline-flex;flex-wrap:wrap;gap:4px}
-.seg button{border:1px solid var(--line);background:#fff;color:var(--ink2);border-radius:7px;padding:6px 12px;font:500 14.5px inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
-.seg button .d{color:var(--mute);font-size:13px;margin-left:4px}
-.seg button:hover{border-color:var(--ac);color:var(--ac)}
-.seg button.active{background:var(--ac);border-color:var(--ac);color:#fff}
-.seg button.active .d{color:rgba(255,255,255,.75)}
+.seg{display:inline-flex;flex-wrap:wrap;gap:2px;background:#eceef3;border-radius:9px;padding:3px}
+.seg button{border:none;background:transparent;color:var(--ink2);border-radius:7px;padding:5px 13px;font:500 14.5px inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
+.seg button .d{display:none;color:var(--mute);font-size:13px;margin-left:5px}
+.seg button:hover{color:var(--ink)}
+.seg button.active{background:#fff;color:var(--ac);font-weight:700;box-shadow:0 1px 3px rgba(30,35,51,.14)}
+.seg button.active .d{display:inline;font-weight:500}
 .custom-wrap{position:relative}
 .custom-tog{border:1px solid var(--line);background:#fff;color:var(--ink2);border-radius:7px;padding:6px 12px;font:500 14.5px inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
 .custom-tog:hover{border-color:#cfd5e1}
@@ -65,11 +66,11 @@ body.m-tiktok .band-logo{padding:0;background:#000}
 .spacer{flex:1}
 .goal{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--ink2)}
 .goal input{width:64px;border:1px solid var(--line);border-radius:6px;padding:3px 6px;font:600 15px inherit;font-family:inherit;text-align:right;color:var(--ink)}
-.chips{display:flex;gap:4px;flex-wrap:wrap}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
 .chip{border:1px solid var(--line);background:#fff;border-radius:20px;padding:4px 13px;font-size:14.5px;color:var(--ink2);cursor:pointer;white-space:nowrap}
 .chip:hover{border-color:var(--ac);color:var(--ac)}
 .chip.active{background:var(--ink);border-color:var(--ink);color:#fff}
-.chip.dim{opacity:.38;border-style:dashed}
+.chip.dim{opacity:.38;border-color:transparent;background:transparent}
 .chip.dim.active{opacity:.7}
 .chip.on:not(.active){border-color:#c9cfdb;color:var(--ink);font-weight:600}
 
@@ -327,7 +328,7 @@ td{border-bottom-color:rgba(20,24,40,.06)}
     </div>
   </section>
 
-  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 15. 오전 9:45:51</div>
+  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 15. 오전 9:50:12</div>
 </main>
 
 <div class="modal-ov" id="modal-ov" onclick="if(event.target===this) closeCampaignModal()">
@@ -560,20 +561,22 @@ var METRIC_DEF = {
   cost: { t: '비용', money: true }, convValue: { t: '매체 전환가치', money: true },
   orderAmount: { t: 'Cafe24 RAW 매출', money: true }, netRevenue: { t: 'Cafe24 순매출', money: true },
   roasGoogle: { t: '매체 ROAS', desc: '매체 전환가치 ÷ 비용' }, roasCafeRaw: { t: 'Cafe24 ROAS', desc: 'Cafe24 RAW 매출 ÷ 비용' },
-  roasCafe: { t: '순ROAS', desc: 'Cafe24 순매출 ÷ 비용', target: true }
+  roasCafe: { t: '순ROAS', desc: 'Cafe24 순매출 ÷ 비용' }
 };
 function metricVal(m, key) { var d = METRIC_DEF[key]; if (d.money) return Math.round(m[key] || 0); return m.cost > 0 ? Math.round(m[key]) : null; }
 function metricFmt(v, key) { if (v == null) return '-'; return METRIC_DEF[key].money ? won(v) : v + '%'; }
 function shortWon(v) { var a = Math.abs(v); return a >= 100000000 ? (v / 100000000) + '억' : a >= 10000 ? Math.round(v / 10000) + '만' : v; }
+// 목표는 순ROAS 기준 — Cafe24 ROAS(수수료 차감 전)는 순 목표 ÷ 0.86 으로 역산
+function goalOf(key) { var t = TARGET_ROAS || 150; return key === 'roasCafe' ? t : key === 'roasCafeRaw' ? t / CAFE24_NET_RATE : null; }
 function roasBarConfig(dates, ms, key) {
   key = key || 'roasCafe';
   var def = METRIC_DEF[key];
   var vals = ms.map(function (m) { return metricVal(m, key); });
-  var t = TARGET_ROAS || 150;
-  // 목표 대비 색은 순ROAS일 때만. 다른 지표는 단색.
+  var t = goalOf(key);
+  // 목표 대비 색은 순ROAS·Cafe24 ROAS만. 다른 지표는 단색.
   var col = function (v, a) {
     if (v == null) return '#e4e6ec';
-    if (!def.target) return CUR_MEDIA === 'tiktok' ? 'rgba(40,40,48,' + a + ')' : 'rgba(47,79,143,' + a + ')';
+    if (t == null) return CUR_MEDIA === 'tiktok' ? 'rgba(40,40,48,' + a + ')' : 'rgba(47,79,143,' + a + ')';
     return v >= t ? 'rgba(47,133,90,' + a + ')' : v >= t * 0.8 ? 'rgba(183,121,31,' + a + ')' : 'rgba(192,71,63,' + a + ')';
   };
   var ds = [
@@ -581,7 +584,7 @@ function roasBarConfig(dates, ms, key) {
       borderRadius: 3, maxBarThickness: 34, order: 2,
       datalabels: { display: function (c) { return (dates.length <= 12 || (window.innerWidth >= 760 && dates.length <= 35)) && c.dataset.data[c.dataIndex] != null; }, anchor: 'end', align: 'end', offset: 1, font: { size: 11.5 }, color: '#465064', formatter: function (v) { return def.money ? shortWon(v) : v + '%'; } } }
   ];
-  if (def.target) ds.push({ type: 'line', label: '목표', data: dates.map(function () { return t; }), borderColor: 'rgba(21,33,59,.45)', borderDash: [4, 4], borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 0, order: 1 });
+  if (t != null) ds.push({ type: 'line', label: '목표', data: dates.map(function () { return t; }), borderColor: 'rgba(21,33,59,.45)', borderDash: [4, 4], borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 0, order: 1 });
   return {
     data: { labels: dates.map(function (d) { return [md(d), WD[parseISO(d).getDay()]]; }), datasets: ds },
     options: {
@@ -624,7 +627,7 @@ function renderChart() {
   var r = monthRange(), ser = dailySeries(r[0], r[1]), key = CHART_METRIC, def = METRIC_DEF[key];
   var dates = ser.map(function (x) { return x.d; }), ms = ser.map(function (x) { return x.m; });
   document.getElementById('chart-title').textContent = '일자별 ' + def.t;
-  document.getElementById('chart-sub').textContent = (CUR_PERIOD === 'lastMonth' ? '지난달 ' : '이번달 ') + rangeTxt(r[0], r[1]) + (SELECTED_PRODUCT !== '전체' ? ' · ' + SELECTED_PRODUCT : '') + (def.target ? ' · 점선 = 목표 ' + (TARGET_ROAS || 150) + '%' : '');
+  document.getElementById('chart-sub').textContent = (CUR_PERIOD === 'lastMonth' ? '지난달 ' : '이번달 ') + rangeTxt(r[0], r[1]) + (SELECTED_PRODUCT !== '전체' ? ' · ' + SELECTED_PRODUCT : '') + (goalOf(key) != null ? ' · 점선 = 목표 ' + Math.round(goalOf(key)) + '%' + (key === 'roasCafeRaw' ? ' (순ROAS ' + (TARGET_ROAS || 150) + '% 역산)' : '') : '');
   if (trendChart) trendChart.destroy();
   trendChart = new Chart(document.getElementById('trend-chart').getContext('2d'), roasBarConfig(dates, ms, key));
   // 한 줄 요약 (레퍼런스의 차트 하단 코멘트 형식)
@@ -632,14 +635,14 @@ function renderChart() {
   var ins = '데이터 없음';
   if (withCost.length) {
     var tot = emptyTotals(); withCost.forEach(function (x) { addTotals(tot, x.m); });
-    var tm = metrics(tot), t = TARGET_ROAS || 150;
+    var tm = metrics(tot), t = goalOf(key);
     var best = withCost.reduce(function (a, b) { return (b.m[key] || 0) > (a.m[key] || 0) ? b : a; });
     var worst = withCost.reduce(function (a, b) { return (b.m[key] || 0) < (a.m[key] || 0) ? b : a; });
     var bw = ' · 최고 ' + mdw(best.d) + ' ' + metricFmt(metricVal(best.m, key), key) + ' · 최저 ' + mdw(worst.d) + ' ' + metricFmt(metricVal(worst.m, key), key);
     if (def.money) ins = '합계 <b>' + won(tm[key]) + '</b> · 일평균 <b>' + won(tm[key] / withCost.length) + '</b>' + bw;
     else {
       ins = '기간 평균 ' + def.t + ' <b>' + pct(tm[key]) + '</b>';
-      if (def.target) ins += ' · 목표(' + t + '%) 이상 <b>' + withCost.filter(function (x) { return x.m.roasCafe >= t; }).length + '</b>/' + withCost.length + '일';
+      if (t != null) ins += ' · 목표(' + Math.round(t) + '%) 이상 <b>' + withCost.filter(function (x) { return x.m[key] >= t; }).length + '</b>/' + withCost.length + '일';
       ins += bw;
     }
   }
