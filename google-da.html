@@ -149,7 +149,7 @@ tr.row:hover td,tr.hov td{background:#f5f7fb}
 tr.tot td{background:#fafbfc;font-weight:600;border-bottom:1px solid var(--line)}
 tr.noclick{cursor:default}
 .r{font-weight:600}
-.r.good{color:var(--good)}.r.mid{color:var(--mid)}.r.bad{color:var(--bad)}.r.none{color:var(--faint);font-weight:400}.r.plain{font-weight:400;color:var(--ink)}
+.r.none{color:var(--faint);font-weight:400}.r.plain{display:inline-block;padding:1px 9px;border-radius:999px;background:var(--ac-soft);font-weight:500;color:var(--ink)}
 th.hl{color:var(--ac);background:#eef2fa;box-shadow:inset 0 -2px 0 var(--ac)}
 td.hl{background:rgba(47,79,143,.055);font-size:1.07em}
 td.hl .r{font-weight:700}
@@ -327,7 +327,7 @@ td{border-bottom-color:rgba(20,24,40,.06)}
     </div>
   </section>
 
-  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 15. 오전 8:49:32</div>
+  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 10. 15. 오전 9:45:51</div>
 </main>
 
 <div class="modal-ov" id="modal-ov" onclick="if(event.target===this) closeCampaignModal()">
@@ -410,10 +410,7 @@ function cnt(n) { n = Math.round(n || 0); return n.toLocaleString(); }
 function cnt2(n) { n = n || 0; return FULL_NUM ? n.toLocaleString(undefined, { maximumFractionDigits: 2 }) : Math.round(n).toLocaleString(); }
 function pct(n) { return isFinite(n) ? (FULL_NUM ? (Math.round(n * 10) / 10).toFixed(1) : Math.round(n)) + '%' : '-'; }
 function pct2(n) { return (n || 0).toFixed(2) + '%'; }
-function roasTone(r) { var t = TARGET_ROAS || 150; if (!isFinite(r) || r <= 0) return 'none'; return r >= t ? 'good' : r >= t * 0.8 ? 'mid' : 'bad'; }
-// 목표 대비 색은 순ROAS에만 — 목표가 순ROAS 기준이라 다른 ROAS에 같은 잣대를 대면 오해를 부른다
 function roasCell(r, hasCost) { if (!hasCost) return '<span class="r none">-</span>'; return '<span class="r plain">' + pct(r) + '</span>'; }
-function netRoasCell(r, hasCost) { if (!hasCost) return '<span class="r none">-</span>'; return '<span class="r ' + roasTone(r) + '">' + pct(r) + '</span>'; }
 // 날짜 + 요일 한 글자 — "10/13 월"
 function md(s) { var a = s.split('-').map(Number); return a[1] + '/' + a[2]; }
 function mdw(s) { return md(s) + ' ' + WD[parseISO(s).getDay()]; }
@@ -664,7 +661,7 @@ var CONV_COLS = [
   { k: 'orderAmount', t: 'Cafe24 RAW매출', f: function (m) { return won(m.orderAmount); } },
   { k: 'roasCafeRaw', t: 'Cafe24 ROAS', f: function (m) { return roasCell(m.roasCafeRaw, m.cost > 0); } },
   { k: 'netRevenue', t: 'Cafe24 순매출', f: function (m) { return won(m.netRevenue); } },
-  { k: 'roasCafe', t: '순ROAS', hl: true, f: function (m) { return netRoasCell(m.roasCafe, m.cost > 0); } }
+  { k: 'roasCafe', t: '순ROAS', hl: true, f: function (m) { return roasCell(m.roasCafe, m.cost > 0); } }
 ];
 var FLOW_COLS = [
   { k: 'impr', t: '노출수', f: function (m) { return cnt(m.impr); } },
