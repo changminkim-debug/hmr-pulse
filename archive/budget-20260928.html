@@ -577,7 +577,7 @@ table.m-tbl tfoot td{font-weight:700;border-top:2px solid var(--line);border-bot
 
 <div class="fbar">
  <div class="fbar-in">
-  <div class="fg"><span class="fl">날짜</span><select class="sel" onchange="if(this.value)location.href=this.value"><option value="../budget.html">오늘로 돌아가기</option><option value="" selected>2026-09-28 (보는 중)</option><option value="budget-20261019.html">2026-10-19</option><option value="budget-20261018.html">2026-10-18</option><option value="budget-20261017.html">2026-10-17</option><option value="budget-20261016.html">2026-10-16</option><option value="budget-20261015.html">2026-10-15</option><option value="budget-20261014.html">2026-10-14</option><option value="budget-20261013.html">2026-10-13</option><option value="budget-20261012.html">2026-10-12</option><option value="budget-20261011.html">2026-10-11</option><option value="budget-20261010.html">2026-10-10</option><option value="budget-20261009.html">2026-10-09</option><option value="budget-20261008.html">2026-10-08</option><option value="budget-20261007.html">2026-10-07</option><option value="budget-20261006.html">2026-10-06</option><option value="budget-20261005.html">2026-10-05</option><option value="budget-20261004.html">2026-10-04</option><option value="budget-20261003.html">2026-10-03</option><option value="budget-20261002.html">2026-10-02</option><option value="budget-20261001.html">2026-10-01</option><option value="budget-20260930.html">2026-09-30</option><option value="budget-20260929.html">2026-09-29</option><option value="budget-20260927.html">2026-09-27</option><option value="budget-20260926.html">2026-09-26</option><option value="budget-20260925.html">2026-09-25</option><option value="budget-20260924.html">2026-09-24</option><option value="budget-20260923.html">2026-09-23</option><option value="budget-20260922.html">2026-09-22</option><option value="budget-20260921.html">2026-09-21</option><option value="budget-20260920.html">2026-09-20</option><option value="budget-20260919.html">2026-09-19</option><option value="budget-20260918.html">2026-09-18</option><option value="budget-20260917.html">2026-09-17</option><option value="budget-20260916.html">2026-09-16</option></select></div>
+  <div class="fg"><span class="fl">날짜</span><select class="sel" onchange="if(this.value)location.href=this.value"><option value="../budget.html">오늘로 돌아가기</option><option value="" selected>2026-09-28 (보는 중)</option><option value="budget-20261020.html">2026-10-20</option><option value="budget-20261019.html">2026-10-19</option><option value="budget-20261018.html">2026-10-18</option><option value="budget-20261017.html">2026-10-17</option><option value="budget-20261016.html">2026-10-16</option><option value="budget-20261015.html">2026-10-15</option><option value="budget-20261014.html">2026-10-14</option><option value="budget-20261013.html">2026-10-13</option><option value="budget-20261012.html">2026-10-12</option><option value="budget-20261011.html">2026-10-11</option><option value="budget-20261010.html">2026-10-10</option><option value="budget-20261009.html">2026-10-09</option><option value="budget-20261008.html">2026-10-08</option><option value="budget-20261007.html">2026-10-07</option><option value="budget-20261006.html">2026-10-06</option><option value="budget-20261005.html">2026-10-05</option><option value="budget-20261004.html">2026-10-04</option><option value="budget-20261003.html">2026-10-03</option><option value="budget-20261002.html">2026-10-02</option><option value="budget-20261001.html">2026-10-01</option><option value="budget-20260930.html">2026-09-30</option><option value="budget-20260929.html">2026-09-29</option><option value="budget-20260927.html">2026-09-27</option><option value="budget-20260926.html">2026-09-26</option><option value="budget-20260925.html">2026-09-25</option><option value="budget-20260924.html">2026-09-24</option><option value="budget-20260923.html">2026-09-23</option><option value="budget-20260922.html">2026-09-22</option><option value="budget-20260921.html">2026-09-21</option><option value="budget-20260920.html">2026-09-20</option><option value="budget-20260919.html">2026-09-19</option><option value="budget-20260918.html">2026-09-18</option><option value="budget-20260917.html">2026-09-17</option><option value="budget-20260916.html">2026-09-16</option></select></div>
   <div class="fg"><span class="fl">계정</span><div class="seg" id="acct-seg"></div></div>
   <div class="fg"><span class="fl">목표 소진</span><input class="tin" id="t-spend" type="text" inputmode="numeric"><span class="tsuf">원</span></div>
   <div class="fg"><span class="fl">목표 C1 ROAS</span><input class="tin small" id="t-roas" type="text" inputmode="numeric"><span class="tsuf">%</span></div>
@@ -854,9 +854,11 @@ var S = {
 
 function rows(){ return S.acct ? D.campaigns.filter(function(r){ return r.account === S.acct; }) : D.campaigns; }
 function agg(list){
-  var o = { daily:0, spend:0, purchases:0, val:0, imp:0, clicks:0, n:list.length };
+  var o = { daily:0, spend:0, purchases:0, val:0, imp:0, clicks:0, n:list.length, room:0, offSpend:0 };
   list.forEach(function(r){ o.daily+=r.daily; o.spend+=r.spend; o.purchases+=r.purchases; o.val+=r.val;
-    o.imp+=(r.imp||0); o.clicks+=(r.clicks||0); });
+    o.imp+=(r.imp||0); o.clicks+=(r.clicks||0);
+    // 남은 예산은 켜진 캠페인별로 센다 — 꺼진 캠페인의 오늘 소진이 켜진 예산을 깎아 보이면 안 된다 (2026-10-20)
+    if (r.off) o.offSpend += r.spend; else o.room += Math.max(r.daily - r.spend, 0); });
   o.pace = o.daily ? o.spend/o.daily*100 : 0;
   o.roas = o.spend ? o.val/o.spend*100 : 0;
   return o;
@@ -927,7 +929,9 @@ var RECENT_HOURS = 2;
 function projections(A, cn){
   if (!cn) return null;
   var B = D.curve.byHour;
-  var landCurve = A.spend / cn.cumShare;
+  // 장중에 예산을 줄이거나 끄면 아침 속도로 환산한 값이 남은 예산을 넘는다 — 그 한도로 자른다
+  var cap = A.spend + A.room;
+  var landCurve = Math.min(A.spend / cn.cumShare, cap);
 
   // 진행 중인 시간대는 불완전하므로 완결된 시간대만 쓴다.
   var lastDone = cn.hh - 1;
@@ -944,7 +948,7 @@ function projections(A, cn){
   if (win.length && shareWin > 0.005 && spendWin > 0) {
     var k = spendWin / shareWin;
     reactive = {
-      land: A.spend + k * Math.max(1 - cn.cumShare, 0),
+      land: Math.min(A.spend + k * Math.max(1 - cn.cumShare, 0), cap),
       hours: win, spendWin: spendWin, shareWin: shareWin,
       // 1 이면 평년 속도, 1.3 이면 평년보다 30% 빠름
       index: k / landCurve,
@@ -1008,7 +1012,8 @@ function renderKpi(A, cn){
 
   var cards = [
     ['총 일예산', won(A.daily) + '원',
-      A.n + '개 캠페인 · 미소진 ' + won(Math.max(A.daily - A.spend, 0)) + '원' +
+      A.n + '개 캠페인 · 미소진 ' + won(D.isArchive ? Math.max(A.daily - A.spend, 0) : A.room) + '원' +
+      (A.offSpend > 0 && !D.isArchive ? '<br>꺼진 캠페인 오늘 소진 ' + won(A.offSpend) + '원 (일예산 밖)' : '') +
       bar(A.daily ? A.spend / A.daily * 100 : 0) +
       lb('소진률 <b>' + pct(A.pace) + '</b>', '목표 ' + man(S.tSpend)),
       prev ? tag('어제 일예산 ' + man(prev.finalSpend ? prev.finalSpend : 0) + ' 소진', 'flat') : ''],
@@ -1077,8 +1082,8 @@ function renderProj(A, cn){
       (sr ? '<br>확정구간(~' + String(sr.end).padStart(2,'0') + '시) ' + pct(sr.roas) + ' × 곡선 ' + sr.ratio.toFixed(3)
           : '<br>확정구간 표본 부족 — 관측값 기준')) +
     // 미소진 예산에는 "앞으로 나갈 돈"과 "그냥 안 쓰고 끝날 돈"이 섞여 있다 — 둘로 쪼개 보여준다.
-    cell('미소진 예산', won(Math.max(A.daily - A.spend, 0)) + '원',
-      '마감까지 나갈 전망 ' + won(Math.max(landCurve - A.spend, 0)) + '원 · 남길 전망 ' + won(Math.max(A.daily - landCurve, 0)) + '원');
+    cell('미소진 예산', won(A.room) + '원',
+      '마감까지 나갈 전망 ' + won(Math.max(landCurve - A.spend, 0)) + '원 · 남길 전망 ' + won(Math.max(A.room - (landCurve - A.spend), 0)) + '원');
 }
 
 /* 오늘 바뀐 것 전부 — 예산과 캡을 한 표에 모아 시간순으로 본다.
