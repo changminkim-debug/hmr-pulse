@@ -345,6 +345,7 @@ input.mm-gap-in:focus{border-color:#4466cc}
         <button class="mm-month-tab" id="mm-tab-08" onclick="mmSwitchMonth('08')">8월</button>
         <button class="mm-month-tab" id="mm-tab-09" onclick="mmSwitchMonth('09')">9월</button>
         <button class="mm-month-tab" id="mm-tab-10" onclick="mmSwitchMonth('10')">10월</button>
+        <button class="mm-month-tab" id="mm-tab-11" onclick="mmSwitchMonth('11')">11월</button>
       </div>
       <span class="mm-modal-badge" id="mm-month-badge">7월 시뮬레이션</span>
       <span class="mm-src-label" id="mm-src-label">기본값 (미작성)</span>
@@ -1366,6 +1367,22 @@ const MM_MONTHS={
     // 7~9월 평균 C24/RAW
     gap:{meta:0.79,google_sa:0.37,google_da:0.67,payco:0.24,toss:0.20,aedi:0.63},
   },
+  // 2026-10-28 산출 (10/27 데이터까지). 산출법은 10과 동일 — 같은 스크립트로 10의 7/1~9/29 값을 재현해 확인
+  //   (ROAS·갭은 ±1~2% 이내, 시트 사후 수정분만큼 차이).
+  //   RAW ROAS = 8/1~10/27 합산 / C24 갭 = 8·9·10월 월별비율의 평균 / 오가닉 = 8~10월 월별 오가닉÷매체 광고비(콘텐츠비 제외)의 평균
+  //   ※ 오가닉 비율이 계속 내려가는 중: 8월 1.083 → 9월 0.851 → 10월 0.675. 3개월 평균 0.87은 10월 단월보다 높다.
+  //   ※ 네이버 갭도 하락: 0.602 / 0.570 / 0.478.
+  '11':{
+    label:'11월', storeKey:'mm-calc-save-11', urlKey:'mm11',
+    gapLabel:'8~10월 평균', organicLabel:'8~10월',
+    naverGap:0.55,        // 8~10월 평균 (0.602 / 0.570 / 0.478)
+    organicRatio:0.87,    // 8~10월 오가닉/광고비 월평균 (1.083 / 0.851 / 0.675)
+    note:'RAW ROAS 기본값은 8/1~10/27 평균 실적 기준 · 예산은 원(₩) 단위 입력 · C24 갭비율은 8~10월 평균 기준 · 오가닉은 8~10월 비율(광고비×87%) 예측값',
+    // 8/1~10/27 합산 RAW ROAS
+    roas:{brand:7794,power:820,shop:529,meta:270,google_sa:2237,google_da:376,payco:540,toss:490,aedi:1661},
+    // 8~10월 평균 C24/RAW (meta 0.809/0.725/0.706 · gsa 0.405/0.358/0.313 · gda 0.693/0.573/0.726 · payco 0.272/0.294/0.158 · toss 0.158/0.227/0.254 · aedi 0.569/0.784/0.772)
+    gap:{meta:0.75,google_sa:0.36,google_da:0.66,payco:0.24,toss:0.21,aedi:0.71},
+  },
 };
 function mmCfg(){return MM_MONTHS[mmMonth];}
 function mmDefRoas(key){return mmCfg().roas[key]||0;}
@@ -1598,7 +1615,8 @@ function openMMCalc(){
     // (예전엔 '07'/'08'이 하드코딩돼 있어 달이 늘 때마다 손봐야 했다.
     //  '이번 달'이 아니라 '마지막 월'인 이유 — 미디어믹스는 늘 다음 달 것을 월말에 짜므로
     //  새 달을 MM_MONTHS에 추가한 시점부터 그게 작업 대상이다)
-    const mms=Object.keys(MM_MONTHS);
+    // 정렬 필수: '10'·'11'은 정수 키라 JS가 '07'보다 앞에 둔다 (10월 내내 9월 탭이 열렸던 원인)
+    const mms=Object.keys(MM_MONTHS).sort();
     const shared=mms.filter(m=>mmDataFromUrl(m));
     const startMonth=MM_MONTHS[urlMonth]?urlMonth:(shared.length===1?shared[0]:mms[mms.length-1]);
     // 시작 월은 곧바로 세팅한다. 예전엔 mmMonth='07'로 둔 뒤 mmSwitchMonth(startMonth)를
@@ -2351,7 +2369,7 @@ function pacePlan(month){
 }
 // 자동 선택: 기간 필터가 특정 월이면 그 월, 아니면 실적이 있는 마지막 계획월
 function paceAutoMonth(){
-  const ms=Object.keys(MM_MONTHS);
+  const ms=Object.keys(MM_MONTHS).sort();
   if(/^\d{4}-\d{2}$/.test(activeMonth)&&MM_MONTHS[activeMonth.slice(5)])return activeMonth.slice(5);
   const withData=ms.filter(m=>rawDays.some(d=>d.month===MM_YEAR+'-'+m));
   return withData.length?withData[withData.length-1]:ms[ms.length-1];
@@ -2363,7 +2381,7 @@ function renderPacing(){
   // 월 선택 드롭다운
   const sel=document.getElementById('pace-month');
   if(sel){
-    const want=Object.keys(MM_MONTHS).map(m=>`<option value="${m}">${MM_MONTHS[m].label}</option>`).join('');
+    const want=Object.keys(MM_MONTHS).sort().map(m=>`<option value="${m}">${MM_MONTHS[m].label}</option>`).join('');
     if(sel.innerHTML!==want)sel.innerHTML=want;
     sel.value=month;
     if(!sel.dataset.bound){sel.dataset.bound='1';sel.addEventListener('change',()=>{paceMonth=sel.value;renderPacing();});}
