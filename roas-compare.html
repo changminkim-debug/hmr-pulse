@@ -139,7 +139,7 @@ td.cb-diff{background:#f0faf1}
 .ch-btn.active.all{background:#4466cc;border-color:#4466cc;color:#fff;font-weight:700}
 .ch-btn.active.naver{color:#03c75a;border-color:#03c75a;background:#f0fdf6;font-weight:700}
 .ch-btn.active.meta{color:#1877f2;border-color:#1877f2;background:#eef4ff;font-weight:700}
-.ch-btn.active.google_sa,.ch-btn.active.google_da{color:#ea4335;border-color:#ea4335;background:#fff5f5;font-weight:700}
+.ch-btn.active.google_sa,.ch-btn.active.google_da,.ch-btn.active.google_shop{color:#ea4335;border-color:#ea4335;background:#fff5f5;font-weight:700}
 .ch-btn.active.payco{color:#ff5722;border-color:#ff5722;background:#fff5f0;font-weight:700}
 .ch-btn.active.toss{color:#0064ff;border-color:#0064ff;background:#f0f5ff;font-weight:700}
 .ch-btn.active.aedi{color:#9c27b0;border-color:#9c27b0;background:#fdf0ff;font-weight:700}
@@ -520,6 +520,7 @@ input.mm-gap-in:focus{border-color:#4466cc}
             <option value="meta">메타</option>
             <option value="google_sa">구글 SA</option>
             <option value="google_da">구글 DA</option>
+            <option value="google_shop">구글 쇼핑</option>
             <option value="payco">페이코</option>
             <option value="toss">토스페이</option>
             <option value="aedi">에디ai</option>
@@ -546,6 +547,7 @@ input.mm-gap-in:focus{border-color:#4466cc}
         <button class="ch-btn meta" data-ch="meta"><span class="ci ci-meta"></span>메타</button>
         <button class="ch-btn google_sa" data-ch="google_sa"><span class="ci ci-google"></span>구글 SA</button>
         <button class="ch-btn google_da" data-ch="google_da"><span class="ci ci-google"></span>구글 DA</button>
+        <button class="ch-btn google_shop" data-ch="google_shop"><span class="ci ci-google"></span>구글 쇼핑</button>
         <button class="ch-btn payco" data-ch="payco"><span class="ci ci-payco"></span>페이코</button>
         <button class="ch-btn toss" data-ch="toss"><span class="ci ci-toss"></span>토스페이</button>
         <button class="ch-btn aedi" data-ch="aedi"><span class="ci ci-aedi"></span>에디ai</button>
@@ -576,12 +578,15 @@ const C24 = {"2026-03-01":{"naver":50565360,"meta":54440060,"google_sa":2491920,
 // ═══ CONFIG ═══════════════════════════════════════════════════════
 const SHEET_ID='1VB0ND3448Ao0inegNeUk0O1aXcn7tiZ-3CXglqRmkvQ',GID='1140301783';
 const START='2026-03-01',END='2026-11-04';
-const PAID_CH=['naver','meta','google_sa','google_da','payco','toss','aedi','criteo','tiktok'];
+const PAID_CH=['naver','meta','google_sa','google_da','google_shop','payco','toss','aedi','criteo','tiktok'];
+// 구글쇼핑 (2026-11-05~) {날짜: [광고비, 매체 전환가치 RAW]} — A squad 시트에 열이 없어 cafe24-sync 가 구글애즈 스크립트 시트 값으로 채움
+const GSHOP={};
 const CH_META={
   naver:    {label:'네이버',   ci:'ci-naver',  color:'#03c75a'},
   meta:     {label:'메타',     ci:'ci-meta',   color:'#1877f2'},
   google_sa:{label:'구글 SA', ci:'ci-google', color:'#ea4335'},
   google_da:{label:'구글 DA', ci:'ci-google', color:'#ff7043'},
+  google_shop:{label:'구글 쇼핑', ci:'ci-google', color:'#7cb342'},
   payco:    {label:'페이코',   ci:'ci-payco',  color:'#ff5722'},
   toss:     {label:'토스페이', ci:'ci-toss',   color:'#0064ff'},
   aedi:     {label:'에디ai',  ci:'ci-aedi',   color:'#9c27b0'},
@@ -741,6 +746,8 @@ async function loadMedia(){
           naver_gfa:{spd:gfa,rev:gfaRev},
           meta:{spd:n(r[8]),rev:metaC1[d]||0}, // C1 기준 (02.메타 U열)
           google_sa:{spd:n(x[1]),rev:n(x[2])},google_da:{spd:n(x[3]),rev:n(x[4])},
+          // 시트 REVENUE 와 같은 규칙(매체 전환가치×0.86)으로 맞춤 → mRev 기본 경로
+          google_shop:{spd:(GSHOP[d]||[0,0])[0],rev:(GSHOP[d]||[0,0])[1]*0.86},
           payco:{spd:n(x[5]),rev:n(x[6])},
           // 에디는 시트 K열(RAW) 우선, 실패 시에만 예전 값(CI÷0.9로 RAW 환산)
           aedi:{spd:n(x[7]),rev:aediMap?(aediMap[d]??0):n(x[8])/0.9},
