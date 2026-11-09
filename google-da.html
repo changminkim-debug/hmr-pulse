@@ -361,6 +361,7 @@ td{border-bottom-color:rgba(20,24,40,.06)}
   </section>
 
   <section id="shop-sec" style="display:none">
+    <div class="shop-sum" id="shop-test" style="margin-bottom:18px"></div>
     <div class="h2"><span class="t">상품별 성과</span><span class="s" id="sp-sub"></span></div>
     <div class="shop-sum" id="sp-sum"></div>
     <div class="shop-tools"><div class="tabs" id="sp-tabs"></div><input id="sp-q" placeholder="상품명·상품번호 검색"></div>
@@ -378,7 +379,7 @@ td{border-bottom-color:rgba(20,24,40,.06)}
     <div class="panel"><div class="tscroll"><table id="t-fd"></table></div><div id="fd-more"></div></div>
   </section>
 
-  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 11. 9. 오후 4:41:16</div>
+  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 11. 9. 오후 5:15:33</div>
 </main>
 
 <div class="modal-ov" id="modal-ov" onclick="if(event.target===this) closeCampaignModal()">
@@ -425,7 +426,7 @@ stripToday(DATA_SHOP);
 // 목표 ROAS — Cafe24 순ROAS 기준, 매체별로 따로 저장 (2026-10-14 사용자 지정)
 function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
-function loadTarget(m) { var v = parseInt(lsGet('gda_target_roas_' + m)); if (isNaN(v) && m === 'google') v = parseInt(lsGet('gda_target_roas')); return isNaN(v) ? 150 : v; }
+function loadTarget(m) { var v = parseInt(lsGet('gda_target_roas_' + m)); if (isNaN(v) && m === 'google') v = parseInt(lsGet('gda_target_roas')); return isNaN(v) ? (m === 'shopping' ? 300 : 150) : v; } // 쇼핑 RAW 300% ≈ 손익분기(VAT 제외 순매출 270~280%) × 1.1
 var TARGET_ROAS = loadTarget('google');
 var CUR_PERIOD = 'yesterday';
 var CUSTOM_RANGE = null;
@@ -620,7 +621,9 @@ function metricVal(m, key) { var d = METRIC_DEF[key]; if (d.money) return Math.r
 function metricFmt(v, key) { if (v == null) return '-'; return METRIC_DEF[key].money ? won(v) : v + '%'; }
 function shortWon(v) { var a = Math.abs(v); return a >= 100000000 ? (v / 100000000) + '억' : a >= 10000 ? Math.round(v / 10000) + '만' : v; }
 // 목표는 순ROAS 기준 — Cafe24 ROAS(수수료 차감 전)는 순 목표 ÷ 0.86 으로 역산
-function goalOf(key) { var t = TARGET_ROAS || 150; return key === 'roasCafe' ? t : key === 'roasCafeRaw' ? t / CAFE24_NET_RATE : null; }
+function goalOf(key) { var t = TARGET_ROAS || 150;
+  if (CUR_MEDIA === 'shopping') return key === 'roasCafeRaw' ? t : key === 'roasCafe' ? t * CAFE24_NET_RATE : null; // 쇼핑은 RAW 기준 (11/09 사용자)
+  return key === 'roasCafe' ? t : key === 'roasCafeRaw' ? t / CAFE24_NET_RATE : null; }
 function roasBarConfig(dates, ms, key) {
   key = key || 'roasCafe';
   var def = METRIC_DEF[key];
@@ -680,7 +683,7 @@ function renderChart() {
   var r = monthRange(), ser = dailySeries(r[0], r[1]), key = CHART_METRIC, def = METRIC_DEF[key];
   var dates = ser.map(function (x) { return x.d; }), ms = ser.map(function (x) { return x.m; });
   document.getElementById('chart-title').textContent = '일자별 ' + def.t;
-  document.getElementById('chart-sub').textContent = (CUR_PERIOD === 'lastMonth' ? '지난달 ' : '이번달 ') + rangeTxt(r[0], r[1]) + (SELECTED_PRODUCT !== '전체' ? ' · ' + SELECTED_PRODUCT : '') + (goalOf(key) != null ? ' · 점선 = 목표 ' + Math.round(goalOf(key)) + '%' + (key === 'roasCafeRaw' ? ' (순ROAS ' + (TARGET_ROAS || 150) + '% 역산)' : '') : '');
+  document.getElementById('chart-sub').textContent = (CUR_PERIOD === 'lastMonth' ? '지난달 ' : '이번달 ') + rangeTxt(r[0], r[1]) + (SELECTED_PRODUCT !== '전체' ? ' · ' + SELECTED_PRODUCT : '') + (goalOf(key) != null ? ' · 점선 = 목표 ' + Math.round(goalOf(key)) + '%' + (CUR_MEDIA !== 'shopping' && key === 'roasCafeRaw' ? ' (순ROAS ' + (TARGET_ROAS || 150) + '% 역산)' : '') : '');
   if (trendChart) trendChart.destroy();
   trendChart = new Chart(document.getElementById('trend-chart').getContext('2d'), roasBarConfig(dates, ms, key));
   // 한 줄 요약 (레퍼런스의 차트 하단 코멘트 형식)
@@ -928,7 +931,7 @@ var SHOP_COLS = [
 var SHOP_CAFE_COLS = [
   { k: 'orderAmount', t: 'Cafe24 매출', tip: '쇼핑 유입 주문에서 실제 산 상품 (주문 금액을 상품 금액 비율로 나눔)', f: function (m) { return m.orderAmount ? won(m.orderAmount) : '-'; } },
   { k: 'brought', t: '클릭→주문', tip: '이 상품을 클릭하고 들어온 주문 금액 (구글 전환 금액 = Cafe24 주문 금액으로 짝지은 추정, 산 상품은 다를 수 있음)', f: function (m) { return m.brought ? won(m.brought) : '-'; } },
-  { k: 'roasCafe', t: '순ROAS', hl: true, f: function (m) { return m.cost > 0 ? (m.orderAmount ? pct(m.roasCafe) : '0%') : (m.orderAmount ? '<span style="color:var(--faint)">광고 0원</span>' : '-'); } }
+  { k: 'roasCafeRaw', t: 'Cafe24 ROAS', hl: true, f: function (m) { return m.cost > 0 ? (m.orderAmount ? pct(m.roasCafeRaw) : '0%') : (m.orderAmount ? '<span style="color:var(--faint)">광고 0원</span>' : '-'); } }
 ];
 function shopTable(id, st, list, nameFn, unit, rerender, extra) {
   var COLS = SHOP_COLS.map(function (c) { return extra && c.k === 'roasGoogle' ? { k: c.k, t: c.t, f: c.f } : c; }).concat(extra || []);
@@ -959,6 +962,16 @@ function renderShop() {
   if (CUR_MEDIA !== 'shopping') { sec.style.display = 'none'; return; }
   sec.style.display = '';
   var r = getRange(CUR_PERIOD), s = r[0], e = r[1], P = DATA_SHOP.products, T = DATA_SHOP.terms;
+  // 테스트 판단 (11/09 사용자): Cafe24 RAW ROAS 기준, 쇼핑 주문 40건 쌓이면 판단 — 기간 필터와 무관하게 시작일~어제 전체
+  (function () {
+    var ds = DATA_SHOP.dates, tt = emptyTotals(); ds.forEach(function (d) { addTotals(tt, DATA_SHOP.daily[d]); });
+    var mm = metrics(tt), need = 40, n = tt.orderCount, days = ds.length, per = days ? n / days : 0;
+    var eta = n >= need ? '판단 가능' : per > 0 ? (function () { var d = parseISO(ds[ds.length - 1]); d.setDate(d.getDate() + Math.ceil((need - n) / per)); return '이 속도면 ' + mdw(iso(d)) + '쯤 판단 가능'; })() : '주문 없음';
+    var goal = TARGET_ROAS || 300, ok = mm.roasCafeRaw >= goal;
+    var c = function (l, v, cls) { return '<div class="c' + (cls ? ' ' + cls : '') + '">' + l + ' <b>' + v + '</b></div>'; };
+    document.getElementById('shop-test').innerHTML = c('테스트 ' + (ds.length ? md(ds[0]) + '~' + md(ds[ds.length - 1]) : ''), days + '일') + c('쇼핑 주문', n + ' / ' + need + '건') +
+      c('Cafe24 ROAS(RAW)', (mm.cost ? pct(mm.roasCafeRaw) : '-') + ' · 기준 ' + goal + '%', n >= need ? (ok ? '' : 'warn') : '') + c('판단', n >= need ? (ok ? '기준 이상 → 증액·분리 검토' : '기준 미달 → 구조·상품 점검') : '보류 · ' + eta);
+  })();
   var sum = function (list) { var t = { cost: 0, conv: 0, convValue: 0 }; list.forEach(function (m) { t.cost += m.cost; t.conv += m.conv; t.convValue += m.convValue; }); return t; };
   var card = function (label, val, cls) { return '<div class="c' + (cls ? ' ' + cls : '') + '">' + label + ' <b>' + val + '</b></div>'; };
 
@@ -985,7 +998,7 @@ function renderShop() {
     var live = list.filter(function (m) { return m.cost > 0; }).length;
     document.getElementById('sp-sub').textContent = rangeTxt(s, e) + ' · 비용·매체 ROAS는 클릭된 상품, Cafe24 매출은 쇼핑 유입 주문에서 실제 산 상품 (다를 수 있음)';
     document.getElementById('sp-sum').innerHTML = card(sp.mode === 'group' ? '돈 쓴 품목' : '돈 쓴 상품', live + '개') + card('비용', won(all.cost)) + card('매체 ROAS', all.cost ? pct(all.convValue / all.cost * 100) : '-') +
-      (SL ? card('Cafe24 매출', won(saleAll) + ' · 순ROAS ' + (all.cost ? pct(saleAll * CAFE24_NET_RATE / all.cost * 100) : '-')) +
+      (SL ? card('Cafe24 매출', won(saleAll) + ' · ROAS ' + (all.cost ? pct(saleAll / all.cost * 100) : '-')) +
         card('광고한 상품을 그대로 산 매출', saleAll ? Math.round(saleOnSpent / saleAll * 100) + '%' : '-') : '') +
       card('1만원+ 쓰고 전환·매출 0', zero.length + '개 · ' + won(z.cost) + (all.cost ? ' (' + Math.round(z.cost / all.cost * 100) + '%)' : ''), zero.length ? 'warn' : '');
     if (sp.q) list = list.filter(function (m) { var i = names[m.key] || []; return (String(m.key) + ' ' + (i[0] || '') + ' ' + (i[1] || '')).toLowerCase().indexOf(sp.q) >= 0; });
@@ -1387,6 +1400,8 @@ function setMedia(m) {
   DATA = m === 'tiktok' ? DATA_TIKTOK : m === 'shopping' ? DATA_SHOP : DATA_GOOGLE;
   try { localStorage.setItem('gda_media', m); } catch (e) {}
   TARGET_ROAS = loadTarget(m);
+  CHART_METRIC = m === 'shopping' ? 'roasCafeRaw' : 'roasCafe';
+  var gl = document.querySelector('.goal'); if (gl) { gl.firstChild.textContent = m === 'shopping' ? '목표 Cafe24 ROAS(RAW) ' : '목표 순ROAS '; gl.title = m === 'shopping' ? 'Cafe24 RAW 매출 ÷ 비용 · 쇼핑 판단 기준 (기본 300% ≈ 손익분기)' : 'Cafe24 순ROAS 기준 · 매체별로 따로 저장'; }
   document.getElementById('target-roas-input').value = TARGET_ROAS;
   SELECTED_PRODUCT = '전체';
   VIEW = 'product'; DRILL = { product: null, campaignId: null };
