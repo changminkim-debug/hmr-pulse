@@ -378,7 +378,7 @@ td{border-bottom-color:rgba(20,24,40,.06)}
     <div class="panel"><div class="tscroll"><table id="t-fd"></table></div><div id="fd-more"></div></div>
   </section>
 
-  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 11. 9. 오후 4:34:10</div>
+  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 11. 9. 오후 4:34:36</div>
 </main>
 
 <div class="modal-ov" id="modal-ov" onclick="if(event.target===this) closeCampaignModal()">
@@ -1075,22 +1075,25 @@ function renderFeed() {
   var r = getRange(CUR_PERIOD), s = r[0], e = r[1], P = DATA_SHOP.products, imp = {}, cost = {};
   if (P) P.rows.forEach(function (x) { if (x[0] < s || x[0] > e) return; imp[x[2]] = (imp[x[2]] || 0) + x[4]; cost[x[2]] = (cost[x[2]] || 0) + x[3]; });
   var ST = { ELIGIBLE: '정상', ELIGIBLE_LIMITED: '제한', NOT_ELIGIBLE: '광고 불가' };
-  var bad = FD.filter(function (f) { return f[2] !== 'ELIGIBLE' || f[5]; }), oos = FD.filter(function (f) { return f[3] && f[3] !== 'IN_STOCK'; }), noimp = FD.filter(function (f) { return f[2] === 'ELIGIBLE' && !imp[f[0]]; });
+  // 상품 그룹에서 직접 뺀 상품(excluded_product_listing_group)은 운영자가 의도한 제외 — 문제로 세지 않는다 (11/09 스타터패키지)
+  var isOff = function (f) { return /excluded_product_listing_group/.test(f[5]); };
+  var off = FD.filter(isOff);
+  var bad = FD.filter(function (f) { return !isOff(f) && (f[2] !== 'ELIGIBLE' || f[5]); }), oos = FD.filter(function (f) { return f[3] && f[3] !== 'IN_STOCK'; }), noimp = FD.filter(function (f) { return f[2] === 'ELIGIBLE' && !imp[f[0]]; });
   var card = function (label, val, cls) { return '<div class="c' + (cls ? ' ' + cls : '') + '">' + label + ' <b>' + val + '</b></div>'; };
   document.getElementById('fd-sub').textContent = '구글 쇼핑 피드의 지금 상태 · 노출은 ' + rangeTxt(s, e);
-  document.getElementById('fd-sum').innerHTML = card('피드 상품', FD.length + '개') + card('광고 불가·제한·문제', bad.length + '개', bad.length ? 'warn' : '') + card('품절', oos.length + '개', oos.length ? 'warn' : '') + card('정상인데 노출 0', noimp.length + '개');
+  document.getElementById('fd-sum').innerHTML = card('피드 상품', FD.length + '개') + card('광고 불가·제한·문제', bad.length + '개', bad.length ? 'warn' : '') + card('직접 제외(설정)', off.length + '개') + card('품절', oos.length + '개', oos.length ? 'warn' : '') + card('정상인데 노출 0', noimp.length + '개');
   var el2 = document.getElementById('fd-tabs');
-  el2.innerHTML = [['issue', '문제 있는 상품'], ['oos', '품절'], ['noimp', '노출 0'], ['all', '전체']].map(function (o) { return '<button class="' + (FEED_ST.mode === o[0] ? 'active' : '') + '" data-m="' + o[0] + '">' + o[1] + '</button>'; }).join('');
+  el2.innerHTML = [['issue', '문제 있는 상품'], ['off', '직접 제외'], ['oos', '품절'], ['noimp', '노출 0'], ['all', '전체']].map(function (o) { return '<button class="' + (FEED_ST.mode === o[0] ? 'active' : '') + '" data-m="' + o[0] + '">' + o[1] + '</button>'; }).join('');
   el2.querySelectorAll('button').forEach(function (b) { b.onclick = function () { FEED_ST.mode = b.dataset.m; FEED_ST.all = false; renderFeed(); }; });
   var q = document.getElementById('fd-q'); if (!q.dataset.bound) { q.dataset.bound = '1'; q.oninput = function () { FEED_ST.q = q.value.trim().toLowerCase(); renderFeed(); }; }
-  var list = FEED_ST.mode === 'issue' ? bad : FEED_ST.mode === 'oos' ? oos : FEED_ST.mode === 'noimp' ? noimp : FD.slice();
+  var list = FEED_ST.mode === 'issue' ? bad : FEED_ST.mode === 'off' ? off : FEED_ST.mode === 'oos' ? oos : FEED_ST.mode === 'noimp' ? noimp : FD.slice();
   if (FEED_ST.q) list = list.filter(function (f) { return (f[1] + ' ' + f[6] + ' ' + f[7]).toLowerCase().indexOf(FEED_ST.q) >= 0; });
   list.sort(function (a, b) { return (imp[b[0]] || 0) - (imp[a[0]] || 0); });
   var shown = FEED_ST.all ? list : list.slice(0, 30);
   el.innerHTML = '<thead><tr><th class="l" style="cursor:default">상품</th><th class="l" style="cursor:default">상태</th><th class="l" style="cursor:default">재고</th><th style="cursor:default">가격</th><th style="cursor:default">노출</th><th style="cursor:default">비용</th><th class="l" style="cursor:default">문제</th></tr></thead><tbody>' +
     (shown.length ? shown.map(function (f) {
-      var stc = f[2] === 'ELIGIBLE' ? '' : ' class="badge b-zero"';
-      return '<tr class="noclick"><td class="l nm"><span class="up">' + h(f[7]) + ' · ' + h(f[6]) + '</span><span class="main">' + h(f[1]) + '</span></td><td class="l"><span' + stc + '>' + (ST[f[2]] || h(f[2])) + '</span></td><td class="l">' + (f[3] === 'IN_STOCK' ? '재고 있음' : '<span class="badge b-zero">' + h(f[3] || '-') + '</span>') + '</td><td>' + won(f[4]) + '</td><td>' + cnt(imp[f[0]] || 0) + '</td><td>' + (cost[f[0]] ? won(cost[f[0]]) : '-') + '</td><td class="l nm" style="font-size:12.5px;color:var(--mute)">' + h(f[5] || '') + '</td></tr>';
+      var stc = f[2] === 'ELIGIBLE' ? '' : isOff(f) ? ' class="badge b-pause"' : ' class="badge b-zero"';
+      return '<tr class="noclick"><td class="l nm"><span class="up">' + h(f[7]) + ' · ' + h(f[6]) + '</span><span class="main">' + h(f[1]) + '</span></td><td class="l"><span' + stc + '>' + (isOff(f) ? '직접 제외' : ST[f[2]] || h(f[2])) + '</span></td><td class="l">' + (f[3] === 'IN_STOCK' ? '재고 있음' : '<span class="badge b-zero">' + h(f[3] || '-') + '</span>') + '</td><td>' + won(f[4]) + '</td><td>' + cnt(imp[f[0]] || 0) + '</td><td>' + (cost[f[0]] ? won(cost[f[0]]) : '-') + '</td><td class="l nm" style="font-size:12.5px;color:var(--mute)">' + h(f[5] || '') + '</td></tr>';
     }).join('') : '<tr><td class="empty" colspan="7">해당 상품 없음</td></tr>') + '</tbody>';
   var mo = document.getElementById('fd-more');
   mo.innerHTML = list.length > 30 ? '<button class="more-btn">' + (FEED_ST.all ? '상위 30개만 보기 ▲' : '전체 ' + list.length + '개 보기 ▾') + '</button>' : '';
