@@ -94,6 +94,16 @@ body{
 .cv{font-size:22px;font-weight:700;line-height:1.1;letter-spacing:-.7px;color:var(--ink)}
 .cs{font-size:12px;color:var(--ink-4);margin-top:7px;white-space:normal;word-break:keep-all;line-height:1.5;font-weight:400}
 .cs b{color:var(--ink-2);font-weight:600}
+/* C1 ROAS 카드 — 제일 중요한 값이라 ROAS 정합성 페이지(hl2)처럼 채운 카드로 다른 카드와 구분 */
+.card.card-key{background:#4466cc;border-color:#4466cc}
+.card.card-key:hover{border-color:#3554b8;box-shadow:0 6px 18px rgba(68,102,204,.35)}
+.card.card-key .cl{color:rgba(255,255,255,.75)}
+.card.card-key .cv,.card.card-key:hover .cv{color:#fff;font-size:26px}
+.card.card-key .cs,.card.card-key .bar-lb{color:rgba(255,255,255,.7)}
+.card.card-key .cs b,.card.card-key .bar-lb b{color:#fff}
+.card.card-key .bar{background:rgba(255,255,255,.25)}
+.card.card-key .bar>i{background:#fff}
+.card.card-key .tag{background:rgba(255,255,255,.18);color:#fff}
 
 /* 비교 태그 — 전일 동시각 대비 등 */
 .tag{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--line-2);color:var(--ink-3);margin-top:9px}
@@ -619,9 +629,8 @@ function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(
 function roasPill(r, spend){
   if (!spend) return '<span class="pill pill-na">—</span>';
   var t = S.tRoas;
-  // 낮은 쪽을 빨갛게 칠하면 표가 온통 붉어져 오히려 안 읽힌다.
-  // 목표 이상만 초록으로 집고 나머지는 중립으로 둔다.
-  var c = r >= t ? 'pill-hi' : 'pill-mid';
+  // 3단계: 목표 이상 초록 · 살짝 낮음(목표 85%~) 회색 · 크게 낮음 붉은색. 기준은 roasCls·KPI 막대와 같다
+  var c = r >= t ? 'pill-hi' : r >= t * 0.85 ? 'pill-mid' : 'pill-lo';
   // 네 자리 %(소진이 아주 적은 캠페인)는 기본 pill 폭을 넘겨 잘린다 — 좁은 변형을 쓴다
   var tight = r >= 1000 ? ' pill-tight' : '';
   return '<span class="pill ' + c + tight + '">' + pct(r) + '</span>';
@@ -1034,7 +1043,7 @@ function renderKpi(A, cn){
                                  landRoas >= S.tRoas ? 'up' : 'down') : '']
   ];
   document.getElementById('kpi').innerHTML = cards.map(function(c){
-    return '<div class="card"><div class="cl">' + c[0] + '</div><div class="cv">' + c[1] + '</div>' +
+    return '<div class="card' + (c[0] === 'C1 ROAS' ? ' card-key' : '') + '"><div class="cl">' + c[0] + '</div><div class="cv">' + c[1] + '</div>' +
            '<div class="cs">' + c[2] + '</div>' + (c[3] || '') + '</div>';
   }).join('');
 }
@@ -1742,7 +1751,7 @@ function renderPerKpi(T, n, p){
       '<br>객단가 ' + (T.purchases ? won(T.val / T.purchases) : '—') + '원 · CTR ' + (T.imp ? (T.clicks / T.imp * 100).toFixed(2) : '0.00') + '% · CVR ' + (T.clicks ? (T.purchases / T.clicks * 100).toFixed(2) : '0.00') + '%']
   ];
   document.getElementById('kpi').innerHTML = cards.map(function(c){
-    return '<div class="card"><div class="cl">' + c[0] + '</div><div class="cv">' + c[1] + '</div><div class="cs">' + c[2] + '</div></div>';
+    return '<div class="card' + (c[0] === 'C1 ROAS' ? ' card-key' : '') + '"><div class="cl">' + c[0] + '</div><div class="cv">' + c[1] + '</div><div class="cs">' + c[2] + '</div></div>';
   }).join('');
 }
 // 기간 모드에선 오늘 전용(예상·수정사항·볼 것·매출 대조)을 숨기고 제목을 바꾼다
