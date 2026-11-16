@@ -25,32 +25,32 @@ body{font-family:'Pretendard Variable',Pretendard,-apple-system,'Malgun Gothic',
 .num{font-variant-numeric:tabular-nums}
 
 /* ── 헤더 밴드 ── */
-.band{background:var(--panel);color:var(--ink);border-bottom:1px solid var(--line);position:relative}
+.band{background:linear-gradient(120deg,var(--band) 0%,var(--band2) 100%);color:var(--band-ink);position:relative}
 body.m-tiktok .band::after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,#25f4ee,#fe2c55)}
 .band-in{max-width:1860px;margin:0 auto;padding:9px 20px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
 .band-l{display:flex;align-items:center;gap:14px;min-width:0}
-.band-logo{width:36px;height:36px;border-radius:9px;background:#fff;border:1px solid var(--line);object-fit:contain;padding:4px;flex-shrink:0}
+.band-logo{width:36px;height:36px;border-radius:9px;background:#fff;object-fit:contain;padding:4px;flex-shrink:0}
 body.m-tiktok .band-logo{padding:0;background:#000}
 .band-kicker{display:none}
-.band-title{font-size:17px;font-weight:700;letter-spacing:-.2px;line-height:1.3;color:var(--ink)}
-.band-meta{font-size:12px;color:var(--faint);margin-top:2px}
-.band-meta b{color:var(--ink2);font-weight:600}
+.band-title{font-size:17px;font-weight:700;letter-spacing:-.2px;line-height:1.3;color:var(--band-ink)}
+.band-meta{font-size:12px;color:var(--band-mute);margin-top:2px}
+.band-meta b{color:var(--band-ink);font-weight:600}
 .band-r{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.media-tog{display:inline-flex;background:var(--line2);border-radius:9px;padding:3px;gap:2px}
-.media-tog button{border:none;background:transparent;color:var(--mute);padding:5px 12px 5px 6px;border-radius:7px;font:600 13px/1 inherit;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
-.media-tog button:hover{color:var(--ink)}
-.media-tog button.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(16,24,40,.12)}
+.media-tog{display:inline-flex;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:3px;gap:2px}
+.media-tog button{border:none;background:transparent;color:var(--band-mute);padding:5px 12px 5px 6px;border-radius:7px;font:600 13px/1 inherit;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.media-tog button:hover{color:#fff}
+.media-tog button.active{background:#fff;color:var(--ink)}
 .media-tog img{width:18px;height:18px;border-radius:5px;object-fit:contain}
 .media-tog button:not(.active) img{opacity:.6}
-.xls-btn{background:var(--line2);color:var(--ink2);border:1px solid var(--line);border-radius:8px;padding:5px 12px;font:600 12.5px inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
-.xls-btn:hover{background:#fff;color:var(--ac);border-color:var(--ac)}
+.xls-btn{background:transparent;color:var(--band-ink);border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:5px 12px;font:600 12.5px inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
+.xls-btn:hover{background:rgba(255,255,255,.12)}
 
 /* ── 고정 툴바 ── */
 .bar{position:sticky;top:0;z-index:20;background:#fff;backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
 .bar-in{max-width:1860px;margin:0 auto;padding:6px 20px;display:flex;flex-direction:column;gap:0}
 .bar-row+.bar-row{border-top:1px solid var(--line2);margin-top:6px;padding-top:6px}
 .bar-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.bar-lbl{font-size:12px;font-weight:600;color:var(--faint);letter-spacing:.4px;width:36px;flex-shrink:0}
+.bar-lbl{font-size:12px;font-weight:600;color:var(--faint);letter-spacing:.4px;width:44px;flex-shrink:0}
 .seg{display:inline-flex;flex-wrap:wrap;gap:2px;background:var(--line2);border-radius:9px;padding:3px}
 .seg button{border:none;background:transparent;color:var(--mute);border-radius:7px;padding:5px 12px;font:600 12.5px inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
 .seg button .d{display:none;color:rgba(255,255,255,.78);font-size:11.5px;margin-left:5px}
@@ -299,6 +299,10 @@ td.btncell{width:1%;padding-left:2px}
       <div class="spacer"></div>
       <label class="goal" title="Cafe24 순ROAS 기준 · 매체별로 따로 저장">목표 순ROAS <input type="number" id="target-roas-input" value="150" min="0" step="10">%</label>
     </div>
+    <div class="bar-row" id="owner-row" style="display:none">
+      <span class="bar-lbl">담당자</span>
+      <div class="chips" id="owner-chips"></div>
+    </div>
   </div>
 </div>
 
@@ -360,7 +364,7 @@ td.btncell{width:1%;padding-left:2px}
     <div class="panel"><div class="tscroll"><table id="t-fd"></table></div><div id="fd-more"></div></div>
   </section>
 
-  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 11. 16. 오후 2:43:50</div>
+  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 11. 16. 오후 3:03:22</div>
 </main>
 
 <div class="modal-ov" id="modal-ov" onclick="if(event.target===this) closeCampaignModal()">
@@ -564,7 +568,7 @@ function renderBand() {
   var dates = DATA.dates;
   var span = dates.length ? md(dates[0]) + ' ~ ' + mdw(dates[dates.length - 1]) : '-';
   var r = getRange(CUR_PERIOD);
-  document.getElementById('band-meta').innerHTML = (CUR_MEDIA === 'tiktok' ? '틱톡 · ' : CUR_MEDIA === 'shopping' ? '쇼핑 · ' : '디맨드젠 · ') + '보는 기간 <b>' + rangeTxt(r[0], r[1]) + '</b> · 데이터 ' + span + ' · Cafe24 순매출 = RAW × 86%';
+  document.getElementById('band-meta').innerHTML = (CUR_MEDIA === 'tiktok' ? '틱톡 · ' : CUR_MEDIA === 'shopping' ? '쇼핑 · ' : '디맨드젠 · ') + (CUR_MEDIA === 'google' && SELECTED_OWNER !== '전체' ? '담당자 <b>' + h(SELECTED_OWNER) + '</b> · ' : '') + '보는 기간 <b>' + rangeTxt(r[0], r[1]) + '</b> · 데이터 ' + span + ' · Cafe24 순매출 = RAW × 86%';
   var el = document.getElementById('notice');
   if (DATA.warnings && DATA.warnings.length) { el.classList.add('show'); el.innerHTML = DATA.warnings.map(function (w) { return '⚠ ' + h(w); }).join('<br>'); }
   else el.classList.remove('show');
@@ -725,6 +729,45 @@ function ownerOf(adName, campName) {
     return null;
   }
   return hit(adName) || hit(campName) || '미지정';
+}
+// 담당자 필터: 그 사람 소재만 남긴 구글 DA 데이터 사본을 DATA 로 끼운다 → KPI·차트·성과 상세·지면이 전부 따라감
+var SELECTED_OWNER = '전체', _ownerViews = {};
+function sumByDate(list) { var o = {}; list.forEach(function (x) { for (var d in x.byDate) addTotals(o[d] || (o[d] = emptyTotals()), x.byDate[d]); }); return o; }
+function sumTotals(list) { var t = emptyTotals(); list.forEach(function (x) { addTotals(t, x.totals); }); return t; }
+function ownerView(o) {
+  if (o === '전체') return DATA_GOOGLE;
+  if (_ownerViews[o]) return _ownerViews[o];
+  var keep = {};
+  var prods = DATA_GOOGLE.byProduct.map(function (p) {
+    var camps = p.campaigns.map(function (c) {
+      var ads = c.ads.filter(function (a) { return ownerOf(a.adName, c.name) === o; });
+      if (!ads.length) return null;
+      ads.forEach(function (a) { keep[a.adId] = 1; });
+      return Object.assign({}, c, { ads: ads, byDate: sumByDate(ads), totals: sumTotals(ads) });
+    }).filter(Boolean);
+    return camps.length ? { product: p.product, campaigns: camps, byDate: sumByDate(camps), totals: sumTotals(camps) } : null;
+  }).filter(Boolean);
+  var P = DATA_GOOGLE.place;
+  return (_ownerViews[o] = Object.assign({}, DATA_GOOGLE, { byProduct: prods, place: P ? Object.assign({}, P, { rows: P.rows.filter(function (x) { return keep[x[2]]; }) }) : P }));
+}
+function renderOwnerChips() {
+  var row = document.getElementById('owner-row');
+  if (CUR_MEDIA !== 'google') { row.style.display = 'none'; return; }
+  row.style.display = '';
+  var r = getRange(CUR_PERIOD), all = {}, live = {};
+  DATA_GOOGLE.byProduct.forEach(function (p) { p.campaigns.forEach(function (c) { c.ads.forEach(function (a) {
+    var o = ownerOf(a.adName, c.name), t = sumRange(a.byDate, r[0], r[1]);
+    all[o] = (all[o] || 0) + a.totals.cost; if (t.cost > 0 || t.orderAmount > 0) live[o] = 1;
+  }); }); });
+  var items = ['전체'].concat(Object.keys(all).sort(function (a, b) { return a === '미지정' ? 1 : b === '미지정' ? -1 : all[b] - all[a]; }));
+  var el = document.getElementById('owner-chips');
+  el.innerHTML = items.map(function (n, i) {
+    var cls = (SELECTED_OWNER === n ? ' active' : '') + (i === 0 ? '' : live[n] ? ' on' : ' dim');
+    return '<span class="chip' + cls + '" data-i="' + i + '"' + (i > 0 && !live[n] ? ' title="이 기간 실적 없음"' : '') + '>' + h(n) + '</span>';
+  }).join('');
+  el.querySelectorAll('.chip').forEach(function (c) {
+    c.onclick = function () { SELECTED_OWNER = items[+c.dataset.i]; DATA = ownerView(SELECTED_OWNER); DRILL = { product: null, campaignId: null }; if (!DATA.byProduct.some(function (p) { return p.product === SELECTED_PRODUCT; })) SELECTED_PRODUCT = '전체'; renderAll(); };
+  });
 }
 function ownerRows(s, e) {
   var ag = {};
@@ -1181,7 +1224,7 @@ function renderPlace() {
   var sec = document.getElementById('place-sec');
   if (CUR_MEDIA !== 'google') { sec.style.display = 'none'; return; }
   sec.style.display = '';
-  var P = DATA_GOOGLE.place, r = getRange(CUR_PERIOD), s = r[0], e = r[1];
+  var P = DATA.place, r = getRange(CUR_PERIOD), s = r[0], e = r[1];
   var unitT = PV === 'product' ? '품목' : PV === 'campaign' ? '캠페인' : '소재';
   if (!P || !P.rows.length) {
     document.getElementById('place-sub').textContent = '';
@@ -1420,6 +1463,7 @@ function exportExcel(){
 function renderAll() {
   renderPeriods();
   renderChips();
+  renderOwnerChips();
   renderBand();
   renderKPI();
   renderChart();
@@ -1435,6 +1479,7 @@ var CUR_MEDIA = 'google';
 function setMedia(m) {
   if ((m === 'tiktok' && !DATA_TIKTOK) || (m === 'shopping' && !DATA_SHOP) || !MEDIA_LABEL[m]) m = 'google';
   CUR_MEDIA = m;
+  SELECTED_OWNER = '전체';
   DATA = m === 'tiktok' ? DATA_TIKTOK : m === 'shopping' ? DATA_SHOP : DATA_GOOGLE;
   try { localStorage.setItem('gda_media', m); } catch (e) {}
   TARGET_ROAS = loadTarget(m);
