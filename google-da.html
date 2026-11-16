@@ -364,7 +364,7 @@ td.btncell{width:1%;padding-left:2px}
     <div class="panel"><div class="tscroll"><table id="t-fd"></table></div><div id="fd-more"></div></div>
   </section>
 
-  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 11. 16. 오후 3:03:22</div>
+  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 11. 16. 오후 3:06:20</div>
 </main>
 
 <div class="modal-ov" id="modal-ov" onclick="if(event.target===this) closeCampaignModal()">
@@ -715,20 +715,20 @@ function toggleDailyTable() {
 
 /* ── 담당자 (11/16~ 소재명 규칙 "품목_컨셉_담당자_주차") ──
    위치(3번째 칸)로 자르지 않는다 — 옛 소재명 "크리스피_하이브리드_1", "닭다리살_1010_먹어본식단템"이 사람으로 잡힘.
-   등록된 이름·이니셜만 인정, 소재명에 없으면 캠페인명, 그래도 없으면 미지정. 새 사람은 아래 두 목록에 추가.
+   등록된 이니셜(OWNER_INI)만 인정, 없으면 미지정. 새 사람은 OWNER_INI 에 추가.
    이니셜 목록은 메타 대시보드(scripts/dashboard.js PERSON_INITIAL_MAP)와 같게 유지. */
 var OWNER_INI = { ahi: '안혜인', chy: '천혜영', ljh: '이지현', gyl: '간유림', jhr: '정혜림', yhk: '유하경', lyg: '이윤관', sck: '신치경',
   ksr: '김승룡', ysy: '양서영', ose: '오서이', ksg: '김선길', bye: '배영언', psh: '박시현', jbm: '정보미', jjy: '장지영',
   kgl: '김건리', cjs: '최진성', kjy: '강주이', khr: '강혜린', egc: '어경찬', sys: '송예서' };
-var OWNER_NAMES = { '김혜선': 1, '남현승': 1 };
-Object.keys(OWNER_INI).forEach(function (k) { OWNER_NAMES[OWNER_INI[k]] = 1; });
-function ownerOf(adName, campName) {
-  function hit(str) {
-    var tk = String(str || '').split('_');
-    for (var i = 0; i < tk.length; i++) { var t = tk[i].split('(')[0].trim(); if (OWNER_NAMES[t]) return t; if (OWNER_INI[t.toLowerCase()]) return OWNER_INI[t.toLowerCase()]; }
-    return null;
-  }
-  return hit(adName) || hit(campName) || '미지정';
+// 11/16 사용자 확정: 담당자 = 소재명 뒤에 붙는 이니셜만. 이름 전체·캠페인명으로는 잡지 않음 → 나머지는 전부 미지정.
+// 예외: 이니셜 없는 옛 소재를 사용자가 직접 지정한 것 (소재명 그대로)
+var OWNER_BY_AD = { '그릴드_메가딜_김혜선': '신치경' };
+function ownerOf(adName) {
+  var n = String(adName || '').trim();
+  if (OWNER_BY_AD[n]) return OWNER_BY_AD[n];
+  var tk = n.split('_');
+  for (var i = tk.length - 1; i >= 0; i--) { var t = tk[i].split('(')[0].trim().toLowerCase(); if (OWNER_INI[t]) return OWNER_INI[t]; } // 뒤에서부터
+  return '미지정';
 }
 // 담당자 필터: 그 사람 소재만 남긴 구글 DA 데이터 사본을 DATA 로 끼운다 → KPI·차트·성과 상세·지면이 전부 따라감
 var SELECTED_OWNER = '전체', _ownerViews = {};
