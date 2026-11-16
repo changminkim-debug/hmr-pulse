@@ -295,6 +295,9 @@ td.nmcell{text-align:left;user-select:text}
     flex:1 1 auto;min-width:0;white-space:normal;word-break:break-all;overflow-wrap:anywhere}
 .nmwrap{display:flex;align-items:flex-start;gap:3px;min-width:0;max-width:100%}
 .nmwrap .arrow,.nmwrap .iconbtn{flex:0 0 auto;margin-top:1px}
+/* 학습 배지는 이름 아래 줄 — 이름 옆에 두면 좁은 칸에서 이름이 글자 단위로 찢어짐(11/16) */
+.nmcol{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.nmcol .lchip{margin-left:0}
 table.grid td.nmcell{white-space:normal;vertical-align:middle}
 table.grid td.itemname{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sub-wrap .nm{font-size:12.5px}
@@ -571,7 +574,7 @@ table.m-tbl tfoot td{font-weight:700;border-top:2px solid var(--line);border-bot
 
 <div class="fbar">
  <div class="fbar-in">
-  <div class="fg"><span class="fl">날짜</span><select class="sel" onchange="if(this.value)location.href=this.value"><option value="../budget.html">오늘로 돌아가기</option><option value="" selected>2026-09-17 (보는 중)</option><option value="budget-20261112.html">2026-11-12</option><option value="budget-20261111.html">2026-11-11</option><option value="budget-20261110.html">2026-11-10</option><option value="budget-20261109.html">2026-11-09</option><option value="budget-20261108.html">2026-11-08</option><option value="budget-20261107.html">2026-11-07</option><option value="budget-20261106.html">2026-11-06</option><option value="budget-20261105.html">2026-11-05</option><option value="budget-20261104.html">2026-11-04</option><option value="budget-20261103.html">2026-11-03</option><option value="budget-20261102.html">2026-11-02</option><option value="budget-20261101.html">2026-11-01</option><option value="budget-20261031.html">2026-10-31</option><option value="budget-20261030.html">2026-10-30</option><option value="budget-20261029.html">2026-10-29</option><option value="budget-20261028.html">2026-10-28</option><option value="budget-20261027.html">2026-10-27</option><option value="budget-20261026.html">2026-10-26</option><option value="budget-20261025.html">2026-10-25</option><option value="budget-20261024.html">2026-10-24</option><option value="budget-20261023.html">2026-10-23</option><option value="budget-20261022.html">2026-10-22</option><option value="budget-20261021.html">2026-10-21</option><option value="budget-20261020.html">2026-10-20</option><option value="budget-20261019.html">2026-10-19</option><option value="budget-20261018.html">2026-10-18</option><option value="budget-20261017.html">2026-10-17</option><option value="budget-20261016.html">2026-10-16</option><option value="budget-20261015.html">2026-10-15</option><option value="budget-20261014.html">2026-10-14</option><option value="budget-20261013.html">2026-10-13</option><option value="budget-20261012.html">2026-10-12</option><option value="budget-20261011.html">2026-10-11</option><option value="budget-20261010.html">2026-10-10</option><option value="budget-20261009.html">2026-10-09</option><option value="budget-20261008.html">2026-10-08</option><option value="budget-20261007.html">2026-10-07</option><option value="budget-20261006.html">2026-10-06</option><option value="budget-20261005.html">2026-10-05</option><option value="budget-20261004.html">2026-10-04</option><option value="budget-20261003.html">2026-10-03</option><option value="budget-20261002.html">2026-10-02</option><option value="budget-20261001.html">2026-10-01</option><option value="budget-20260930.html">2026-09-30</option><option value="budget-20260929.html">2026-09-29</option><option value="budget-20260928.html">2026-09-28</option><option value="budget-20260927.html">2026-09-27</option><option value="budget-20260926.html">2026-09-26</option><option value="budget-20260925.html">2026-09-25</option><option value="budget-20260924.html">2026-09-24</option><option value="budget-20260923.html">2026-09-23</option><option value="budget-20260922.html">2026-09-22</option><option value="budget-20260921.html">2026-09-21</option><option value="budget-20260920.html">2026-09-20</option><option value="budget-20260919.html">2026-09-19</option><option value="budget-20260918.html">2026-09-18</option><option value="budget-20260916.html">2026-09-16</option></select></div>
+  <div class="fg"><span class="fl">날짜</span><select class="sel" onchange="if(this.value)location.href=this.value"><option value="../budget.html">오늘로 돌아가기</option><option value="" selected>2026-09-17 (보는 중)</option><option value="budget-20261115.html">2026-11-15</option><option value="budget-20261114.html">2026-11-14</option><option value="budget-20261113.html">2026-11-13</option><option value="budget-20261112.html">2026-11-12</option><option value="budget-20261111.html">2026-11-11</option><option value="budget-20261110.html">2026-11-10</option><option value="budget-20261109.html">2026-11-09</option><option value="budget-20261108.html">2026-11-08</option><option value="budget-20261107.html">2026-11-07</option><option value="budget-20261106.html">2026-11-06</option><option value="budget-20261105.html">2026-11-05</option><option value="budget-20261104.html">2026-11-04</option><option value="budget-20261103.html">2026-11-03</option><option value="budget-20261102.html">2026-11-02</option><option value="budget-20261101.html">2026-11-01</option><option value="budget-20261031.html">2026-10-31</option><option value="budget-20261030.html">2026-10-30</option><option value="budget-20261029.html">2026-10-29</option><option value="budget-20261028.html">2026-10-28</option><option value="budget-20261027.html">2026-10-27</option><option value="budget-20261026.html">2026-10-26</option><option value="budget-20261025.html">2026-10-25</option><option value="budget-20261024.html">2026-10-24</option><option value="budget-20261023.html">2026-10-23</option><option value="budget-20261022.html">2026-10-22</option><option value="budget-20261021.html">2026-10-21</option><option value="budget-20261020.html">2026-10-20</option><option value="budget-20261019.html">2026-10-19</option><option value="budget-20261018.html">2026-10-18</option><option value="budget-20261017.html">2026-10-17</option><option value="budget-20261016.html">2026-10-16</option><option value="budget-20261015.html">2026-10-15</option><option value="budget-20261014.html">2026-10-14</option><option value="budget-20261013.html">2026-10-13</option><option value="budget-20261012.html">2026-10-12</option><option value="budget-20261011.html">2026-10-11</option><option value="budget-20261010.html">2026-10-10</option><option value="budget-20261009.html">2026-10-09</option><option value="budget-20261008.html">2026-10-08</option><option value="budget-20261007.html">2026-10-07</option><option value="budget-20261006.html">2026-10-06</option><option value="budget-20261005.html">2026-10-05</option><option value="budget-20261004.html">2026-10-04</option><option value="budget-20261003.html">2026-10-03</option><option value="budget-20261002.html">2026-10-02</option><option value="budget-20261001.html">2026-10-01</option><option value="budget-20260930.html">2026-09-30</option><option value="budget-20260929.html">2026-09-29</option><option value="budget-20260928.html">2026-09-28</option><option value="budget-20260927.html">2026-09-27</option><option value="budget-20260926.html">2026-09-26</option><option value="budget-20260925.html">2026-09-25</option><option value="budget-20260924.html">2026-09-24</option><option value="budget-20260923.html">2026-09-23</option><option value="budget-20260922.html">2026-09-22</option><option value="budget-20260921.html">2026-09-21</option><option value="budget-20260920.html">2026-09-20</option><option value="budget-20260919.html">2026-09-19</option><option value="budget-20260918.html">2026-09-18</option></select></div>
   <div class="fg" id="per-bar"></div>
   <div class="fg"><span class="fl">계정</span><div class="seg" id="acct-seg"></div></div>
   <div class="fg"><span class="fl">목표 소진</span><input class="tin" id="t-spend" type="text" inputmode="numeric"><span class="tsuf">원</span></div>
@@ -1439,7 +1442,7 @@ function prodCodes(it){
    서로 다른 자리에 떨어져 "합계와 항목이 안 맞는" 것처럼 보였다(2026-09-21 피드백).
    같은 colgroup 을 공유하면 어느 깊이든 같은 세로선 위에 놓인다. */
 var COLS = [
-  { k:'name',      h:'캠페인',     left:true,  w:'11.5%' },
+  { k:'name',      h:'캠페인',     left:true,  w:'18%' },
   { k:'mode',      h:'체계',       left:true,  w:'4%' },
   { k:'attr',      h:'기여',       left:true,  w:'3.5%' },
   { k:'strategy',  h:'입찰 · 캡값', left:true,  w:'6%' },
@@ -1458,7 +1461,7 @@ var COLS = [
   { k:'cpa',       h:'CPA',                    w:'4.5%'  },
   { k:'realEst',   h:'실매출 ROAS',            w:'5.5%'  },
   { k:'flowIdx',   h:'오늘 흐름',              w:'5%'  },
-  { k:'todoN',     h:'할 일',      left:true,  w:'9%'  }
+  { k:'todoN',     h:'할 일',      left:true,  w:'7%'  }
 ];
 var NCOL = COLS.length;
 
@@ -1472,13 +1475,13 @@ var KEYCOL = { daily:'key k1', spend:'key k2', remain:'rem' };
    성격이 다른 지표를 한 표에 늘어놓으니 구분이 안 된다는 피드백(2026-09-30).
    두 표는 같은 순서로 그리고 행 높이를 고정해 좌우가 같은 줄에 오게 한다. */
 var ITEM_COLS = [
-  { k:'item',      h:'품목',   left:true, w:'15%', w0:'17%' },
+  { k:'item',      h:'품목',   left:true, w:'17%', w0:'19%' },
   { k:'daily',     h:'일예산',            w:'8.5%', w0:'11%' },
-  { k:'spend',     h:'소진',              w:'10%', w0:'12%' },
+  { k:'spend',     h:'소진',              w:'9%', w0:'11%' },
   { k:'remain',    h:'잔여',              w:'7.5%', w0:'8.5%' },
   { k:'pace',      h:'페이스',            w:'6.5%', w0:'7%'  },
   { k:'purchases', h:'전환수',            w:'5%',  w0:'6%' },
-  { k:'val',       h:'전환값',            w:'9.5%', w0:'11%' },
+  { k:'val',       h:'전환값',            w:'8.5%', w0:'10%' },
   { k:'roas',      h:'ROAS',              w:'7%',  w0:'8%' },
   { k:'cpa',       h:'CPA',               w:'6%',  w0:'9%' },
   { k:'realEst',   h:'실매출 ROAS',       w:'7.5%', w0:'10.5%',
@@ -1802,7 +1805,7 @@ function adsetRows(r){
     var roas = a.spend ? a.val/a.spend*100 : 0;
     var share = r.spend ? a.spend/r.spend*100 : 0;
     h += '<tr class="lv3' + '">' +
-      '<td class="left nmcell tog" onclick="ddIn(\'s\',\'' + a.id + '\')" title="눌러서 소재로 들어가기"><span class="nmwrap"><span class="arrow">›</span><span class="nm" title="' + esc(a.name) + '">' + esc(a.name) + '</span>' + learnChip(a) + histBtn(a.id) + '</span></td>' +
+      '<td class="left nmcell tog" onclick="ddIn(\'s\',\'' + a.id + '\')" title="눌러서 소재로 들어가기"><span class="nmwrap"><span class="arrow">›</span><span class="nmcol"><span class="nm" title="' + esc(a.name) + '">' + esc(a.name) + '</span>' + learnChip(a) + '</span>' + histBtn(a.id) + '</span></td>' +
       '<td></td>' +
       '<td class="left">' + attrCell(a.attr) + '</td>' +
       '<td class="left">' + chgVal(bidCell(a.strategy, a.capText), a.chgCap, 'c:' + a.id, true) + '</td>' +
