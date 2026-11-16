@@ -364,7 +364,7 @@ td.btncell{width:1%;padding-left:2px}
     <div class="panel"><div class="tscroll"><table id="t-fd"></table></div><div id="fd-more"></div></div>
   </section>
 
-  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 11. 16. 오후 3:06:20</div>
+  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 11. 16. 오후 3:13:28</div>
 </main>
 
 <div class="modal-ov" id="modal-ov" onclick="if(event.target===this) closeCampaignModal()">
@@ -1219,6 +1219,19 @@ function placeIndex() { // 캠페인 ID → 품목·이름, 광고 ID → 소재
   }); });
   return (_placeIdx = { camp: camp, ad: ad });
 }
+// 지면은 06시 자동수집만 있고, 성과 상세는 그 뒤 수동 업로드분까지 반영 → 늦게 잡힌 전환만큼 최근 며칠이 어긋난다 (11/16 확인)
+function placeLagNote(pDay, s, e) {
+  var aDay = {};
+  DATA.byProduct.forEach(function (p) {
+    if (!productMatch(p.product) || (DRILL.product && DRILL.product !== p.product)) return;
+    p.campaigns.forEach(function (c) { if (DRILL.campaignId && DRILL.campaignId !== c.campaignId) return;
+      for (var d in c.byDate) if (d >= s && d <= e && pDay[d] != null) aDay[d] = (aDay[d] || 0) + c.byDate[d].conv; });
+  });
+  var off = Object.keys(pDay).sort().filter(function (d) { return Math.abs((aDay[d] || 0) - pDay[d]) >= 0.5; });
+  if (!off.length) return '';
+  return '<br><b style="color:#B54708">⚠ ' + off.map(function (d) { return mdw(d) + ' 지면 전환 ' + cnt2(pDay[d]) + ' / 성과 상세 ' + cnt2(aDay[d] || 0); }).join(' · ') +
+    '</b> — 지면은 06시 자동수집 값이라 그 뒤 늦게 잡힌 전환이 아직 안 들어왔습니다. 다음 날 06시 수집 때 맞춰집니다.';
+}
 function renderPlace() {
   var PV = VIEW === 'owner' ? 'product' : VIEW;
   var sec = document.getElementById('place-sec');
@@ -1232,6 +1245,7 @@ function renderPlace() {
     ['place-note', 'place-tabs', 'place-crumb', 't-place-mx'].forEach(function (id) { document.getElementById(id).innerHTML = ''; });
     return;
   }
+  var pDay = {}; // 날짜별 지면 전환 — 성과 상세와 어긋나는 날 표시용
   var ix = placeIndex(), byPlace = {}, byRow = {}, rowInfo = {}, order = P.order.slice();
   var first = P.rows.reduce(function (m, x) { return x[0] < m ? x[0] : m; }, '9999');
   P.rows.forEach(function (x) {
@@ -1244,6 +1258,7 @@ function renderPlace() {
     var pl = x[3];
     if (order.indexOf(pl) < 0) order.push(pl);
     addTotals(byPlace[pl] || (byPlace[pl] = emptyTotals()), t);
+    pDay[d] = (pDay[d] || 0) + x[7];
     var key = PV === 'product' ? ci.product : PV === 'campaign' ? x[1] : x[1] + '|' + x[2];
     if (!rowInfo[key]) rowInfo[key] = PV === 'product' ? { kind: 'product', id: ci.product, name: ci.product, up: '' }
       : PV === 'campaign' ? { kind: 'campaign', id: x[1], product: ci.product, name: ci.name, raw: ci.raw, up: ci.product }
@@ -1264,7 +1279,7 @@ function renderPlace() {
   };
   document.getElementById('t-place').innerHTML = H + '<tbody>' + (places.length ? row('합계', all, true) + places.map(function (p) { return row(p, byPlace[p]); }).join('') : '<tr><td class="empty" colspan="12">이 기간·필터에 지면 데이터 없음</td></tr>') + '</tbody>';
   document.getElementById('place-note').innerHTML = (P.hasSub ? '유튜브는 구글이 주는 세부 지면(쇼츠·인스트림·인피드)으로 나눴습니다. 구글 안내상 <b>인피드</b>에는 Gmail·Discover 트래픽 일부가 함께 잡힐 수 있습니다. ' : '<b>세부 지면(쇼츠·인스트림·인피드)이 아직 안 들어왔습니다</b> — 지금은 네트워크 단위입니다. ') +
-    '전환·ROAS는 구글 매체 전환 기준이라 Cafe24 실매출과 다릅니다. 1만원 미만 지면은 흐리게, 행마다 가장 좋은 지면은 굵게 표시합니다.';
+    '전환·ROAS는 구글 매체 전환 기준이라 Cafe24 실매출과 다릅니다. 1만원 미만 지면은 흐리게, 행마다 가장 좋은 지면은 굵게 표시합니다.' + placeLagNote(pDay, s, e);
 
   // 지표 탭 + 매트릭스 (보기 단위 × 지면)
   var tEl = document.getElementById('place-tabs');
