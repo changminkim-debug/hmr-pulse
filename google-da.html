@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>한끼통살 · 구글 DA 성과</title>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,500,1,0&display=block">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <style>
@@ -83,7 +84,7 @@ body.m-tiktok .band-logo{padding:0;background:#000}
 .notice.show{display:block}
 .h2{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
 .h2 .t{font-size:19px;font-weight:800;letter-spacing:-.3px;color:#111}
-.h2 .t::before{content:'■';margin-right:7px;font-size:.8em;vertical-align:1px;color:#111} /* 11/25 사용자: 섹션 제목 잘 보이게 검은 표시 + 크게 */
+.h2 .ic{font-family:'Material Symbols Rounded';font-size:22px;line-height:1;color:#111;align-self:center;margin-right:-4px;font-variation-settings:'FILL' 1,'wght' 500;-webkit-font-feature-settings:'liga';user-select:none} /* 11/25 사용자: 섹션마다 검은 아이콘 */
 .h2 .s{font-size:13px;color:var(--faint)}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
 
@@ -312,12 +313,12 @@ td.btncell{width:1%;padding-left:2px}
   <div class="notice" id="notice"></div>
 
   <section>
-    <div class="h2"><span class="t">핵심 지표</span><span class="s" id="kpi-sub"></span></div>
+    <div class="h2"><span class="ic" aria-hidden="true">monitoring</span><span class="t">핵심 지표</span><span class="s" id="kpi-sub"></span></div>
     <div class="kpis" id="kpis"></div>
   </section>
 
   <section>
-    <div class="h2"><span class="t" id="chart-title">일자별 Cafe24 ROAS</span><span class="s" id="chart-sub"></span></div>
+    <div class="h2"><span class="ic" aria-hidden="true">bar_chart</span><span class="t" id="chart-title">일자별 Cafe24 ROAS</span><span class="s" id="chart-sub"></span></div>
     <div class="panel chart-panel">
       <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
       <div class="foot"><div id="chart-insight"></div><button class="lnk" id="daily-toggle" onclick="toggleDailyTable()">일자별 표 펼치기 ▾</button></div>
@@ -326,7 +327,7 @@ td.btncell{width:1%;padding-left:2px}
   </section>
 
   <section>
-    <div class="h2"><span class="t">성과 상세</span><span class="s">행을 누르면 한 단계 아래로 · 헤더를 누르면 정렬</span></div>
+    <div class="h2"><span class="ic" aria-hidden="true">table_chart</span><span class="t">성과 상세</span><span class="s">행을 누르면 한 단계 아래로 · 헤더를 누르면 정렬</span></div>
     <div class="tbl-head">
       <div class="tabs" id="view-tabs"></div>
       <div class="crumb" id="crumb"></div>
@@ -338,7 +339,7 @@ td.btncell{width:1%;padding-left:2px}
   </section>
 
   <section id="place-sec">
-    <div class="h2"><span class="t">지면별 효율</span><span class="s" id="place-sub"></span></div>
+    <div class="h2"><span class="ic" aria-hidden="true">smart_display</span><span class="t">지면별 효율</span><span class="s" id="place-sub"></span></div>
     <div class="panel"><div class="tscroll"><table class="place-tbl" id="place-t"></table></div><div class="place-note" id="place-note"></div></div>
     <div class="tbl-head" style="margin-top:14px">
       <div class="tabs" id="place-tabs"></div>
@@ -348,7 +349,7 @@ td.btncell{width:1%;padding-left:2px}
   </section>
 
   <section id="age-sec">
-    <div class="h2"><span class="t">연령별 효율</span><span class="s" id="age-sub"></span></div>
+    <div class="h2"><span class="ic" aria-hidden="true">groups</span><span class="t">연령별 효율</span><span class="s" id="age-sub"></span></div>
     <div class="panel"><div class="tscroll"><table class="place-tbl" id="age-t"></table></div><div class="place-note" id="age-note"></div></div>
     <div class="tbl-head" style="margin-top:14px">
       <div class="tabs" id="age-tabs"></div>
@@ -358,7 +359,7 @@ td.btncell{width:1%;padding-left:2px}
   </section>
 
   <section id="gender-sec">
-    <div class="h2"><span class="t">성별 효율</span><span class="s" id="gender-sub"></span></div>
+    <div class="h2"><span class="ic" aria-hidden="true">wc</span><span class="t">성별 효율</span><span class="s" id="gender-sub"></span></div>
     <div class="panel"><div class="tscroll"><table class="place-tbl" id="gender-t"></table></div><div class="place-note" id="gender-note"></div></div>
     <div class="tbl-head" style="margin-top:14px">
       <div class="tabs" id="gender-tabs"></div>
@@ -368,7 +369,7 @@ td.btncell{width:1%;padding-left:2px}
   </section>
 
   <section id="hour-sec">
-    <div class="h2"><span class="t">시간대별 효율</span><span class="s" id="hour-sub"></span></div>
+    <div class="h2"><span class="ic" aria-hidden="true">schedule</span><span class="t">시간대별 효율</span><span class="s" id="hour-sub"></span></div>
     <div class="panel"><div class="tscroll"><table class="place-tbl" id="hour-t"></table></div><div class="place-note" id="hour-note"></div></div>
     <div class="tbl-head" style="margin-top:14px">
       <div class="tabs" id="hour-tabs"></div>
@@ -379,24 +380,24 @@ td.btncell{width:1%;padding-left:2px}
 
   <section id="shop-sec" style="display:none">
     <div class="shop-sum" id="shop-test" style="margin-bottom:18px"></div>
-    <div class="h2"><span class="t">상품별 성과</span><span class="s" id="sp-sub"></span></div>
+    <div class="h2"><span class="ic" aria-hidden="true">inventory_2</span><span class="t">상품별 성과</span><span class="s" id="sp-sub"></span></div>
     <div class="shop-sum" id="sp-sum"></div>
     <div class="shop-tools"><div class="tabs" id="sp-tabs"></div><input id="sp-q" placeholder="상품명·상품번호 검색"></div>
     <div class="panel"><div class="tscroll"><table id="t-sp"></table></div><div id="sp-more"></div></div>
-    <div class="h2" style="margin-top:22px"><span class="t">구매 흐름 · 광고에 보인 상품 → 실제로 산 상품</span><span class="s" id="fl-sub"></span></div>
+    <div class="h2" style="margin-top:22px"><span class="ic" aria-hidden="true">shopping_cart</span><span class="t">구매 흐름 · 광고에 보인 상품 → 실제로 산 상품</span><span class="s" id="fl-sub"></span></div>
     <div class="shop-sum" id="fl-sum"></div>
     <div class="panel"><div class="tscroll"><table id="t-fl"></table></div></div>
-    <div class="h2" style="margin-top:22px"><span class="t">검색어</span><span class="s" id="st-sub"></span></div>
+    <div class="h2" style="margin-top:22px"><span class="ic" aria-hidden="true">search</span><span class="t">검색어</span><span class="s" id="st-sub"></span></div>
     <div class="shop-sum" id="st-sum"></div>
     <div class="shop-tools"><div class="tabs" id="st-tabs"></div><input id="st-q" placeholder="검색어 찾기"></div>
     <div class="panel"><div class="tscroll"><table id="t-st"></table></div><div id="st-more"></div></div>
-    <div class="h2" style="margin-top:22px"><span class="t">피드 점검</span><span class="s" id="fd-sub"></span></div>
+    <div class="h2" style="margin-top:22px"><span class="ic" aria-hidden="true">fact_check</span><span class="t">피드 점검</span><span class="s" id="fd-sub"></span></div>
     <div class="shop-sum" id="fd-sum"></div>
     <div class="shop-tools"><div class="tabs" id="fd-tabs"></div><input id="fd-q" placeholder="상품명·상품번호 검색"></div>
     <div class="panel"><div class="tscroll"><table id="t-fd"></table></div><div id="fd-more"></div></div>
   </section>
 
-  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 11. 25. 오후 12:10:51</div>
+  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 11. 25. 오후 1:36:35</div>
 </main>
 
 <div class="modal-ov" id="modal-ov" onclick="if(event.target===this) closeCampaignModal()">
