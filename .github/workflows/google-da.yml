@@ -61,6 +61,7 @@ jobs:
           GITHUB_PAGES_REPO: changminkim-debug/hmr-pulse
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+          BQ_SA_JSON: ${{ secrets.BQ_SA_JSON }}  # 타겟·페이싱 블록 조회 + 지면 BigQuery 적재 (2026-11-25)
 
       - name: 새 원본·로그를 비공개 브랜치에 저장
         if: always()
