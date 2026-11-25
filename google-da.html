@@ -78,12 +78,13 @@ body.m-tiktok .band-logo{padding:0;background:#000}
 .chip.on:not(.active){border-color:#c9cfdb;color:var(--ink);font-weight:600}
 
 /* ── 본문 ── */
-.wrap{max-width:1860px;margin:0 auto;padding:12px 20px 24px;display:flex;flex-direction:column;gap:14px}
+.wrap{max-width:1860px;margin:0 auto;padding:16px 20px 32px;display:flex;flex-direction:column;gap:26px} /* 11/25 사용자: 박스 사이 살짝 띄움 (14→26) */
 .notice{background:#fff8e1;border:1px solid #f3dc9a;color:#7a5a00;border-radius:8px;padding:9px 14px;font-size:14.5px;display:none}
 .notice.show{display:block}
-.h2{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}
-.h2 .t{font-size:15px;font-weight:700;letter-spacing:-.2px}
-.h2 .s{font-size:12px;color:var(--faint)}
+.h2{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.h2 .t{font-size:19px;font-weight:800;letter-spacing:-.3px;color:#111}
+.h2 .t::before{content:'■';margin-right:7px;font-size:.8em;vertical-align:1px;color:#111} /* 11/25 사용자: 섹션 제목 잘 보이게 검은 표시 + 크게 */
+.h2 .s{font-size:13px;color:var(--faint)}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
 
 /* KPI 스트립 */
@@ -227,7 +228,7 @@ td.btncell{width:1%;padding-left:2px}
   .seg button{padding:4px 8px;font-size:14px}
   .custom input{width:auto;flex:1;min-width:0}
   .custom{width:100%}
-  .wrap{padding:12px 10px 20px;gap:14px}
+  .wrap{padding:12px 10px 20px;gap:20px}
   .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
   .kpi{padding:13px 13px 12px;border-radius:12px}
   .kpi:hover{transform:none}
@@ -395,7 +396,7 @@ td.btncell{width:1%;padding-left:2px}
     <div class="panel"><div class="tscroll"><table id="t-fd"></table></div><div id="fd-more"></div></div>
   </section>
 
-  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 11. 25. 오전 10:45:08</div>
+  <div class="ft">한끼통살 퍼포먼스 대시보드 · 자동 생성 2026. 11. 25. 오후 12:10:51</div>
 </main>
 
 <div class="modal-ov" id="modal-ov" onclick="if(event.target===this) closeCampaignModal()">
